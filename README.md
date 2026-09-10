@@ -19,6 +19,25 @@ Node 18+ required (developed on Node 24).
 
 ---
 
+## Deployment
+
+Hosted on Vercel, built from this repository.
+
+- Project: `syncore-techs-projects/unique-homes`
+- Config lives in `vercel.json` — Vite preset, `dist` output, `trailingSlash: true`
+  (every internal link is written with a trailing slash, so there are no redirect hops),
+  and immutable caching on the content-hashed `/assets/*` files.
+
+```bash
+npx vercel --prod        # deploy from a local checkout
+```
+
+To get a deploy on every push, connect the GitHub repo in
+**Vercel → Project → Settings → Git**. That needs a GitHub login connection on
+the Vercel account, which has to be authorised once from the dashboard.
+
+---
+
 ## Pages
 
 | Route | Sections |

@@ -324,12 +324,41 @@
 /* -------------------------------------------------------------- REVEALS  */
 /* Base states consumed by src/core/reveal.js. JS clears them on animate-in. */
 [data-reveal] { will-change: transform, opacity; }
-[data-reveal="fade"]   { opacity: 0; }
-[data-reveal="up"]     { opacity: 0; transform: translate3d(0, 2.2rem, 0); }
-[data-reveal="scale"]  { opacity: 0; transform: scale(1.06); }
-[data-reveal="clip"]   { clip-path: inset(0 0 100% 0); }
-[data-reveal="mask"]   { clip-path: inset(0 100% 0 0); }
-html.no-js [data-reveal] { opacity: 1 !important; transform: none !important; clip-path: none !important; }
+
+/* The pre-animation hidden states are declared ONLY when motion is welcome.
+   They must never apply under reduced motion: the JS path there clears inline
+   styles, which cannot override a stylesheet rule, so a CSS-level `opacity: 0`
+   would leave the content permanently invisible. */
+@media (prefers-reduced-motion: no-preference) {
+  [data-reveal="fade"]       { opacity: 0; }
+  [data-reveal="up"]         { opacity: 0; transform: translate3d(0, 2.2rem, 0); }
+  [data-reveal="down"]       { opacity: 0; transform: translate3d(0, -2.2rem, 0); }
+  [data-reveal="left"]       { opacity: 0; transform: translate3d(-2.5rem, 0, 0); }
+  [data-reveal="right"]      { opacity: 0; transform: translate3d(2.5rem, 0, 0); }
+  [data-reveal="scale"]      { opacity: 0; transform: scale(1.06); }
+  [data-reveal="scale-down"] { opacity: 0; transform: scale(0.94); }
+  [data-reveal="blur"]       { opacity: 0; }
+  [data-reveal="clip"]       { clip-path: inset(0 0 100% 0); }
+  [data-reveal="mask"]       { clip-path: inset(0 100% 0 0); }
+}
+
+/* If JS never runs, nothing will ever animate these — show them outright. */
+html.no-js [data-reveal] {
+  opacity: 1 !important;
+  transform: none !important;
+  clip-path: none !important;
+  filter: none !important;
+}
+
+/* Belt and braces for reduced motion, in case a section ships its own hidden
+   pre-animation state. Deliberately does NOT reset `transform`: an element can
+   legitimately be positioned with one, and moving it would be a worse fault
+   than the one being guarded against. */
+html.reduced-motion [data-reveal] {
+  opacity: 1 !important;
+  clip-path: none !important;
+  filter: none !important;
+}
 
 /* Media that scales down into place as it enters */
 .reveal-media { overflow: hidden; }
