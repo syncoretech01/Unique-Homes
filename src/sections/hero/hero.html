@@ -1,0 +1,105 @@
+<!-- ==========================================================================
+     HERO — the courtyard house, rendered live behind the studio's promise.
+     Behaviour lives in src/sections/hero/hero.js (initHero). Copy mirrors
+     src/data/site.js and src/data/services.js; the JS re-syncs it on boot.
+     ========================================================================== -->
+<section class="section hero" data-section="hero" id="hero" aria-labelledby="hero-title">
+  <div class="hero__viewport" data-hero-viewport>
+
+    <!-- 3D: the shared WebGL stage draws the house into this box ---------- -->
+    <div class="hero__stage gl-slot" data-hero-stage aria-hidden="true">
+      <div class="gl-slot__fallback hero__fallback" data-hero-fallback></div>
+    </div>
+
+    <!-- Soft light scrim so the type stays legible over the render -------- -->
+    <div class="hero__scrim" aria-hidden="true"></div>
+
+    <!-- Sunlight bloom that floods in as the camera enters the house ------ -->
+    <div class="hero__flare" data-hero-flare aria-hidden="true"></div>
+
+    <!-- Content ----------------------------------------------------------- -->
+    <div class="hero__main" data-hero-main>
+      <div class="shell hero__shell">
+        <div class="grid hero__grid">
+          <div class="hero__body">
+
+            <p class="hero__eyebrow eyebrow" data-hero-item>Austin, Texas — Est. 2009</p>
+
+            <h1 class="hero__title" id="hero-title">Drawings that get <em>built</em>.</h1>
+
+            <p class="hero__lede t-lead" data-hero-item data-hero-lede>
+              A residential architecture and engineering studio producing permit-ready
+              drawing sets, site-tailored civil packages and photoreal visualisation —
+              all in house.
+            </p>
+
+            <ul class="hero__chips" data-hero-item data-hero-chips>
+              <li class="hero__chip-item">
+                <a class="hero__chip" href="/services/#architectural-packages">
+                  <span class="hero__chip-idx t-num" aria-hidden="true">01</span>
+                  <span class="hero__chip-label">Architectural Packages</span>
+                </a>
+              </li>
+              <li class="hero__chip-item">
+                <a class="hero__chip" href="/services/#civil-engineering">
+                  <span class="hero__chip-idx t-num" aria-hidden="true">02</span>
+                  <span class="hero__chip-label">Civil Engineering</span>
+                </a>
+              </li>
+              <li class="hero__chip-item">
+                <a class="hero__chip" href="/services/#3d-renderings">
+                  <span class="hero__chip-idx t-num" aria-hidden="true">03</span>
+                  <span class="hero__chip-label">3D Renderings</span>
+                </a>
+              </li>
+            </ul>
+
+            <div class="hero__actions" data-hero-item>
+              <a class="btn btn--lg hero__btn" href="/contact/" data-arrow data-magnetic="0.26">
+                <span class="btn__fill" aria-hidden="true"></span>
+                <span class="btn__label"><span data-text="Start a project">Start a project</span></span>
+              </a>
+              <a class="btn btn--ghost btn--lg hero__btn" href="/projects/">
+                <span class="btn__fill" aria-hidden="true"></span>
+                <span class="btn__label"><span data-text="See our work">See our work</span></span>
+              </a>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom instrument strip ------------------------------------------- -->
+    <div class="hero__foot" data-hero-foot>
+      <div class="shell hero__foot-shell">
+
+        <div class="hero__cue-row" data-hero-foot-item>
+          <a class="scroll-cue hero__cue" href="#manifesto">
+            <span class="hero__cue-label">Scroll</span>
+            <span class="scroll-cue__rail" aria-hidden="true"></span>
+          </a>
+        </div>
+
+        <div class="hero__meta" data-hero-foot-item>
+          <p class="hero__meta-row hero__meta-row--work">
+            <span class="hero__live" aria-hidden="true" data-pulse data-pulse-duration="2.8"></span>
+            <span class="hero__meta-tag">Structural drawings</span>
+            <span class="hero__meta-tag">Site plans</span>
+            <span class="hero__meta-tag">Visualisation</span>
+          </p>
+
+          <p class="hero__meta-row hero__meta-row--tech">
+            <span class="hero__meta-cell t-num" data-hero-coords>30.2672° N&nbsp;&nbsp;97.7431° W</span>
+            <span class="hero__meta-cell t-num">
+              <span class="hero__meta-key">Austin</span>
+              <span data-clock-ui="hm">--:-- CT</span>
+            </span>
+            <span class="hero__meta-cell hero__meta-cell--sheet t-num">Sheet A-000</span>
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>

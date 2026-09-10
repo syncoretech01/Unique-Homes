@@ -1,0 +1,403 @@
+/* ============================================================================
+   STUDIO TEAM
+   ----------------------------------------------------------------------------
+   Six generated portrait plates in a 3 / 2 / 1 grid.
+
+   3D note — the tilt element (.studio-team__tilt) owns the 3D rendering
+   context. Anything that clips, blends or fades is a *grouping* element in CSS
+   and would flatten that context, so the portrait itself never clips: each
+   depth layer is absolutely positioned over the whole plate and clips its own
+   contents instead.
+
+   Depth compensation — a layer pushed to z = d under perspective P projects
+   at P / (P - d). Each layer is therefore inset by (1 - (P - d) / P) / 2 at
+   rest so that, at full hover depth, it lands exactly flush with the plate
+   instead of spilling past it. P = 1100 here.
+       z 14 -> 0.64%    z 30 -> 1.36%    z 46 -> 2.09%
+   The sheen is the one exception: it is the only layer that paints a bright
+   fill edge to edge, so an inset would read as an unlit rim. It stays flush
+   and is allowed to overshoot onto the card's own paper margin instead,
+   where a soft white gradient on a near-white ground is invisible.
+
+   Inside a preserve-3d context the painting order follows z, not the DOM, so
+   the layers are authored in ascending depth (field, drawing, marks,
+   initials, sheen) and the stack therefore reads identically at rest and at
+   full tilt. For the same reason no layer uses mix-blend-mode: a 3D
+   transform makes its parent a stacking context, which would silently change
+   what a blend has to blend against the moment the pointer arrives.
+   ========================================================================== */
+
+.studio-team {
+  --tm-plate-ratio: 3 / 4;
+}
+
+/* ------------------------------------------------------------------ HEAD */
+
+.studio-team__count {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  margin-top: var(--sp-4);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wider);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+.studio-team__count-sep {
+  width: 1.4rem;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.5;
+}
+
+.studio-team__title { margin: 0; }
+.studio-team__lede { color: var(--fg-soft); }
+
+/* Held back until reveal.js has split the lines, so the heading never paints
+   once and then jumps into its masks. Never hidden without JS. */
+.js .studio-team__title[data-split] { visibility: hidden; }
+.no-js .studio-team__title[data-split] { visibility: visible; }
+
+/* ------------------------------------------------------------------ GRID */
+
+.studio-team__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(2rem, 3.2vw, 3.5rem) var(--gutter);
+  margin: 0;
+  padding: 0;
+}
+@media (max-width: 1100px) {
+  .studio-team__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  .studio-team__grid { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* display:grid so the card always stretches to the tallest card in its row. */
+.studio-team__item { display: grid; min-width: 0; }
+
+/* ------------------------------------------------------------------ CARD */
+/* The card owns the lift (CSS only, so :focus-visible gets it too). The inner
+   .studio-team__tilt owns the rotation, which GSAP writes — the two never
+   fight over the same transform. */
+
+/* The tint pair is derived here, on the same element that carries the inline
+   --tm-hue, because a custom property that references another is substituted
+   where it is declared — declaring it on the section would freeze all six
+   plates at one hue. */
+.studio-team__card {
+  --tm-hue: 24;
+  --tm-tint: hsl(var(--tm-hue) 44% 52%);
+  --tm-deep: hsl(var(--tm-hue) 36% 22%);
+  position: relative;
+  display: block;
+  height: 100%;
+  background: var(--bg-raised);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-1);
+  transform: translate3d(0, 0, 0);
+  transition:
+    transform 620ms var(--e-out-expo),
+    box-shadow 620ms var(--e-out-expo),
+    border-color 420ms var(--e-out-quart);
+}
+.studio-team__card:focus-visible {
+  transform: translate3d(0, -10px, 0);
+  box-shadow: var(--sh-3);
+  border-color: color-mix(in oklab, var(--accent) 42%, transparent);
+}
+
+.studio-team__tilt {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: clamp(0.75rem, 1.1vw, 1rem);
+}
+
+/* --------------------------------------------------------------- PORTRAIT */
+
+.studio-team__portrait {
+  position: relative;
+  width: 100%;
+  aspect-ratio: var(--tm-plate-ratio);
+  transform-style: preserve-3d;
+  background: var(--c-bone);
+}
+
+/* Every layer covers the whole plate and clips its own contents. */
+.studio-team__field,
+.studio-team__draw,
+.studio-team__marks,
+.studio-team__initials,
+.studio-team__sheen {
+  position: absolute;
+  display: block;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* 1 — tinted field ---------------------------------------------------- */
+.studio-team__field {
+  inset: 0;
+  background:
+    radial-gradient(118% 78% at 20% 6%, color-mix(in oklab, var(--c-white) 72%, transparent), transparent 62%),
+    linear-gradient(
+      162deg,
+      color-mix(in oklab, var(--tm-tint) 15%, var(--c-paper)) 0%,
+      color-mix(in oklab, var(--tm-tint) 8%, var(--c-bone)) 44%,
+      color-mix(in oklab, var(--tm-tint) 30%, var(--c-shell)) 100%
+    );
+}
+.studio-team__grain {
+  position: absolute;
+  inset: 0;
+  display: block;
+  background-image: var(--tm-grain, none);
+  background-repeat: repeat;
+  background-size: 96px 96px;
+  opacity: 0.32;
+  mix-blend-mode: multiply;
+}
+
+/* 2 — cropped drawing fragment ---------------------------------------- */
+.studio-team__draw { inset: 0.64%; }
+.studio-team__draw-art {
+  position: absolute;
+  top: 17%;
+  right: -6%;
+  bottom: -12%;
+  left: -14%;
+  display: block;
+  opacity: 0.58;
+}
+.studio-team__draw-art svg { display: block; width: 100%; height: 100%; }
+
+/* 3 — registration frame and sheet marks ------------------------------ */
+.studio-team__marks { inset: 1.36%; }
+.studio-team__frame-line {
+  position: absolute;
+  inset: 5.5%;
+  border: 1px solid color-mix(in oklab, var(--tm-deep) 22%, transparent);
+}
+.studio-team__frame-line::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  width: 14%;
+  height: 1px;
+  background: var(--accent);
+}
+.studio-team__stamp,
+.studio-team__kind {
+  position: absolute;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: var(--tr-wider);
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--tm-deep) 68%, transparent);
+}
+/* Both labels live in the clear band above the drawing and the initials. */
+.studio-team__stamp { top: 8.5%; left: 8.5%; }
+.studio-team__kind {
+  top: 8.5%;
+  right: 8.5%;
+  max-width: 58%;
+  text-align: right;
+  color: color-mix(in oklab, var(--tm-deep) 48%, transparent);
+}
+
+/* 4 — oversized initials, cut by the frame ---------------------------- */
+.studio-team__initials { inset: 2.09%; }
+.studio-team__initials-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.studio-team__initials-svg text {
+  font-family: var(--ff-display);
+  font-weight: 300;
+  font-variation-settings: "SOFT" 0, "WONK" 0, "opsz" 144;
+  font-size: 268px;
+  letter-spacing: -0.045em;
+}
+.studio-team__initials-ghost {
+  fill: none;
+  stroke: color-mix(in oklab, var(--c-paper) 88%, transparent);
+  stroke-width: 1.6;
+}
+.studio-team__initials-fill {
+  fill: color-mix(in oklab, var(--tm-deep) 30%, transparent);
+  stroke: none;
+  transition: fill 620ms var(--e-out-expo);
+}
+
+/* 5 — specular sheen --------------------------------------------------- */
+.studio-team__sheen { inset: 0; }
+.studio-team__sheen-band {
+  position: absolute;
+  top: -32%;
+  left: -48%;
+  display: block;
+  width: 40%;
+  height: 164%;
+  opacity: 0;
+  transform: translate3d(-30%, 0, 0) rotate(14deg);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in oklab, var(--c-white) 22%, transparent) 38%,
+    color-mix(in oklab, var(--c-white) 58%, transparent) 52%,
+    color-mix(in oklab, var(--c-white) 18%, transparent) 66%,
+    transparent 100%
+  );
+}
+
+@keyframes studio-team-sheen {
+  0%   { opacity: 0; transform: translate3d(-30%, 0, 0) rotate(14deg); }
+  16%  { opacity: 1; }
+  86%  { opacity: 1; }
+  100% { opacity: 0; transform: translate3d(310%, 0, 0) rotate(14deg); }
+}
+
+/* ------------------------------------------------------------------ BODY */
+
+.studio-team__body {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: var(--sp-3);
+  padding: clamp(1.35rem, 1.9vw, 1.85rem) clamp(0.35rem, 0.8vw, 0.75rem) clamp(0.5rem, 0.9vw, 0.85rem);
+}
+
+.studio-team__meta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wider);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+.studio-team__meta-line {
+  flex: 1 1 auto;
+  height: 1px;
+  background: var(--line);
+}
+.studio-team__meta-i { color: var(--fg-soft); }
+.studio-team__meta-since { letter-spacing: var(--tr-wide); }
+
+.studio-team__name {
+  margin: 0;
+  font-family: var(--ff-display);
+  font-size: var(--fs-xl);
+  font-weight: 300;
+  line-height: var(--lh-snug);
+  letter-spacing: var(--tr-snug);
+  font-variation-settings: "SOFT" 0, "WONK" 0, "opsz" 40;
+  color: var(--fg);
+  text-wrap: balance;
+}
+
+.studio-team__role {
+  margin: -0.35rem 0 0;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  font-weight: 500;
+  letter-spacing: var(--tr-wider);
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.studio-team__bio {
+  margin: 0;
+  font-size: var(--fs-sm);
+  line-height: 1.62;
+  color: var(--fg-soft);
+  max-width: 42ch;
+}
+
+.studio-team__focus {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: auto 0 0;
+  padding: var(--sp-2) 0 0;
+}
+/* Doubled up so it always beats .tag from the shared UI kit. */
+.studio-team .studio-team__tag {
+  padding: 0.38em 0.8em;
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wide);
+  color: var(--fg-muted);
+  border-color: var(--line);
+}
+
+/* ------------------------------------------------------------------ FOOT */
+
+.studio-team__foot {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-4);
+  max-width: 62ch;
+  margin: clamp(2.5rem, 4.5vw, 4.5rem) 0 0;
+  margin-left: auto;
+  color: var(--fg-muted);
+}
+.studio-team__foot-rule {
+  flex: none;
+  width: clamp(1.5rem, 4vw, 4rem);
+  height: 1px;
+  margin-top: 0.7em;
+  background: var(--line-strong);
+}
+@media (max-width: 900px) {
+  .studio-team__foot { margin-left: 0; }
+}
+
+/* ----------------------------------------------------------------- HOVER */
+
+@media (hover: hover) and (pointer: fine) {
+  .studio-team__card:hover {
+    transform: translate3d(0, -10px, 0);
+    box-shadow: var(--sh-3);
+    border-color: color-mix(in oklab, var(--accent) 42%, transparent);
+  }
+  .studio-team__card:hover .studio-team__initials-fill {
+    fill: color-mix(in oklab, var(--tm-deep) 52%, transparent);
+  }
+  .studio-team__card:hover .studio-team__tag {
+    border-color: var(--line-strong);
+    color: var(--fg-soft);
+  }
+  .studio-team__card:hover .studio-team__sheen-band {
+    animation: studio-team-sheen 1200ms var(--e-out-quart) forwards;
+  }
+}
+
+.studio-team__card:focus-visible .studio-team__initials-fill {
+  fill: color-mix(in oklab, var(--tm-deep) 52%, transparent);
+}
+.studio-team__card:focus-visible .studio-team__sheen-band {
+  animation: studio-team-sheen 1200ms var(--e-out-quart) forwards;
+}
+
+/* --------------------------------------------------------- REDUCED MOTION */
+
+@media (prefers-reduced-motion: reduce) {
+  .js .studio-team__title[data-split] { visibility: visible; }
+  .studio-team__card,
+  .studio-team__initials-fill { transition: none; }
+  .studio-team__card:hover,
+  .studio-team__card:focus-visible { transform: none; }
+  .studio-team__sheen-band,
+  .studio-team__card:hover .studio-team__sheen-band,
+  .studio-team__card:focus-visible .studio-team__sheen-band { animation: none; opacity: 0; }
+}

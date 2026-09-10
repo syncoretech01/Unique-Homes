@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Sheet not found — Unique Homes and Design</title>
+  <meta name="description" content="That sheet is not in the set." />
+  <meta name="theme-color" content="#F3EFE8" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="./src/styles/main.css" />
+  <script>document.documentElement.classList.remove('no-js');document.documentElement.classList.add('js')</script>
+  <style>
+    .nf { min-height: 100svh; display: grid; place-items: center; text-align: center; background: var(--c-bone); }
+    .nf__inner { padding: var(--page-x); max-width: 46rem; }
+    .nf__code { font-family: var(--ff-mono); font-size: var(--fs-2xs); letter-spacing: var(--tr-widest);
+                text-transform: uppercase; color: var(--c-terra); }
+    .nf__title { font-family: var(--ff-display); font-weight: 300; font-size: var(--fs-4xl);
+                 line-height: 0.95; letter-spacing: var(--tr-tight); margin: 1.5rem 0 1.25rem; }
+    .nf__body { color: var(--fg-soft); margin-bottom: 2.5rem; }
+    .nf__links { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+  <!-- #include "src/partials/header.html" -->
+  <main id="main" class="nf">
+    <div class="nf__inner">
+      <p class="nf__code">Error 404 &middot; Sheet A-404</p>
+      <h1 class="nf__title">This sheet is not<br />in the set.</h1>
+      <p class="nf__body">The drawing you asked for was never issued, or the revision moved it. Head back to the cover sheet and try again.</p>
+      <div class="nf__links">
+        <a class="btn" href="/"><span class="btn__label"><span data-text="Back to home">Back to home</span></span></a>
+        <a class="btn btn--ghost" href="/projects/"><span class="btn__label"><span data-text="See projects">See projects</span></span></a>
+      </div>
+    </div>
+  </main>
+  <!-- #include "src/partials/footer.html" -->
+  <script type="module" src="./src/pages/notfound.js"></script>
+</body>
+</html>

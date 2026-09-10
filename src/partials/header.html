@@ -1,0 +1,207 @@
+<!-- ==========================================================================
+     SITE HEADER — fixed chrome, transparent over the hero, paper once stuck.
+     Behaviour lives in src/core/nav.js (initNav). Copy mirrors src/data/site.js.
+     ========================================================================== -->
+<header class="site-head" data-nav>
+  <div class="site-head__inner">
+
+    <a class="site-head__logo" href="/" data-nav-home aria-label="Unique Homes and Design — home">
+      <span class="site-head__mark" aria-hidden="true">
+        <svg viewBox="0 0 32 32" width="32" height="32" fill="none" focusable="false" aria-hidden="true">
+          <g stroke="currentColor" stroke-width="1.4" stroke-linecap="square">
+            <path class="site-head__mark-body" d="M9 27V13.4h14V27" />
+            <path class="site-head__mark-roof" d="M4.4 14.6 16 4.2l11.6 10.4" />
+            <path class="site-head__mark-faint" d="M9 20.4h14" />
+            <path class="site-head__mark-faint" d="M16 20.4V27" />
+          </g>
+          <path class="site-head__mark-base" d="M2 27.6h28" stroke-width="1.6" stroke-linecap="square" />
+        </svg>
+      </span>
+      <span class="site-head__word">
+        <span class="site-head__word-full">Unique Homes and Design</span>
+        <span class="site-head__word-short" aria-hidden="true">UH&amp;D</span>
+      </span>
+    </a>
+
+    <nav class="site-head__nav" aria-label="Primary">
+      <ul class="site-head__list">
+        <li class="site-head__item">
+          <a class="site-head__link" href="/studio/" data-nav-link>
+            <span class="site-head__idx t-num" aria-hidden="true">01</span>
+            <span class="site-head__label">Studio</span>
+          </a>
+        </li>
+        <li class="site-head__item">
+          <a class="site-head__link" href="/services/" data-nav-link>
+            <span class="site-head__idx t-num" aria-hidden="true">02</span>
+            <span class="site-head__label">Services</span>
+          </a>
+        </li>
+        <li class="site-head__item">
+          <a class="site-head__link" href="/projects/" data-nav-link>
+            <span class="site-head__idx t-num" aria-hidden="true">03</span>
+            <span class="site-head__label">Projects</span>
+          </a>
+        </li>
+        <li class="site-head__item">
+          <a class="site-head__link" href="/journal/" data-nav-link>
+            <span class="site-head__idx t-num" aria-hidden="true">04</span>
+            <span class="site-head__label">Journal</span>
+          </a>
+        </li>
+        <li class="site-head__item">
+          <a class="site-head__link" href="/contact/" data-nav-link>
+            <span class="site-head__idx t-num" aria-hidden="true">05</span>
+            <span class="site-head__label">Contact</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="site-head__right">
+      <div class="site-head__aside" data-nav-aside>
+        <a class="site-head__micro site-head__micro--tel t-num" href="tel:+15125550142">+1 (512) 555-0142</a>
+        <span class="site-head__micro-rule" aria-hidden="true"></span>
+        <a class="site-head__micro site-head__micro--mail" href="mailto:studio@uniquehomesanddesign.com">studio@uniquehomesanddesign.com</a>
+        <a class="btn btn--sm site-head__cta" href="/contact/">
+          <span class="btn__fill" aria-hidden="true"></span>
+          <span class="btn__label"><span data-text="Start a project">Start a project</span></span>
+        </a>
+      </div>
+
+      <button class="site-head__toggle" type="button" aria-expanded="false" aria-controls="site-menu"
+              aria-label="Open menu" data-menu-toggle>
+        <span class="site-head__toggle-text" aria-hidden="true">
+          <span class="site-head__toggle-word">Menu</span>
+          <span class="site-head__toggle-word">Close</span>
+        </span>
+        <span class="site-head__burger" aria-hidden="true">
+          <span class="site-head__burger-line"></span>
+          <span class="site-head__burger-line"></span>
+        </span>
+      </button>
+    </div>
+
+  </div>
+</header>
+
+<!-- ------------------------------------------------------- OVERLAY MENU -->
+<div class="site-menu" id="site-menu" data-menu data-theme="ink" role="dialog" aria-modal="true"
+     aria-label="Site menu" aria-hidden="true" inert>
+
+  <div class="site-menu__wipe" aria-hidden="true">
+    <span class="site-menu__col"></span>
+    <span class="site-menu__col"></span>
+    <span class="site-menu__col"></span>
+    <span class="site-menu__col"></span>
+    <span class="site-menu__col"></span>
+  </div>
+
+  <div class="site-menu__body" data-lenis-prevent>
+    <div class="site-menu__grid">
+
+      <nav class="site-menu__primary" aria-label="Menu">
+        <ul class="site-menu__list">
+          <li class="site-menu__item">
+            <a class="site-menu__link" href="/studio/" data-nav-link>
+              <span class="site-menu__line">
+                <span class="site-menu__idx t-num" aria-hidden="true">01</span>
+                <span class="site-menu__word">Studio</span>
+                <span class="site-menu__blurb">Who we are, how we work</span>
+              </span>
+            </a>
+          </li>
+          <li class="site-menu__item">
+            <a class="site-menu__link" href="/services/" data-nav-link>
+              <span class="site-menu__line">
+                <span class="site-menu__idx t-num" aria-hidden="true">02</span>
+                <span class="site-menu__word">Services</span>
+                <span class="site-menu__blurb">Drawings, civil, visualisation</span>
+              </span>
+            </a>
+          </li>
+          <li class="site-menu__item">
+            <a class="site-menu__link" href="/projects/" data-nav-link>
+              <span class="site-menu__line">
+                <span class="site-menu__idx t-num" aria-hidden="true">03</span>
+                <span class="site-menu__word">Projects</span>
+                <span class="site-menu__blurb">Selected residential work</span>
+              </span>
+            </a>
+          </li>
+          <li class="site-menu__item">
+            <a class="site-menu__link" href="/journal/" data-nav-link>
+              <span class="site-menu__line">
+                <span class="site-menu__idx t-num" aria-hidden="true">04</span>
+                <span class="site-menu__word">Journal</span>
+                <span class="site-menu__blurb">Notes from the drawing board</span>
+              </span>
+            </a>
+          </li>
+          <li class="site-menu__item">
+            <a class="site-menu__link" href="/contact/" data-nav-link>
+              <span class="site-menu__line">
+                <span class="site-menu__idx t-num" aria-hidden="true">05</span>
+                <span class="site-menu__word">Contact</span>
+                <span class="site-menu__blurb">Start a project</span>
+              </span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="site-menu__secondary">
+
+        <section class="site-menu__block" data-menu-fade aria-labelledby="site-menu-services">
+          <h2 class="site-menu__block-title t-mono" id="site-menu-services">Services</h2>
+          <ul class="site-menu__mini">
+            <li><a class="site-menu__mini-link link-u" href="/services/#architectural-packages"><span class="t-num site-menu__mini-idx">01</span> Architectural Packages</a></li>
+            <li><a class="site-menu__mini-link link-u" href="/services/#civil-engineering"><span class="t-num site-menu__mini-idx">02</span> Civil Engineering</a></li>
+            <li><a class="site-menu__mini-link link-u" href="/services/#3d-renderings"><span class="t-num site-menu__mini-idx">03</span> 3D Renderings</a></li>
+          </ul>
+        </section>
+
+        <section class="site-menu__block" data-menu-fade aria-labelledby="site-menu-contact">
+          <h2 class="site-menu__block-title t-mono" id="site-menu-contact">Studio</h2>
+          <address class="site-menu__address">
+            1204 East Sixth Street, Suite 300<br />
+            Austin, TX 78702
+          </address>
+          <ul class="site-menu__mini">
+            <li><a class="site-menu__mini-link link-u" href="tel:+15125550142">+1 (512) 555-0142</a></li>
+            <li><a class="site-menu__mini-link link-u" href="mailto:studio@uniquehomesanddesign.com">studio@uniquehomesanddesign.com</a></li>
+          </ul>
+        </section>
+
+        <section class="site-menu__block" data-menu-fade aria-labelledby="site-menu-hours">
+          <h2 class="site-menu__block-title t-mono" id="site-menu-hours">Hours</h2>
+          <p class="site-menu__hours">Monday – Friday, 8:30 – 18:00 CT</p>
+          <p class="site-menu__now t-num">Austin, local time <span data-clock>—</span></p>
+        </section>
+
+        <section class="site-menu__block" data-menu-fade aria-labelledby="site-menu-social">
+          <h2 class="site-menu__block-title t-mono" id="site-menu-social">Follow</h2>
+          <ul class="site-menu__social">
+            <li><a class="site-menu__mini-link link-u" href="#" rel="noopener">Instagram</a></li>
+            <li><a class="site-menu__mini-link link-u" href="#" rel="noopener">LinkedIn</a></li>
+            <li><a class="site-menu__mini-link link-u" href="#" rel="noopener">Pinterest</a></li>
+            <li><a class="site-menu__mini-link link-u" href="#" rel="noopener">Houzz</a></li>
+          </ul>
+        </section>
+
+      </div>
+    </div>
+
+    <div class="site-menu__foot" data-menu-foot>
+      <p class="site-menu__closing">
+        Send the site address, a sketch, or nothing at all — we will tell you
+        what the drawing set needs to contain.
+      </p>
+      <a class="btn-circle site-menu__circle" href="/contact/">
+        <span class="site-menu__circle-label">
+          Start<br />a project
+        </span>
+      </a>
+    </div>
+  </div>
+</div>

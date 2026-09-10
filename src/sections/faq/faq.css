@@ -1,0 +1,253 @@
+/* ============================================================================
+   FAQ
+   A sticky editorial column against the eight-question accordion.
+
+   The accordion itself is the shared .acc component — this file only sets the
+   things that are specific to the page: the mono index column, the hairline
+   that draws in under each row, the nudge on hover, and the answer's
+   indentation so it hangs off the same optical line as the question.
+
+   The component's own hairlines are dropped to --line-soft and a second,
+   animatable hairline is laid over them. Before a row reveals you see a faint
+   rule; as it arrives the rule inks up to full weight from the left.
+   ========================================================================== */
+
+.section.faq {
+  background: var(--bg);
+  /* width of the mono index gutter, shared by the rows and the checklist */
+  --faq-idx: clamp(2.4rem, 3.4vw, 3.4rem);
+}
+
+/* ---------------------------------------------------------------- LAYOUT */
+
+.faq .faq__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: clamp(2.5rem, 6vw, 6.5rem);
+  align-items: start;
+}
+
+.faq .faq__aside-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.faq .faq__heading { margin-top: var(--sp-4); }
+
+.faq .faq__lede {
+  margin-top: var(--sp-5);
+  max-width: 38ch;
+}
+
+/* ------------------------------------------------------------------ MAIL */
+
+.faq .faq__mail {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-top: var(--sp-6);
+  color: var(--fg);
+}
+
+.faq .faq__mail-label {
+  font-size: var(--fs-base);
+  font-weight: 500;
+}
+
+.faq .faq__mail:hover .faq__mail-label,
+.faq .faq__mail:focus-visible .faq__mail-label {
+  background-size: 100% 1px;
+  color: var(--accent);
+}
+
+.faq .faq__mail-addr {
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wide);
+  color: var(--fg-muted);
+  text-transform: none;
+  transition: color var(--d-fast) var(--e-out-quart);
+}
+
+.faq .faq__mail:hover .faq__mail-addr { color: var(--fg-soft); }
+
+/* Open-row read-out — a quiet drawing-sheet counter under the column. */
+.faq .faq__count {
+  margin-top: var(--sp-7);
+  padding-top: var(--sp-4);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-widest);
+  color: var(--fg-muted);
+  border-top: 1px solid var(--line-soft);
+  min-width: 6.5rem;
+}
+
+.faq .faq__count-open { color: var(--accent); }
+
+/* ------------------------------------------------------------- ACCORDION */
+
+.faq .faq__acc-mount { position: relative; }
+
+.faq .acc { border-top-color: var(--line-soft); }
+.faq .acc__item {
+  position: relative;
+  border-bottom-color: var(--line-soft);
+}
+
+/* The animatable hairline laid over the component's own. */
+.faq .faq__rule {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
+  background: var(--line);
+  transform-origin: left center;
+  pointer-events: none;
+}
+
+.faq .faq__rule--top { top: 0; bottom: auto; z-index: 1; }
+
+/* The component centres the icon against the whole question block, which is
+   what a two- or three-line question wants. Only the mono index is pulled up
+   to sit against the first line. */
+.faq .acc__trigger { gap: var(--sp-4); }
+
+.faq .faq__q-wrap {
+  display: grid;
+  grid-template-columns: var(--faq-idx) minmax(0, 1fr);
+  align-items: start;
+  gap: 0;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.faq .faq__idx {
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wide);
+  color: var(--fg-muted);
+  /* optically seated against the first line of the question */
+  padding-top: 0.55em;
+  transition: color var(--d-base) var(--e-out-quart);
+}
+
+.faq .acc__item.is-open .faq__idx { color: var(--accent); }
+
+.faq .acc__q {
+  display: block;
+  text-wrap: balance;
+  transition: transform var(--d-base) var(--e-out-expo);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .faq .acc__trigger:hover .acc__q { transform: translateX(0.55rem); }
+  .faq .acc__trigger:hover .faq__idx { color: var(--accent); }
+  .faq .acc__trigger:hover .acc__icon { transform: rotate(90deg); }
+  .faq .acc__item.is-open .acc__trigger:hover .acc__icon { transform: rotate(180deg); }
+}
+
+.faq .acc__trigger:focus-visible .acc__q { transform: translateX(0.55rem); }
+
+.faq .acc__panel-inner {
+  display: block;
+  padding-left: var(--faq-idx);
+  padding-right: clamp(0rem, 4vw, 4rem);
+}
+
+.faq .faq__a {
+  max-width: 58ch;
+  font-size: var(--fs-base);
+  line-height: var(--lh-relaxed);
+  color: var(--fg-soft);
+}
+
+/* ------------------------------------------------------------- CHECKLIST */
+
+.faq .faq__start {
+  margin-top: clamp(2.5rem, 5vw, 4rem);
+  padding: clamp(1.4rem, 2.4vw, 2.2rem);
+  background: var(--bg-raised);
+  border: 1px solid var(--line-soft);
+}
+
+.faq .faq__start-label {
+  color: var(--fg-muted);
+  padding-bottom: clamp(1rem, 1.8vw, 1.4rem);
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.faq .faq__start-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0;
+}
+
+.faq .faq__start-item {
+  display: grid;
+  grid-template-columns: 2.2rem minmax(0, 1fr);
+  gap: 0.35rem;
+  align-items: start;
+  padding: clamp(1rem, 1.8vw, 1.4rem) clamp(0.9rem, 1.6vw, 1.4rem) 0 0;
+}
+
+.faq .faq__start-item:nth-child(even) {
+  padding-right: 0;
+  padding-left: clamp(0.9rem, 1.6vw, 1.4rem);
+  border-left: 1px solid var(--line-soft);
+}
+
+.faq .faq__start-idx {
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wide);
+  color: var(--accent);
+  padding-top: 0.2em;
+}
+
+.faq .faq__start-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-width: 0;
+}
+
+.faq .faq__start-title {
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  line-height: 1.35;
+  color: var(--fg);
+}
+
+.faq .faq__start-note {
+  font-size: var(--fs-xs);
+  line-height: 1.55;
+  color: var(--fg-muted);
+}
+
+/* ------------------------------------------------------------ RESPONSIVE */
+
+@media (max-width: 1100px) {
+  .faq .faq__layout { grid-template-columns: minmax(0, 4fr) minmax(0, 7fr); }
+  .faq .acc__q { font-size: var(--fs-md); }
+}
+
+@media (max-width: 900px) {
+  .faq .faq__layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(2rem, 5vw, 3rem);
+  }
+  .faq .faq__aside-inner { position: static; top: auto; }
+  .faq .faq__lede { max-width: 52ch; }
+  .faq .faq__count { display: none; }
+}
+
+@media (max-width: 640px) {
+  .section.faq { --faq-idx: 2.1rem; }
+  .faq .acc__icon { width: 2.1rem; height: 2.1rem; }
+  .faq .acc__trigger { gap: var(--sp-3); }
+  .faq .faq__start-list { grid-template-columns: minmax(0, 1fr); }
+  .faq .faq__start-item,
+  .faq .faq__start-item:nth-child(even) {
+    padding: clamp(0.9rem, 3vw, 1.2rem) 0 0;
+    border-left: 0;
+  }
+}

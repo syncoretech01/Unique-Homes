@@ -1,0 +1,481 @@
+/* ============================================================================
+   VOICES — client and contractor testimonials, as an editorial slider
+   Two panels: the quote set large in Fraunces, the related project's art
+   plate in a tall frame. Everything is scoped to .voices.
+   ========================================================================== */
+
+.voices {
+  overflow: clip;
+}
+
+.voices__note {
+  max-width: 36ch;
+}
+
+/* ------------------------------------------------------------------ SLIDER */
+
+.voices__slider {
+  position: relative;
+  border-top: 1px solid var(--line);
+  padding-top: clamp(2rem, 4vw, 3.25rem);
+}
+
+.voices__stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.74fr);
+  gap: clamp(2.5rem, 6vw, 6.5rem);
+  align-items: start;
+}
+
+.voices__col {
+  min-width: 0;
+}
+
+.voices__col--quote {
+  position: relative;
+}
+
+/* -------------------------------------------------------- GHOST NUMERAL */
+
+.voices__ghost {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  display: block;
+  font-size: var(--fs-4xl);
+  line-height: 0.78;
+  pointer-events: none;
+  user-select: none;
+}
+
+.voices__ghost-num {
+  position: absolute;
+  top: -0.36em;
+  left: -0.035em;
+  display: block;
+  font-family: var(--ff-display);
+  font-weight: 300;
+  font-variation-settings: "SOFT" 0, "WONK" 0, "opsz" 144;
+  letter-spacing: var(--tr-mega);
+  color: color-mix(in oklab, var(--fg) 9%, transparent);
+  will-change: transform, opacity;
+}
+
+/* --------------------------------------------------------------- QUOTE */
+
+.voices__quote-wrap {
+  position: relative;
+  z-index: 1;
+}
+
+.voices__figure,
+.voices__quote {
+  margin: 0;
+}
+
+.voices__quote-text {
+  margin: 0;
+  max-width: 20ch;
+  font-family: var(--ff-display);
+  font-size: var(--fs-2xl);
+  font-weight: 300;
+  font-variation-settings: "SOFT" 0, "WONK" 0, "opsz" 96;
+  line-height: 1.14;
+  letter-spacing: var(--tr-tight);
+  color: var(--fg);
+  text-wrap: pretty;
+}
+
+/* Masked SplitText lines: a hair of padding keeps descenders off the mask. */
+.voices__quote-text .split-line {
+  padding-bottom: 0.08em;
+  will-change: transform;
+}
+
+.voices__attrib {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-top: clamp(1.75rem, 3.4vw, 2.75rem);
+}
+
+.voices__author {
+  margin: 0;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  letter-spacing: var(--tr-wide);
+  text-transform: uppercase;
+  color: var(--fg);
+  font-feature-settings: "zero" 1;
+}
+
+.voices__role {
+  margin: 0;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wider);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.voices__project {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.55em;
+  margin-top: clamp(1.4rem, 2.6vw, 2.1rem);
+  font-family: var(--ff-sans);
+  font-size: var(--fs-base);
+  font-weight: 450;
+  letter-spacing: var(--tr-snug);
+  color: var(--fg);
+}
+
+.voices__project-arrow {
+  display: inline-block;
+  color: var(--accent);
+  transition: transform var(--d-base) var(--e-out-expo);
+}
+
+.voices__project:hover .voices__project-arrow,
+.voices__project:focus-visible .voices__project-arrow {
+  transform: translateX(0.38em);
+}
+
+/* ------------------------------------------------------------- ART PLATE */
+
+.voices__frame {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: var(--c-shell);
+  border: 1px solid var(--line);
+}
+
+.voices__layer {
+  position: absolute;
+  inset: 0;
+  clip-path: inset(0% 0% 0% 0%);
+  will-change: clip-path;
+}
+
+.voices__layer-art {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+
+/* The accent hairline that sweeps across during a swap. */
+.voices__sweep {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  height: 1px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left center;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  box-shadow: 0 0 14px color-mix(in oklab, var(--accent) 45%, transparent);
+}
+
+/* Registration marks, drawing-sheet style. */
+.voices__ticks {
+  position: absolute;
+  inset: 0.75rem;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.voices__ticks::before,
+.voices__ticks::after {
+  content: "";
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border: 0 solid color-mix(in oklab, var(--c-blueprint) 42%, transparent);
+}
+
+.voices__ticks::before {
+  top: 0;
+  left: 0;
+  border-top-width: 1px;
+  border-left-width: 1px;
+}
+
+.voices__ticks::after {
+  right: 0;
+  bottom: 0;
+  border-right-width: 1px;
+  border-bottom-width: 1px;
+}
+
+.voices__art-meta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  margin-top: var(--sp-4);
+  padding-top: var(--sp-3);
+  border-top: 1px solid var(--line);
+}
+
+.voices__art-name,
+.voices__art-place {
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wider);
+  text-transform: uppercase;
+}
+
+.voices__art-name {
+  color: var(--fg-soft);
+}
+
+.voices__art-place {
+  color: var(--fg-muted);
+  text-align: right;
+}
+
+/* ------------------------------------------------------------- CONTROLS */
+
+.voices__bar {
+  display: flex;
+  align-items: center;
+  gap: clamp(1.1rem, 2.6vw, 2.5rem);
+  margin-top: clamp(2.5rem, 5vw, 4rem);
+  padding-top: var(--sp-5);
+  border-top: 1px solid var(--line);
+}
+
+.voices__nav-group {
+  display: flex;
+  gap: 0.6rem;
+  flex: none;
+}
+
+.voices__nav {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  color: var(--fg);
+  will-change: transform;
+  transition: color var(--d-fast) var(--e-out-quart),
+              background-color var(--d-fast) var(--e-out-quart),
+              border-color var(--d-fast) var(--e-out-quart);
+}
+
+.voices__nav:hover {
+  background: var(--fg);
+  border-color: var(--fg);
+  color: var(--bg);
+}
+
+.voices__nav:active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-fg);
+}
+
+.voices__rail {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 3rem;
+  height: 1px;
+  background: var(--line);
+  overflow: hidden;
+}
+
+.voices__rail-fill {
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left center;
+  will-change: transform;
+  transition: opacity var(--d-base) var(--e-out-quart);
+}
+
+.voices.is-paused .voices__rail-fill {
+  opacity: 0.4;
+}
+
+.voices__count {
+  flex: none;
+  margin: 0;
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wider);
+  color: var(--fg-muted);
+}
+
+.voices__count-sep {
+  padding: 0 0.5em;
+  opacity: 0.6;
+}
+
+/* --------------------------------------------------------- CLIENT NAMES */
+
+.voices__clients {
+  display: flex;
+  align-items: baseline;
+  gap: clamp(1.25rem, 3vw, 3rem);
+  margin-top: clamp(3rem, 6vw, 5.5rem);
+  padding-top: var(--sp-5);
+  border-top: 1px solid var(--line-soft);
+}
+
+.voices__clients-label {
+  flex: none;
+  margin: 0;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-widest);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.voices__clients-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.voices__client {
+  position: relative;
+  display: block;
+  padding: 0.5rem clamp(0.9rem, 2.2vw, 2.2rem);
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  font-weight: 450;
+  letter-spacing: var(--tr-wider);
+  text-transform: uppercase;
+  text-align: left;
+  color: var(--fg-muted);
+  transition: color var(--d-fast) var(--e-out-quart);
+}
+
+.voices__client::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 1px;
+  height: 1.15em;
+  background: var(--line-strong);
+  transform: translateY(-50%);
+}
+
+.voices__clients-list > li:first-child .voices__client {
+  padding-left: 0;
+}
+
+.voices__clients-list > li:first-child .voices__client::before {
+  display: none;
+}
+
+.voices__client:hover {
+  color: var(--fg);
+}
+
+.voices__client.is-active {
+  color: var(--accent);
+}
+
+/* -------------------------------------------------------------- RESPONSIVE */
+
+@media (max-width: 1100px) {
+  .voices__stage {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.66fr);
+  }
+  .voices__quote-text {
+    max-width: 22ch;
+  }
+}
+
+@media (max-width: 900px) {
+  .voices__stage {
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(2.5rem, 7vw, 3.5rem);
+  }
+  .voices__quote-text {
+    max-width: 26ch;
+  }
+  .voices__frame {
+    aspect-ratio: 5 / 4;
+  }
+}
+
+@media (max-width: 700px) {
+  .voices__clients {
+    flex-direction: column;
+    gap: var(--sp-4);
+  }
+  .voices__clients-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+  }
+  .voices__client {
+    padding-inline: clamp(0.75rem, 3vw, 1.25rem) 0;
+  }
+  .voices__clients-list > li:nth-child(odd) .voices__client {
+    padding-left: 0;
+  }
+  .voices__clients-list > li:nth-child(odd) .voices__client::before {
+    display: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .voices__bar {
+    flex-wrap: wrap;
+    gap: var(--sp-4);
+  }
+  .voices__rail {
+    order: 3;
+    flex-basis: 100%;
+  }
+  .voices__count {
+    margin-left: auto;
+  }
+  .voices__quote-text {
+    max-width: none;
+  }
+  .voices__nav {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .voices__clients-list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .voices__client,
+  .voices__clients-list > li:nth-child(odd) .voices__client {
+    padding-left: 0;
+  }
+  .voices__client::before,
+  .voices__clients-list > li:nth-child(odd) .voices__client::before {
+    display: none;
+  }
+}
+
+/* Reduced motion: nothing sweeps, the rail reads as a position indicator. */
+@media (prefers-reduced-motion: reduce) {
+  .voices__sweep {
+    display: none;
+  }
+  .voices__project-arrow {
+    transition: none;
+  }
+}

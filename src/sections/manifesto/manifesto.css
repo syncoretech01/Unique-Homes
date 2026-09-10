@@ -1,0 +1,517 @@
+/* ============================================================================
+   MANIFESTO — statement of intent + the numbers behind it.
+   Light, editorial, hairline-ruled. No cards, no boxes: rules and whitespace.
+
+   Layout model
+     · the marquee band is full-bleed and sits flush at the very top
+     · .manifesto__inner is the shell and owns the section's vertical rhythm
+     · at >=1101px the inner reserves a right-hand margin (--m-strip) for the
+       procedural drawing, and the revision rail hangs in the left gutter
+   ========================================================================== */
+
+.section[data-section='manifesto'] {
+  /* reserved right margin for the drawing strip, and the strip's own width */
+  --m-strip: 0rem;
+  --m-strip-w: 0rem;
+  --m-stat-gap: clamp(1.5rem, 3vw, 3rem);
+  --m-mq-gap: clamp(1.5rem, 2.6vw, 2.75rem);
+
+  padding-block: 0;
+  overflow-x: clip;
+}
+
+@media (min-width: 1101px) {
+  .section[data-section='manifesto'] {
+    --m-strip: clamp(8rem, 8.6vw, 11.5rem);
+    --m-strip-w: clamp(5.5rem, 6vw, 8.5rem);
+  }
+}
+
+[data-section='manifesto'] .manifesto__inner {
+  position: relative;
+  padding-block: var(--section-y);
+  padding-inline: var(--page-x) calc(var(--page-x) + var(--m-strip));
+}
+
+/* ------------------------------------------------------------------------ */
+/*  1 — MARQUEE BAND                                                        */
+/* ------------------------------------------------------------------------ */
+
+.manifesto__band {
+  position: relative;
+  padding-block: clamp(0.9rem, 1.7vw, 1.5rem);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: color-mix(in oklab, var(--bg-raised) 65%, var(--bg));
+  overflow: hidden;
+}
+
+.manifesto__band .marquee {
+  --marquee-gap: var(--m-mq-gap);
+  --marquee-duration: 64s;
+}
+
+.manifesto__band .marquee__item {
+  gap: var(--m-mq-gap);
+  font-family: var(--ff-display);
+  font-size: var(--fs-lg);
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: var(--tr-snug);
+  color: var(--fg-soft);
+  font-variation-settings: 'SOFT' 0, 'WONK' 0, 'opsz' 72;
+}
+
+.manifesto__glyph {
+  flex: none;
+  width: 0.5em;
+  height: 0.5em;
+  color: var(--fg-muted);
+  opacity: 0.8;
+}
+.manifesto__glyph--acc {
+  color: var(--accent);
+  opacity: 1;
+}
+
+/* Static, non-animated fallback shown until the marquee is built. */
+.manifesto__band-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--m-mq-gap);
+  white-space: nowrap;
+  font-family: var(--ff-display);
+  font-size: var(--fs-lg);
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: var(--tr-snug);
+  color: var(--fg-soft);
+}
+.manifesto__band-fallback span {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--m-mq-gap);
+}
+.manifesto__band-fallback span::after {
+  content: '';
+  width: 0.42em;
+  height: 0.42em;
+  border: 1px solid var(--fg-muted);
+  transform: rotate(45deg);
+}
+.manifesto__band-fallback span:last-child::after {
+  display: none;
+}
+
+/* ------------------------------------------------------------------------ */
+/*  7 — REVISION RAIL (scroll progress, drawing-sheet revision bar)         */
+/* ------------------------------------------------------------------------ */
+
+.manifesto__rail {
+  position: absolute;
+  top: clamp(4rem, 9vh, 8rem);
+  bottom: clamp(4rem, 9vh, 8rem);
+  left: calc(var(--page-x) - clamp(1.35rem, 2vw, 2.4rem));
+  z-index: 2;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(0.75rem, 1.4vw, 1.1rem);
+  width: 1.25rem;
+  pointer-events: none;
+}
+@media (min-width: 1024px) {
+  .manifesto__rail {
+    display: flex;
+  }
+}
+
+.manifesto__rail-label {
+  writing-mode: vertical-rl;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  font-weight: 500;
+  letter-spacing: var(--tr-widest);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.manifesto__rail-track {
+  position: relative;
+  flex: 1 1 auto;
+  width: 1px;
+  background: var(--line);
+}
+
+.manifesto__rail-fill {
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  transform: scaleY(0);
+  transform-origin: top center;
+  will-change: transform;
+}
+
+.manifesto__rail-tick {
+  position: absolute;
+  left: 50%;
+  width: 7px;
+  height: 1px;
+  background: var(--line-strong);
+  transform: translateX(-50%);
+}
+.manifesto__rail-tick:nth-of-type(1) { top: 25%; }
+.manifesto__rail-tick:nth-of-type(2) { top: 50%; }
+.manifesto__rail-tick:nth-of-type(3) { top: 75%; }
+
+.manifesto__rail-read {
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wide);
+  color: var(--fg-muted);
+}
+
+/* ------------------------------------------------------------------------ */
+/*  2 — THE STATEMENT                                                       */
+/* ------------------------------------------------------------------------ */
+
+.manifesto__statement {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--gutter);
+  row-gap: clamp(1.5rem, 3vw, 2.75rem);
+}
+
+.manifesto__eyebrow {
+  grid-column: 1 / -1;
+}
+
+[data-section='manifesto'] .manifesto__title {
+  grid-column: 1 / -1;
+  font-family: var(--ff-display);
+  font-size: var(--fs-4xl);
+  font-weight: 300;
+  line-height: 0.92;
+  letter-spacing: var(--tr-mega);
+  font-variation-settings: 'SOFT' 0, 'WONK' 0, 'opsz' 144;
+  color: var(--fg);
+}
+
+.manifesto__t-line {
+  display: block;
+}
+/* Each word rides in its own mask. The padding buys room for descenders and
+   for the negative tracking's overhang; the matching negative margin keeps the
+   metrics identical to plain text. */
+.manifesto__t-mask {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  padding-bottom: 0.2em;
+  margin-bottom: -0.2em;
+  padding-right: 0.06em;
+  margin-right: -0.06em;
+}
+.manifesto__t-word {
+  display: block;
+}
+.manifesto__t-dot {
+  color: var(--accent);
+}
+
+[data-section='manifesto'] .manifesto__lede {
+  grid-column: 6 / -1;
+  max-width: 46ch;
+  margin-top: clamp(0.25rem, 1.2vw, 1.25rem);
+  color: var(--fg-soft);
+}
+
+@media (max-width: 1100px) {
+  [data-section='manifesto'] .manifesto__lede {
+    grid-column: 1 / -1;
+    max-width: 58ch;
+  }
+}
+
+/* ------------------------------------------------------------------------ */
+/*  3 — TWO-COLUMN BODY                                                     */
+/* ------------------------------------------------------------------------ */
+
+.manifesto__body {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--gutter);
+  row-gap: clamp(2rem, 4vw, 3rem);
+  margin-top: clamp(3.5rem, 7vw, 7.5rem);
+}
+
+.manifesto__para {
+  grid-column: 1 / span 5;
+  max-width: 54ch;
+  font-size: var(--fs-base);
+  line-height: var(--lh-relaxed);
+  color: var(--fg-soft);
+}
+.manifesto__para + .manifesto__para {
+  grid-column: 7 / span 5;
+}
+.manifesto__para--first {
+  color: var(--fg);
+}
+
+@media (max-width: 900px) {
+  .manifesto__para,
+  .manifesto__para + .manifesto__para {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ------------------------------------------------------------------------ */
+/*  4 — CAPABILITIES TABLE                                                  */
+/* ------------------------------------------------------------------------ */
+
+.manifesto__caps {
+  margin-top: clamp(4rem, 9vw, 9rem);
+}
+
+.manifesto__cap {
+  position: relative;
+  display: grid;
+  grid-template-columns: clamp(2.75rem, 4vw, 4.5rem) minmax(0, 5fr) minmax(0, 8fr);
+  align-items: baseline;
+  gap: var(--gutter);
+  padding-block: clamp(1.15rem, 2.2vw, 2rem);
+}
+
+.manifesto__cap-rule {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 100%;
+  height: 1px;
+  background: var(--line);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+.manifesto__cap-rule--end {
+  position: relative;
+  background: var(--line-strong);
+}
+
+.manifesto__cap-i {
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wide);
+  color: var(--fg-muted);
+  transition: color var(--d-base) var(--e-out-quart);
+}
+
+.manifesto__cap-k {
+  display: inline-block;
+  transform-origin: left center;
+  font-family: var(--ff-display);
+  font-size: var(--fs-lg);
+  font-weight: 300;
+  line-height: 1.1;
+  letter-spacing: var(--tr-snug);
+  color: var(--fg);
+  font-variation-settings: 'SOFT' 0, 'WONK' 0, 'opsz' 48;
+  transition: transform var(--d-base) var(--e-out-expo);
+}
+
+.manifesto__cap-v {
+  font-size: var(--fs-base);
+  line-height: 1.5;
+  color: var(--fg-soft);
+  transition: color var(--d-base) var(--e-out-quart);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .manifesto__cap:hover .manifesto__cap-i { color: var(--accent); }
+  .manifesto__cap:hover .manifesto__cap-k { transform: translateX(0.4rem); }
+  .manifesto__cap:hover .manifesto__cap-v { color: var(--fg); }
+}
+
+@media (max-width: 700px) {
+  .manifesto__cap {
+    grid-template-columns: 2.5rem minmax(0, 1fr);
+    row-gap: 0.4rem;
+  }
+  .manifesto__cap-v {
+    grid-column: 2 / -1;
+  }
+}
+
+/* ------------------------------------------------------------------------ */
+/*  5 — STATS BAND                                                          */
+/* ------------------------------------------------------------------------ */
+
+.manifesto__stats {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--m-stat-gap);
+  row-gap: clamp(2.25rem, 4.5vw, 3.25rem);
+  margin-top: clamp(4rem, 9vw, 9rem);
+  padding-top: clamp(2rem, 4vw, 3.25rem);
+}
+
+.manifesto__stats-rule {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 100%;
+  height: 1px;
+  background: var(--line-strong);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+[data-section='manifesto'] .manifesto__stat {
+  position: relative;
+  gap: 0.6rem;
+}
+
+.manifesto__stat-rule {
+  position: absolute;
+  display: block;
+  background: var(--line);
+}
+.manifesto__stat-rule--v {
+  top: -0.15rem;
+  bottom: -0.15rem;
+  left: calc(var(--m-stat-gap) * -0.5);
+  width: 1px;
+  transform: scaleY(0);
+  transform-origin: top center;
+}
+.manifesto__stat-rule--h {
+  display: none;
+  top: calc(var(--m-stat-gap) * -0.5);
+  left: 0;
+  right: 0;
+  height: 1px;
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+.manifesto__stat:first-of-type .manifesto__stat-rule--v {
+  display: none;
+}
+
+[data-section='manifesto'] .manifesto__stat-num {
+  color: var(--fg);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+}
+
+[data-section='manifesto'] .manifesto__stat-label {
+  color: var(--fg-soft);
+}
+
+.manifesto__stat-note {
+  max-width: 26ch;
+  font-size: var(--fs-sm);
+  line-height: 1.45;
+  color: var(--fg-muted);
+}
+
+@media (max-width: 900px) {
+  .manifesto__stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: var(--m-stat-gap);
+  }
+  .manifesto__stat:nth-of-type(odd) .manifesto__stat-rule--v {
+    display: none;
+  }
+  .manifesto__stat:nth-of-type(n + 3) .manifesto__stat-rule--h {
+    display: block;
+  }
+}
+
+/* ------------------------------------------------------------------------ */
+/*  6 — SIGNATURE                                                           */
+/* ------------------------------------------------------------------------ */
+
+.manifesto__sign {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: clamp(0.85rem, 1.8vw, 1.5rem);
+  margin-top: clamp(3rem, 6vw, 6rem);
+}
+
+.manifesto__sign-rule {
+  flex: 1 1 4rem;
+  display: block;
+  height: 1px;
+  background: var(--line);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+.manifesto__mark {
+  flex: none;
+  display: block;
+  width: clamp(2rem, 2.6vw, 2.75rem);
+  color: var(--fg-muted);
+}
+.manifesto__mark svg {
+  width: 100%;
+  height: auto;
+}
+.manifesto__mark-acc {
+  color: var(--accent);
+}
+
+.manifesto__sign-text {
+  flex: 0 1 auto;
+  text-align: right;
+  color: var(--fg-soft);
+}
+
+/* ------------------------------------------------------------------------ */
+/*  PROCEDURAL MARGIN DRAWING                                               */
+/* ------------------------------------------------------------------------ */
+
+/* Sits in the margin the inner reserves for it: its right edge lines up with
+   the page's right text margin, clear of the 12-column field. */
+.manifesto__strip {
+  position: absolute;
+  top: clamp(6rem, 15vh, 13rem);
+  right: var(--page-x);
+  display: none;
+  width: var(--m-strip-w);
+  aspect-ratio: 240 / 1000;
+  opacity: 0.72;
+  pointer-events: none;
+  mask-image: linear-gradient(180deg, transparent, #000 11%, #000 89%, transparent);
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 11%, #000 89%, transparent);
+}
+@media (min-width: 1101px) {
+  .manifesto__strip {
+    display: block;
+  }
+}
+.manifesto__strip svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* ------------------------------------------------------------------------ */
+/*  NO-JS — every rule that a timeline would wipe in has to be drawn already */
+/* ------------------------------------------------------------------------ */
+
+html.no-js [data-section='manifesto'] .manifesto__cap-rule,
+html.no-js [data-section='manifesto'] .manifesto__stats-rule,
+html.no-js [data-section='manifesto'] .manifesto__stat-rule,
+html.no-js [data-section='manifesto'] .manifesto__sign-rule,
+html.no-js [data-section='manifesto'] .manifesto__rail-fill {
+  transform: none;
+}
+html.no-js [data-section='manifesto'] .manifesto__rail-fill {
+  opacity: 0.25;
+}

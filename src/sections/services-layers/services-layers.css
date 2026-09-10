@@ -1,0 +1,528 @@
+/* ============================================================================
+   SERVICES — LAYER TRANSFORMATION
+   Three service sheets stacked like tracing paper in a drawing set. On desktop
+   the section pins and the stack fans apart in 3D, one layer at a time coming
+   forward and squaring up to the viewer. Below 900px it is a plain vertical
+   sequence of cards.
+
+   Every selector is scoped to .services-layers / [data-section="services-layers"].
+   ========================================================================== */
+
+/* No overflow on the section itself — a clipping ancestor can interfere with
+   the fixed-position pin. Bleed is contained by .services-layers__pin. */
+.services-layers {
+  position: relative;
+  isolation: isolate;
+}
+
+/* Setting-out grid behind everything — background-image assigned in JS from
+   blueprintBackgroundCSS() so the line colours stay token-derived. */
+.services-layers__field {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.6;
+  pointer-events: none;
+  -webkit-mask-image: radial-gradient(125% 78% at 50% 42%, currentColor 12%, transparent 76%);
+  mask-image: radial-gradient(125% 78% at 50% 42%, currentColor 12%, transparent 76%);
+}
+
+.services-layers__head-shell,
+.services-layers__pin {
+  position: relative;
+  z-index: 1;
+}
+
+/* ------------------------------------------------------------------ HEAD */
+.services-layers__head {
+  padding-bottom: clamp(2.25rem, 4.5vw, 4rem);
+}
+.services-layers__intro {
+  max-width: 36ch;
+}
+.services-layers__all {
+  display: inline-block;
+  margin-top: var(--sp-4);
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-widest);
+  text-transform: uppercase;
+  color: var(--fg);
+}
+
+/* ----------------------------------------------------------------- STAGE */
+.services-layers__stage {
+  display: grid;
+  gap: var(--gutter);
+}
+
+/* The rail is a desktop device: it tracks the pinned timeline. */
+[data-section="services-layers"] .sl-rail { display: none; }
+
+/* ------------------------------------------------------------------ DECK */
+[data-section="services-layers"] .sl-deck {
+  display: grid;
+  gap: clamp(1.5rem, 3.5vw, 2.5rem);
+}
+
+/* ----------------------------------------------------------------- LAYER */
+[data-section="services-layers"] .sl-layer {
+  display: block;
+  color: inherit;
+  border-radius: var(--radius-1);
+}
+[data-section="services-layers"] .sl-layer:focus-visible {
+  outline: 2px solid var(--sl-accent, var(--accent));
+  outline-offset: 5px;
+}
+
+[data-section="services-layers"] .sl-layer__sheet {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-1);
+  background: var(--bg-raised);
+  box-shadow: var(--sh-1);
+  transition: box-shadow var(--d-slow) var(--e-out-expo),
+              border-color var(--d-base) var(--e-out-quart),
+              transform var(--d-base) var(--e-out-expo);
+}
+
+/* Paper tooth — data URI assigned in JS from grainDataURI(). */
+[data-section="services-layers"] .sl-layer__tooth {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  opacity: 0.4;
+  mix-blend-mode: multiply;
+  background-repeat: repeat;
+  background-size: 96px 96px;
+  pointer-events: none;
+}
+
+/* Accent key line along the top edge of every sheet. */
+[data-section="services-layers"] .sl-layer__edge {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 4;
+  height: 3px;
+  background: var(--sl-accent, var(--accent));
+  transform: scaleX(1);
+  transform-origin: left center;
+  transition: transform 760ms var(--e-out-expo);
+}
+
+/* The scrim that pushes a sheet back into the pile. */
+[data-section="services-layers"] .sl-layer__veil {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  background: var(--bg);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ---------------------------------------------------------- SHEET HEADER */
+[data-section="services-layers"] .sl-layer__top {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: clamp(0.7rem, 1.4vw, 1.15rem);
+  padding: clamp(0.85rem, 1.5vw, 1.15rem) clamp(1.1rem, 2.1vw, 2rem);
+  border-bottom: 1px solid var(--line-soft);
+  background: color-mix(in oklab, var(--sl-accent, var(--accent)) 5%, var(--bg-raised));
+  transition: background-color var(--d-base) var(--e-out-quart);
+}
+[data-section="services-layers"] .sl-layer__index {
+  font-family: var(--ff-mono);
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  letter-spacing: var(--tr-wide);
+  color: var(--sl-accent, var(--accent));
+}
+[data-section="services-layers"] .sl-layer__label {
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-widest);
+  text-transform: uppercase;
+  color: var(--fg-soft);
+}
+[data-section="services-layers"] .sl-layer__glyph {
+  width: 0.85rem;
+  height: 0.85rem;
+  margin-left: auto;
+  flex: none;
+  color: var(--fg-muted);
+  transition: transform var(--d-base) var(--e-out-expo),
+              color var(--d-base) var(--e-out-quart);
+}
+
+/* ------------------------------------------------------------ SHEET BODY */
+[data-section="services-layers"] .sl-layer__grid {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.1rem, 2.4vw, 1.75rem);
+  padding: clamp(1.1rem, 2.4vw, 1.75rem);
+  min-height: 0;
+  flex: 1 1 auto;
+}
+
+[data-section="services-layers"] .sl-layer__media {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+}
+[data-section="services-layers"] .sl-layer__frame {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 16 / 10;
+  background: var(--c-shell);
+  border: 1px solid var(--line-soft);
+}
+[data-section="services-layers"] .sl-layer__plate {
+  position: absolute;
+  inset: -10% 0;
+}
+[data-section="services-layers"] .sl-layer__cap {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  z-index: 2;
+  padding: 0.45rem 0.75rem;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wider);
+  text-transform: uppercase;
+  line-height: 1;
+  color: var(--fg-soft);
+  background: color-mix(in oklab, var(--bg-raised) 78%, transparent);
+}
+
+[data-section="services-layers"] .sl-layer__keys {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1rem;
+  padding-top: 0.85rem;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wide);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+[data-section="services-layers"] .sl-layer__keys li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+[data-section="services-layers"] .sl-layer__keys li::before {
+  content: "";
+  width: 11px;
+  height: 1px;
+  background: var(--sl-accent, var(--accent));
+  opacity: 0.75;
+}
+
+[data-section="services-layers"] .sl-layer__body {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.85rem, 1.6vw, 1.35rem);
+  min-width: 0;
+  min-height: 0;
+}
+[data-section="services-layers"] .sl-layer__title {
+  font-family: var(--ff-display);
+  font-weight: 300;
+  font-size: var(--fs-xl);
+  line-height: 1.02;
+  letter-spacing: var(--tr-tight);
+  font-variation-settings: "SOFT" 0, "WONK" 0, "opsz" 72;
+}
+[data-section="services-layers"] .sl-layer__tl { display: block; }
+[data-section="services-layers"] .sl-layer__lede {
+  font-size: var(--fs-base);
+  line-height: var(--lh-relaxed);
+  color: var(--fg-soft);
+  max-width: 50ch;
+}
+
+[data-section="services-layers"] .sl-layer__ck {
+  display: block;
+  margin-bottom: 0.7rem;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-widest);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+[data-section="services-layers"] .sl-layer__list {
+  display: grid;
+  gap: 0.34rem 1.5rem;
+  font-size: var(--fs-sm);
+  color: var(--fg-soft);
+}
+[data-section="services-layers"] .sl-layer__list li {
+  position: relative;
+  padding-left: 1.05rem;
+  line-height: 1.45;
+}
+[data-section="services-layers"] .sl-layer__list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.66em;
+  width: 0.55rem;
+  height: 1px;
+  background: var(--sl-accent, var(--accent));
+  opacity: 0.8;
+}
+
+[data-section="services-layers"] .sl-layer__facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem 1.5rem;
+  padding-top: clamp(0.8rem, 1.6vw, 1.2rem);
+  border-top: 1px solid var(--line-soft);
+}
+[data-section="services-layers"] .sl-fact__k {
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wider);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+[data-section="services-layers"] .sl-fact__v {
+  margin-top: 0.3rem;
+  font-size: var(--fs-sm);
+  line-height: 1.35;
+  color: var(--fg);
+}
+
+[data-section="services-layers"] .sl-layer__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-top: auto;
+  padding-top: 0.35rem;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-widest);
+  text-transform: uppercase;
+  color: var(--sl-accent, var(--accent));
+}
+[data-section="services-layers"] .sl-layer__cta-text {
+  padding-bottom: 0.14em;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1px;
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  transition: background-size var(--d-base) var(--e-out-expo);
+}
+[data-section="services-layers"] .sl-layer__cta-arrow {
+  display: inline-block;
+  transition: transform var(--d-base) var(--e-out-expo);
+}
+
+/* ---------------------------------------------------------------- HOVER  */
+@media (hover: hover) and (pointer: fine) {
+  [data-section="services-layers"] .sl-layer:hover .sl-layer__sheet {
+    transform: translate3d(0, -6px, 0);
+    border-color: color-mix(in oklab, var(--sl-accent, var(--accent)) 42%, var(--line));
+    box-shadow: var(--sh-3);
+  }
+  [data-section="services-layers"] .sl-layer:hover .sl-layer__top {
+    background: color-mix(in oklab, var(--sl-accent, var(--accent)) 11%, var(--bg-raised));
+  }
+  [data-section="services-layers"] .sl-layer:hover .sl-layer__glyph {
+    transform: translate3d(0.18rem, -0.18rem, 0);
+    color: var(--sl-accent, var(--accent));
+  }
+  [data-section="services-layers"] .sl-layer:hover .sl-layer__cta-text { background-size: 100% 1px; }
+  [data-section="services-layers"] .sl-layer:hover .sl-layer__cta-arrow { transform: translate3d(0.4rem, 0, 0); }
+}
+
+/* ========================================================= 620px AND UP  */
+@media (min-width: 620px) {
+  [data-section="services-layers"] .sl-layer__list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(4, auto);
+    grid-auto-flow: column;
+  }
+  [data-section="services-layers"] .sl-layer__facts {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* ================================================ 901px AND UP — 3D PIN  */
+@media (min-width: 901px) {
+
+  .services-layers.is-3d .services-layers__pin {
+    display: grid;
+    align-content: center;
+    min-height: 100svh;
+    padding-block: clamp(5rem, 12svh, 9rem) clamp(2rem, 5svh, 4rem);
+    overflow: hidden;
+  }
+
+  .services-layers.is-3d .services-layers__stage {
+    grid-template-columns: clamp(3.75rem, 5vw, 5.5rem) minmax(0, 1fr);
+    gap: clamp(1rem, 2vw, 2.5rem);
+    align-items: stretch;
+  }
+
+  /* ---------------------------------------------------------------- RAIL */
+  .services-layers.is-3d .sl-rail {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--sp-4);
+    min-height: 0;
+  }
+  [data-section="services-layers"] .sl-rail__count {
+    display: flex;
+    align-items: baseline;
+    gap: 0.3rem;
+    font-family: var(--ff-mono);
+    font-size: var(--fs-2xs);
+    letter-spacing: var(--tr-wide);
+    color: var(--fg-muted);
+  }
+  [data-section="services-layers"] .sl-rail__now {
+    font-size: var(--fs-sm);
+    font-weight: 500;
+    color: var(--sl-accent, var(--accent));
+    transition: color var(--d-base) var(--e-out-quart);
+  }
+  [data-section="services-layers"] .sl-rail__track {
+    position: relative;
+    flex: 1 1 auto;
+    width: 1px;
+    min-height: 6rem;
+    margin-left: 0.6rem;
+    background: var(--line);
+  }
+  [data-section="services-layers"] .sl-rail__fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1px;
+    height: 100%;
+    background: var(--sl-accent, var(--accent));
+    transform: scaleY(0);
+    transform-origin: top center;
+  }
+  [data-section="services-layers"] .sl-rail__ticks {
+    position: absolute;
+    inset: 0;
+  }
+  [data-section="services-layers"] .sl-rail__tick {
+    position: absolute;
+    left: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    transform: translate(-0.5rem, -50%);
+    white-space: nowrap;
+  }
+  [data-section="services-layers"] .sl-rail__dot {
+    width: 10px;
+    height: 1px;
+    background: var(--line-strong);
+    transition: width var(--d-base) var(--e-out-expo),
+                background-color var(--d-base) var(--e-out-quart);
+  }
+  [data-section="services-layers"] .sl-rail__no {
+    font-family: var(--ff-mono);
+    font-size: var(--fs-2xs);
+    letter-spacing: var(--tr-wide);
+    color: var(--fg-muted);
+    transition: color var(--d-base) var(--e-out-quart);
+  }
+  [data-section="services-layers"] .sl-rail__tick.is-active .sl-rail__dot {
+    width: 20px;
+    background: var(--sl-accent, var(--accent));
+  }
+  [data-section="services-layers"] .sl-rail__tick.is-active .sl-rail__no { color: var(--fg); }
+  [data-section="services-layers"] .sl-rail__legend {
+    writing-mode: vertical-rl;
+    font-family: var(--ff-mono);
+    font-size: var(--fs-2xs);
+    letter-spacing: var(--tr-widest);
+    text-transform: uppercase;
+    color: var(--fg-muted);
+  }
+
+  /* ---------------------------------------------------------------- DECK */
+  .services-layers.is-3d .sl-deck {
+    position: relative;
+    display: block;
+    width: 100%;
+    max-width: 92rem;
+    margin-inline: auto;
+    height: min(68svh, 40rem);
+    min-height: 23rem;
+    perspective: 2200px;
+    perspective-origin: 50% 46%;
+    transform-style: preserve-3d;
+  }
+
+  .services-layers.is-3d .sl-layer {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+  }
+  .services-layers.is-3d.is-live .sl-layer { will-change: transform; }
+
+  .services-layers.is-3d .sl-layer__edge { transform: scaleX(0.12); }
+  .services-layers.is-3d .sl-layer.is-active .sl-layer__edge { transform: scaleX(1); }
+  .services-layers.is-3d .sl-layer.is-active .sl-layer__sheet { box-shadow: var(--sh-4); }
+
+  /* Only the layer that has squared up to the viewer lifts on hover. */
+  .services-layers.is-3d .sl-layer:not(.is-active):hover .sl-layer__sheet {
+    transform: none;
+    box-shadow: var(--sh-1);
+  }
+
+  /* The sheet becomes a two-column panel: drawing plate left, prose right. */
+  .services-layers.is-3d .sl-layer__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.4fr);
+    gap: clamp(1.25rem, 2.6vw, 2.75rem);
+    padding: clamp(1.25rem, 2.1vw, 2.1rem) clamp(1.25rem, 2.3vw, 2.4rem) clamp(1.1rem, 1.9vw, 1.9rem);
+  }
+  .services-layers.is-3d .sl-layer__frame {
+    aspect-ratio: auto;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+}
+
+/* Short desktop viewports — trim the panel so nothing is ever clipped. */
+@media (min-width: 901px) and (max-height: 820px) {
+  .services-layers.is-3d .sl-layer__title { font-size: var(--fs-lg); }
+  .services-layers.is-3d .sl-layer__lede { font-size: var(--fs-sm); max-width: 54ch; }
+  .services-layers.is-3d .sl-layer__list { font-size: var(--fs-xs); gap: 0.22rem 1.25rem; }
+  .services-layers.is-3d .sl-layer__ck { margin-bottom: 0.45rem; }
+  .services-layers.is-3d .sl-layer__body { gap: 0.75rem; }
+  .services-layers.is-3d .sl-layer__keys { padding-top: 0.6rem; }
+  .services-layers.is-3d .sl-fact__v { font-size: var(--fs-xs); }
+}
+
+/* --------------------------------------------------------------- MOTION  */
+@media (prefers-reduced-motion: reduce) {
+  [data-section="services-layers"] .sl-layer__sheet,
+  [data-section="services-layers"] .sl-layer__edge,
+  [data-section="services-layers"] .sl-layer__glyph,
+  [data-section="services-layers"] .sl-layer__cta-text,
+  [data-section="services-layers"] .sl-layer__cta-arrow {
+    transition-duration: 1ms;
+  }
+}

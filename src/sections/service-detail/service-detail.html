@@ -1,0 +1,22 @@
+<!-- ==========================================================================
+     SERVICE DETAIL — the heart of the services page.
+
+     Three deep chapters (Architectural Packages · Civil Engineering ·
+     3D Renderings) are rendered from src/data/services.js in
+     service-detail.js, because every chapter is the same machine fed
+     different data: an opener with a giant index numeral, a sticky columns
+     slider of procedural drawings, the body copy, a hairline-ruled
+     deliverables list, a four-step process band and a facts table.
+
+     Each chapter wrapper carries the service id as its anchor target
+     (/services/#architectural-packages), so the mount point below stays
+     empty in markup — the ids belong to the chapters, not to this shell.
+     ========================================================================== -->
+<section
+  class="section section--flush service-detail"
+  data-section="service-detail"
+  id="service-detail"
+  aria-label="Services in detail"
+>
+  <div class="service-detail__chapters" data-sd-chapters></div>
+</section>

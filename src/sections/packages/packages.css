@@ -1,0 +1,372 @@
+/* ============================================================================
+   PACKAGES
+   Three engagement cards on one hairline-ruled row, the promoted one grown a
+   little out of the line rather than scaled with a transform — GSAP owns the
+   transform on these cards (entrance rotation, hover lift, 3D tilt) and a CSS
+   scale would be overwritten the moment a pointer touched them.
+
+   Everything below is the *rest* state. The section is fully legible with no
+   JavaScript beyond the card render: no element starts hidden, no hairline
+   starts collapsed.
+   ========================================================================== */
+
+.section.packages {
+  background: var(--bg-sunken);
+  /* how far the promoted card grows out of the row, top and bottom */
+  --pk-pop: clamp(0.7rem, 1.3vw, 1.4rem);
+  --pk-pad: clamp(1.5rem, 2.3vw, 2.3rem);
+}
+
+.packages .packages__lede {
+  max-width: 34ch;
+}
+
+/* ------------------------------------------------------------------ GRID */
+
+/* The track list is written by JS from the data, so the promoted package can
+   move without this file knowing which column it lands in. Narrow layouts
+   set the property outright — an inline custom property must not outrank a
+   media query. */
+.packages .packages__grid {
+  display: grid;
+  grid-template-columns: var(--pk-track, repeat(3, minmax(0, 1fr)));
+  gap: var(--gutter);
+  align-items: stretch;
+  margin-block: var(--pk-pop) 0;
+}
+
+.packages .packages__item {
+  display: flex;
+  min-width: 0;
+}
+
+.packages .packages__item--accent {
+  margin-block: calc(var(--pk-pop) * -1);
+  z-index: 2;
+}
+
+/* ------------------------------------------------------------------ CARD */
+
+.packages .packages__card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: var(--pk-pad);
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-0);
+  /* Left open on purpose: [data-tilt] needs preserve-3d, which a browser
+     silently downgrades to flat under overflow:hidden. Every corner here is
+     square, so there is nothing to clip anyway. */
+  overflow: visible;
+  isolation: isolate;
+  transition: border-color var(--d-base) var(--e-out-quart),
+              box-shadow var(--d-base) var(--e-out-expo);
+}
+
+.packages .packages__card--accent {
+  border-color: color-mix(in oklab, var(--accent) 42%, transparent);
+  padding-block: calc(var(--pk-pad) + var(--pk-pop));
+}
+
+/* Soft accent glow behind the card, plus a warm wash inside it. Both are
+   inert until the pointer arrives. */
+.packages .packages__wash {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0;
+  background:
+    radial-gradient(120% 78% at 50% 0%,
+      color-mix(in oklab, var(--accent) 12%, transparent),
+      transparent 70%);
+  transition: opacity var(--d-slow) var(--e-out-expo);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .packages .packages__card:hover,
+  .packages .packages__card:focus-within {
+    border-color: color-mix(in oklab, var(--accent) 34%, transparent);
+    box-shadow: 0 2px 8px rgb(var(--shadow-color) / 0.05),
+                0 26px 70px color-mix(in oklab, var(--accent) 20%, transparent);
+  }
+  .packages .packages__card--accent:hover,
+  .packages .packages__card--accent:focus-within {
+    border-color: color-mix(in oklab, var(--accent) 62%, transparent);
+  }
+  .packages .packages__card:hover .packages__wash,
+  .packages .packages__card:focus-within .packages__wash { opacity: 1; }
+}
+
+.packages .packages__card .tilt__glare { --tilt-glare: 0.4; }
+
+/* ------------------------------------------------------------- CARD HEAD */
+
+.packages .packages__card-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  flex-wrap: wrap;
+}
+
+.packages .packages__idx {
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wider);
+  color: var(--fg-muted);
+}
+
+.packages .packages__card--accent .packages__idx { color: var(--accent); }
+
+.packages .packages__tag {
+  padding: 0.35em 0.75em;
+  font-size: var(--fs-2xs);
+  white-space: nowrap;
+}
+
+.packages .packages__name {
+  font-family: var(--ff-display);
+  font-size: var(--fs-xl);
+  font-weight: 300;
+  line-height: var(--lh-snug);
+  letter-spacing: var(--tr-snug);
+  font-variation-settings: "SOFT" 0, "WONK" 0, "opsz" 40;
+  margin-top: var(--sp-5);
+  color: var(--fg);
+}
+
+/* ------------------------------------------------------------------ PRICE */
+
+.packages .packages__price {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.55em;
+  margin-top: var(--sp-3);
+}
+
+.packages .packages__price-lead {
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wider);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.packages .packages__price-num {
+  font-family: var(--ff-mono);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "zero" 1, "tnum" 1;
+  font-size: var(--fs-xl);
+  font-weight: 450;
+  line-height: 1;
+  letter-spacing: var(--tr-tight);
+  color: var(--fg);
+}
+
+.packages .packages__card--accent .packages__price-num { color: var(--accent); }
+
+.packages .packages__for {
+  margin-top: var(--sp-3);
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+  color: var(--fg-soft);
+  max-width: 30ch;
+}
+
+/* ------------------------------------------------------------------ RULES */
+
+.packages .packages__rule {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 1px;
+  margin-block: var(--sp-5);
+  background: var(--line-soft);
+}
+
+.packages .packages__rule-in {
+  position: absolute;
+  inset: 0;
+  display: block;
+  background: var(--line-strong);
+  transform-origin: left center;
+}
+
+/* --------------------------------------------------------------- INCLUDES */
+
+.packages .packages__includes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.packages .packages__inc {
+  display: grid;
+  grid-template-columns: 1.15rem 1fr;
+  gap: 0.75rem;
+  align-items: start;
+  font-size: var(--fs-sm);
+  line-height: 1.45;
+  color: var(--fg-soft);
+}
+
+.packages .packages__tick {
+  display: block;
+  width: 1.15rem;
+  height: 1.15rem;
+  margin-top: 0.1em;
+  color: var(--accent);
+}
+
+.packages .packages__tick svg {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  overflow: visible;
+}
+
+.packages .packages__tick path {
+  stroke-dasharray: 17;
+  stroke-dashoffset: 0;
+}
+
+@keyframes packages-tick-redraw {
+  from { stroke-dashoffset: 17; }
+  to   { stroke-dashoffset: 0; }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .packages .packages__card:hover .packages__tick path {
+    animation: packages-tick-redraw 560ms var(--e-out-quart) both;
+    animation-delay: calc(var(--pk-i, 0) * 55ms);
+  }
+}
+
+/* ----------------------------------------------------------------- ACTION */
+
+.packages .packages__action { margin-top: auto; padding-top: var(--sp-6); }
+
+.packages .packages__btn {
+  padding-inline: 1.35em;
+  text-align: center;
+}
+
+/* The card is the hover surface — the fill sweeps when the pointer is
+   anywhere on it, not only on the pill itself. */
+@media (hover: hover) and (pointer: fine) {
+  .packages .packages__card:hover .packages__btn .btn__fill {
+    transform: translate3d(0, 0, 0);
+    border-radius: 0;
+  }
+  .packages .packages__card:hover .packages__btn { color: var(--accent-fg); }
+  .packages .packages__card:hover .packages__btn.btn--accent { color: var(--bg); }
+  .packages .packages__card:hover .packages__btn.btn--ghost { border-color: transparent; }
+  .packages .packages__card:hover .packages__btn .btn__label span {
+    transform: translateY(-100%);
+  }
+  .packages .packages__card:hover .packages__btn .btn__arrow svg {
+    transform: translate3d(130%, -130%, 0);
+  }
+  .packages .packages__card:hover .packages__btn .btn__arrow svg:last-child {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* ------------------------------------------------------------ REASSURANCE */
+
+.packages .packages__assure {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-top: clamp(3rem, 6vw, 5.5rem);
+  border-block: 1px solid var(--line);
+}
+
+.packages .packages__assure-item {
+  display: flex;
+  align-items: baseline;
+  gap: 0.85rem;
+  padding: clamp(1.1rem, 1.8vw, 1.6rem) clamp(0.9rem, 1.6vw, 1.6rem);
+  border-left: 1px solid var(--line);
+  min-width: 0;
+}
+
+.packages .packages__assure-item:first-child {
+  border-left: 0;
+  padding-left: 0;
+}
+
+.packages .packages__assure-idx {
+  flex: none;
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wide);
+  color: var(--accent);
+}
+
+.packages .packages__assure-label {
+  min-width: 0;
+  font-size: var(--fs-sm);
+  line-height: 1.4;
+  color: var(--fg);
+  text-wrap: balance;
+  overflow-wrap: break-word;
+}
+
+/* ------------------------------------------------------------------- NOTE */
+
+.packages .packages__note {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
+  gap: var(--gutter);
+  margin-top: clamp(2rem, 3.5vw, 3rem);
+}
+
+.packages .packages__note-label { color: var(--fg-muted); }
+
+.packages .packages__note-body {
+  max-width: 62ch;
+  color: var(--fg-soft);
+}
+
+/* ------------------------------------------------------------ RESPONSIVE */
+
+@media (max-width: 1100px) {
+  .packages .packages__name { font-size: var(--fs-lg); }
+  .packages .packages__price-num { font-size: var(--fs-lg); }
+}
+
+@media (max-width: 900px) {
+  .section.packages { --pk-pop: 0px; }
+  .packages .packages__grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--sp-5);
+  }
+  .packages .packages__item--accent { margin-block: 0; }
+  .packages .packages__card--accent { padding-block: var(--pk-pad); }
+  .packages .packages__for { max-width: 46ch; }
+  .packages .packages__assure { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .packages .packages__assure-item:nth-child(3) { border-left: 0; padding-left: 0; }
+  .packages .packages__assure-item:nth-child(n + 3) { border-top: 1px solid var(--line); }
+  .packages .packages__note { grid-template-columns: minmax(0, 1fr); gap: var(--sp-3); }
+}
+
+@media (max-width: 560px) {
+  .packages .packages__assure { grid-template-columns: minmax(0, 1fr); }
+  .packages .packages__assure-item {
+    border-left: 0;
+    padding-left: 0;
+    border-top: 1px solid var(--line);
+  }
+  .packages .packages__assure-item:first-child { border-top: 0; }
+}
+
+@media (max-width: 480px) {
+  .packages .packages__btn { font-size: var(--fs-xs); padding-inline: 1.1em; }
+}
+
+/* Coarse pointers never receive tilt, so the injected glare must not linger. */
+@media (hover: none), (pointer: coarse) {
+  .packages .packages__card .tilt__glare { display: none; }
+}

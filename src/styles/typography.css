@@ -1,0 +1,159 @@
+/* ============================================================================
+   TYPOGRAPHY
+   ========================================================================== */
+
+.t-display {
+  font-family: var(--ff-display);
+  font-weight: 300;
+  font-variation-settings: "SOFT" 0, "WONK" 0, "opsz" 144;
+  line-height: var(--lh-none);
+  letter-spacing: var(--tr-mega);
+  text-wrap: balance;
+}
+.t-display--wonk { font-variation-settings: "SOFT" 4, "WONK" 1, "opsz" 144; }
+
+.t-display em,
+.t-mega em,
+.t-h1 em,
+.t-h2 em,
+.t-h3 em {
+  font-style: italic;
+  font-variation-settings: "SOFT" 6, "WONK" 1, "opsz" 144;
+  font-weight: 300;
+  color: var(--accent);
+}
+
+h1, h2, h3, h4 { font-weight: 400; text-wrap: balance; }
+
+.t-mega {
+  font-family: var(--ff-display);
+  font-size: var(--fs-mega);
+  font-weight: 300;
+  line-height: var(--lh-none);
+  letter-spacing: var(--tr-mega);
+  font-variation-settings: "SOFT" 0, "WONK" 0, "opsz" 144;
+}
+.t-h1 {
+  font-family: var(--ff-display);
+  font-size: var(--fs-4xl);
+  font-weight: 300;
+  line-height: var(--lh-tight);
+  letter-spacing: var(--tr-tight);
+  font-variation-settings: "SOFT" 0, "WONK" 0, "opsz" 144;
+}
+.t-h2 {
+  font-family: var(--ff-display);
+  font-size: var(--fs-3xl);
+  font-weight: 300;
+  line-height: var(--lh-tight);
+  letter-spacing: var(--tr-tight);
+  font-variation-settings: "SOFT" 0, "WONK" 0, "opsz" 120;
+}
+.t-h3 {
+  font-family: var(--ff-display);
+  font-size: var(--fs-2xl);
+  font-weight: 300;
+  line-height: var(--lh-snug);
+  letter-spacing: var(--tr-snug);
+  font-variation-settings: "SOFT" 0, "WONK" 0, "opsz" 72;
+}
+.t-h4 {
+  font-family: var(--ff-display);
+  font-size: var(--fs-xl);
+  font-weight: 400;
+  line-height: var(--lh-snug);
+  letter-spacing: var(--tr-snug);
+  font-variation-settings: "SOFT" 0, "WONK" 0, "opsz" 40;
+}
+.t-h5 {
+  font-family: var(--ff-sans);
+  font-size: var(--fs-lg);
+  font-weight: 500;
+  line-height: var(--lh-snug);
+  letter-spacing: var(--tr-snug);
+}
+
+.t-lead {
+  font-size: var(--fs-md);
+  line-height: var(--lh-relaxed);
+  font-weight: 380;
+  color: var(--fg-soft);
+  max-width: 56ch;
+  letter-spacing: -0.006em;
+}
+.t-body {
+  font-size: var(--fs-base);
+  line-height: var(--lh-relaxed);
+  color: var(--fg-soft);
+  max-width: var(--maxw-text);
+}
+.t-small { font-size: var(--fs-sm); line-height: 1.55; color: var(--fg-soft); }
+
+.t-mono {
+  font-family: var(--ff-mono);
+  font-size: var(--fs-xs);
+  font-weight: 450;
+  letter-spacing: var(--tr-wider);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  font-feature-settings: "zero" 1;
+}
+.t-mono--tight { letter-spacing: var(--tr-wide); }
+
+.t-num {
+  font-family: var(--ff-mono);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "zero" 1, "tnum" 1;
+}
+
+/* Eyebrow: monospaced index label preceded by a hairline */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7em;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  font-weight: 500;
+  letter-spacing: var(--tr-widest);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+.eyebrow::before {
+  content: "";
+  width: clamp(1.5rem, 3vw, 3rem);
+  height: 1px;
+  background: currentColor;
+  opacity: 0.55;
+  transform-origin: left center;
+}
+.eyebrow--accent { color: var(--accent); }
+.eyebrow--plain::before { display: none; }
+
+/* Inline link with an underline that draws in */
+.link-u {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 0.08em;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1px;
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  transition: background-size var(--d-base) var(--e-out-expo);
+}
+.link-u:hover,
+.link-u:focus-visible { background-size: 100% 1px; }
+
+/* Drop cap for manifesto paragraphs */
+.t-dropcap::first-letter {
+  font-family: var(--ff-display);
+  font-size: 3.4em;
+  line-height: 0.78;
+  float: left;
+  padding: 0.06em 0.12em 0 0;
+  font-weight: 300;
+  color: var(--accent);
+  font-variation-settings: "SOFT" 0, "WONK" 1, "opsz" 144;
+}
+
+/* Line clipping wrapper used by the reveal system */
+.line-mask { display: block; overflow: hidden; }

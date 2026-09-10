@@ -1,0 +1,165 @@
+/* ============================================================================
+   UNIQUE HOMES AND DESIGN — DESIGN TOKENS
+   A warm, light, architectural system. Paper + stone + terracotta + blueprint.
+   ========================================================================== */
+
+:root {
+  /* ---------- RAW PALETTE ------------------------------------------------ */
+  --c-white:      #FFFFFF;
+  --c-paper:      #FBF9F5;
+  --c-bone:       #F3EFE8;
+  --c-shell:      #EBE5DB;
+  --c-sand:       #DFD7C9;
+  --c-stone:      #C4BAA8;
+  --c-ash:        #918A7C;
+  --c-graphite:   #5D5850;
+  --c-slate:      #38342F;
+  --c-ink:        #1A1714;
+  --c-obsidian:   #0D0B0A;
+
+  --c-terra:      #AE4E2A;   /* primary accent — burnt sienna */
+  --c-terra-600:  #963F1F;
+  --c-terra-400:  #CF6E42;
+  --c-terra-200:  #E9BCA5;
+  --c-terra-050:  #F7E9E1;
+
+  --c-ochre:      #C2934A;
+  --c-ochre-200:  #EBD9B6;
+  --c-blueprint:  #27415A;   /* technical drawing ink */
+  --c-blueprint-400: #4E7391;
+  --c-cyanotype:  #34556F;
+  --c-moss:       #4F5F49;
+
+  /* ---------- SEMANTIC (LIGHT — default) --------------------------------- */
+  --bg:           var(--c-bone);
+  --bg-raised:    var(--c-paper);
+  --bg-sunken:    var(--c-shell);
+  --bg-contrast:  var(--c-ink);
+  --fg:           var(--c-ink);
+  --fg-soft:      var(--c-graphite);
+  --fg-muted:     var(--c-ash);
+  --fg-invert:    var(--c-paper);
+  --accent:       var(--c-terra);
+  --accent-fg:    var(--c-paper);
+  --line:         color-mix(in oklab, var(--c-ink) 12%, transparent);
+  --line-soft:    color-mix(in oklab, var(--c-ink) 7%, transparent);
+  --line-strong:  color-mix(in oklab, var(--c-ink) 24%, transparent);
+  --veil:         color-mix(in oklab, var(--c-ink) 4%, transparent);
+  --shadow-color: 26 23 20;
+
+  /* ---------- TYPE FAMILIES ---------------------------------------------- */
+  --ff-display: 'Fraunces Variable', 'Fraunces', 'Times New Roman', serif;
+  --ff-sans: 'Inter Tight Variable', 'Inter Tight', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --ff-mono: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+  /* ---------- FLUID TYPE SCALE ------------------------------------------- */
+  --fs-2xs:  clamp(0.625rem, 0.605rem + 0.10vw, 0.6875rem);
+  --fs-xs:   clamp(0.6875rem, 0.66rem + 0.14vw, 0.75rem);
+  --fs-sm:   clamp(0.8125rem, 0.785rem + 0.14vw, 0.875rem);
+  --fs-base: clamp(0.9375rem, 0.90rem + 0.19vw, 1.0625rem);
+  --fs-md:   clamp(1.0625rem, 0.99rem + 0.38vw, 1.3125rem);
+  --fs-lg:   clamp(1.25rem, 1.11rem + 0.70vw, 1.75rem);
+  --fs-xl:   clamp(1.5rem, 1.24rem + 1.30vw, 2.5rem);
+  --fs-2xl:  clamp(2rem, 1.55rem + 2.25vw, 3.75rem);
+  --fs-3xl:  clamp(2.5rem, 1.71rem + 3.95vw, 5.5rem);
+  --fs-4xl:  clamp(3rem, 1.55rem + 7.25vw, 8rem);
+  --fs-5xl:  clamp(3.5rem, 0.80rem + 13.5vw, 11.5rem);
+  --fs-mega: clamp(4rem, -1.5rem + 20vw, 17rem);
+
+  /* ---------- LINE HEIGHT / TRACKING ------------------------------------- */
+  --lh-none: 0.86;
+  --lh-tight: 0.98;
+  --lh-snug: 1.12;
+  --lh-base: 1.34;
+  --lh-relaxed: 1.62;
+  --tr-mega: -0.045em;
+  --tr-tight: -0.028em;
+  --tr-snug: -0.014em;
+  --tr-none: 0em;
+  --tr-wide: 0.06em;
+  --tr-wider: 0.14em;
+  --tr-widest: 0.22em;
+
+  /* ---------- SPACE ------------------------------------------------------- */
+  --sp-1: 0.25rem;  --sp-2: 0.5rem;   --sp-3: 0.75rem;  --sp-4: 1rem;
+  --sp-5: 1.5rem;   --sp-6: 2rem;     --sp-7: 2.5rem;   --sp-8: 3rem;
+  --sp-9: 4rem;     --sp-10: 5rem;    --sp-11: 6.5rem;  --sp-12: 8rem;
+  --sp-13: 10rem;   --sp-14: 13rem;
+  --section-y: clamp(5rem, 11vh + 3rem, 12rem);
+  --section-y-lg: clamp(7rem, 16vh + 4rem, 18rem);
+
+  /* ---------- LAYOUT ------------------------------------------------------ */
+  --page-x: clamp(1.125rem, 4.2vw, 4.5rem);
+  --maxw: 1680px;
+  --maxw-text: 68ch;
+  --gutter: clamp(1rem, 1.6vw, 1.75rem);
+  --header-h: clamp(4.5rem, 6vw, 6rem);
+  --radius-0: 0px;
+  --radius-1: 2px;
+  --radius-2: 4px;
+  --radius-3: 10px;
+  --radius-pill: 999px;
+
+  /* ---------- MOTION ------------------------------------------------------ */
+  --e-out-expo:    cubic-bezier(0.16, 1, 0.30, 1);
+  --e-out-quart:   cubic-bezier(0.25, 1, 0.50, 1);
+  --e-out-quint:   cubic-bezier(0.22, 1, 0.36, 1);
+  --e-in-out-quart:cubic-bezier(0.76, 0, 0.24, 1);
+  --e-in-out-expo: cubic-bezier(0.87, 0, 0.13, 1);
+  --e-spring:      cubic-bezier(0.34, 1.46, 0.64, 1);
+  --e-linear:      linear;
+  --d-fast: 220ms;
+  --d-base: 420ms;
+  --d-slow: 720ms;
+  --d-slower: 1100ms;
+
+  /* ---------- ELEVATION --------------------------------------------------- */
+  --sh-1: 0 1px 2px rgb(var(--shadow-color) / 0.05), 0 2px 8px rgb(var(--shadow-color) / 0.04);
+  --sh-2: 0 2px 6px rgb(var(--shadow-color) / 0.06), 0 12px 28px rgb(var(--shadow-color) / 0.07);
+  --sh-3: 0 6px 18px rgb(var(--shadow-color) / 0.08), 0 30px 70px rgb(var(--shadow-color) / 0.11);
+  --sh-4: 0 10px 30px rgb(var(--shadow-color) / 0.10), 0 60px 130px rgb(var(--shadow-color) / 0.16);
+  --sh-accent: 0 14px 40px color-mix(in oklab, var(--accent) 24%, transparent);
+
+  /* ---------- Z INDEX ----------------------------------------------------- */
+  --z-canvas: 1;
+  --z-content: 5;
+  --z-sticky: 30;
+  --z-header: 60;
+  --z-menu: 70;
+  --z-cursor: 90;
+  --z-loader: 100;
+}
+
+/* ---------- DARK SCOPE (used sparingly, per-section) ---------------------- */
+[data-theme='ink'] {
+  --bg:          var(--c-ink);
+  --bg-raised:   #221E1A;
+  --bg-sunken:   var(--c-obsidian);
+  --bg-contrast: var(--c-paper);
+  --fg:          var(--c-paper);
+  --fg-soft:     #B7AFA3;
+  --fg-muted:    #857D71;
+  --fg-invert:   var(--c-ink);
+  --accent:      var(--c-terra-400);
+  --accent-fg:   var(--c-ink);
+  --line:        color-mix(in oklab, var(--c-paper) 15%, transparent);
+  --line-soft:   color-mix(in oklab, var(--c-paper) 9%, transparent);
+  --line-strong: color-mix(in oklab, var(--c-paper) 30%, transparent);
+  --veil:        color-mix(in oklab, var(--c-paper) 5%, transparent);
+  --shadow-color: 0 0 0;
+  color-scheme: dark;
+}
+
+/* ---------- BLUEPRINT SCOPE (technical drawing sections) ------------------ */
+[data-theme='blueprint'] {
+  --bg:          #F0F2F4;
+  --bg-raised:   #F8F9FA;
+  --bg-sunken:   #E3E8ED;
+  --fg:          var(--c-blueprint);
+  --fg-soft:     #4B6A85;
+  --fg-muted:    #7B93A8;
+  --accent:      var(--c-terra);
+  --line:        color-mix(in oklab, var(--c-blueprint) 18%, transparent);
+  --line-soft:   color-mix(in oklab, var(--c-blueprint) 10%, transparent);
+  --line-strong: color-mix(in oklab, var(--c-blueprint) 34%, transparent);
+}

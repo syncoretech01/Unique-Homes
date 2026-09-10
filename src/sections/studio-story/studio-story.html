@@ -1,0 +1,354 @@
+<!-- ==========================================================================
+     STUDIO STORY — the long version of the argument the home page makes.
+
+     Five blocks, in order:
+       01  The position      a large pull-quote, lines masked on scroll
+       02  The argument      two-column essay + sticky marginal drawing
+       03  The practice      2009 → today, a ruled timeline that scrubs
+       04  Setup             capabilities and credentials, two ruled tables
+       05  The numbers       the studio's four figures, hairline-separated
+
+     Copy that exists in the data layer (manifesto.paragraphs, capabilities,
+     credentials, stats, manifesto.signature) is written out below so the
+     section reads correctly with no JS at all, and is re-rendered from
+     src/data/* by studio-story.js so it can never drift out of step.
+     ========================================================================== -->
+<section class="section studio-story" data-section="studio-story" id="studio-story" aria-labelledby="studio-story-title">
+  <div class="studio-story__inner shell">
+
+    <!-- 01 ------------------------------------------------------ POSITION -->
+    <header class="studio-story__open">
+      <div class="studio-story__head studio-story__head--open">
+        <p class="eyebrow">The position</p>
+        <span class="studio-story__idx t-num" aria-hidden="true">01 / 05</span>
+      </div>
+
+      <h2 class="t-h3 studio-story__statement" id="studio-story-title" data-split="lines" data-stagger="0.085">
+        A drawing set is a single argument, and an argument split across three offices stops
+        agreeing with itself somewhere around week nine. <em>We kept ours in one room.</em>
+      </h2>
+
+      <p class="t-lead studio-story__sub" data-split="lines" data-delay="0.22" data-stagger="0.07">
+        Architecture, engineering and visualisation, drawn from one model by people who can see
+        each other&rsquo;s screens &mdash; so what you are handed at the end is one building,
+        described three ways.
+      </p>
+
+      <p class="studio-story__sign" data-reveal="up" data-delay="0.38">
+        <i class="studio-story__sign-rule" aria-hidden="true"></i>
+        <span class="t-mono studio-story__sign-text" data-ss-sign>Unique Homes and Design &mdash; Austin, Texas</span>
+      </p>
+    </header>
+
+    <!-- 02 ------------------------------------------------------- ESSAY --->
+    <div class="studio-story__essay" data-ss-essay>
+
+      <!-- the setting-out grid: rotates into alignment as the essay scrolls -->
+      <div class="studio-story__field" aria-hidden="true">
+        <div class="studio-story__field-grid" data-ss-grid></div>
+      </div>
+
+      <div class="studio-story__head">
+        <p class="eyebrow">The argument</p>
+        <span class="studio-story__idx t-num" aria-hidden="true">02 / 05</span>
+      </div>
+
+      <div class="studio-story__essay-body">
+        <h3 class="studio-story__essay-title">Why it is all one room.</h3>
+
+        <div class="studio-story__cols">
+          <p class="studio-story__para studio-story__para--a t-dropcap" data-ss-manifesto="0"
+             data-reveal="up" data-duration="1.1" data-start="top 88%">
+            Most residential projects fail in the gaps between consultants. The architect draws a
+            wall, the engineer sizes a beam that will not fit inside it, and the render shows a
+            window that the framing plan never had room for. Nobody is wrong. The information
+            simply never met.
+          </p>
+
+          <p class="studio-story__para studio-story__para--b"
+             data-reveal="up" data-duration="1.1" data-delay="0.1" data-start="top 88%">
+            Three disciplines in one room is not a convenience. It is the only arrangement in which
+            an argument can be settled while it is still cheap to settle. The engineer sizes a ridge
+            beam while the ceiling above it is still a question; the visualiser lights a room and
+            notices that the clerestory has nowhere to sit. Each of those is a ten-minute
+            conversation across a desk, and a three-week exchange of PDFs between offices.
+          </p>
+
+          <p class="studio-story__para studio-story__para--c" data-ss-manifesto="1"
+             data-reveal="up" data-duration="1.1" data-start="top 88%">
+            We removed the gaps. One coordinated model produces the permit set, the site plan and
+            the renders, so a change in any of them is a change in all of them. It is slower for the
+            first two weeks and considerably faster for the next six months.
+          </p>
+
+          <p class="studio-story__para studio-story__para--d"
+             data-reveal="up" data-duration="1.1" data-delay="0.1" data-start="top 88%">
+            BIM-first is a technical phrase for a plain commercial fact: your drawings cannot quietly
+            disagree with one another. Move a window and the elevation, the schedule, the header
+            above it and the render all move in the same afternoon. The change orders that arrive on
+            site are almost never about design &mdash; they are about sheets that stopped matching,
+            and that is the thing this removes.
+          </p>
+        </div>
+      </div>
+
+      <aside class="studio-story__margin">
+        <div class="studio-story__sticky">
+          <p class="studio-story__setout" aria-hidden="true">
+            <span class="studio-story__setout-k">Setting out</span>
+            <span class="studio-story__setout-v t-num" data-ss-angle>&minus;06&deg;30&prime;</span>
+          </p>
+
+          <figure class="studio-story__plate">
+            <div class="studio-story__plate-frame">
+              <div class="studio-story__plate-art" data-ss-art-a></div>
+              <div class="studio-story__plate-art studio-story__plate-art--b" data-ss-art-b></div>
+              <span class="studio-story__plate-edge" aria-hidden="true"></span>
+            </div>
+            <figcaption class="studio-story__plate-cap t-mono">
+              <span data-ss-cap>Section AA</span>
+              <span class="studio-story__plate-scale t-num" aria-hidden="true" data-ss-scale>1:50</span>
+            </figcaption>
+          </figure>
+
+          <p class="studio-story__margin-note">
+            The same building, cut twice. A beam cannot be one size here and another size there.
+          </p>
+        </div>
+      </aside>
+    </div>
+
+    <!-- 03 ---------------------------------------------------- TIMELINE --->
+    <div class="studio-story__time">
+      <div class="studio-story__head">
+        <p class="eyebrow">The practice</p>
+        <span class="studio-story__idx t-num" aria-hidden="true">03 / 05</span>
+      </div>
+
+      <div class="studio-story__time-head">
+        <h3 class="studio-story__time-title">From the first sheet<br />to this morning.</h3>
+        <p class="t-small studio-story__time-lede">
+          Six things changed the way this office draws. The rest &mdash; the software, the office,
+          the number of desks &mdash; followed from them.
+        </p>
+      </div>
+
+      <div class="studio-story__track">
+        <div class="studio-story__ruler" data-ss-ruler aria-hidden="true">
+          <span class="studio-story__ruler-line"></span>
+          <span class="studio-story__ruler-fill" data-ss-fill></span>
+          <span class="studio-story__ruler-head" data-ss-head></span>
+          <span class="studio-story__ruler-ticks" data-ss-ticks></span>
+        </div>
+
+        <span class="studio-story__vrail" aria-hidden="true">
+          <i class="studio-story__vrail-fill" data-ss-vfill></i>
+        </span>
+
+        <ol class="studio-story__miles">
+          <li class="studio-story__mile" data-year="2009">
+            <i class="studio-story__leader" aria-hidden="true"></i>
+            <p class="studio-story__mile-year t-num">2009</p>
+            <h4 class="studio-story__mile-title">The first sheet</h4>
+            <p class="studio-story__mile-body">
+              The practice opens in one room off East Sixth with a licensed architect, a plotter and
+              a rule that nothing gets promised until it has been drawn. By 2012 there is a
+              structural engineer at the next desk.
+            </p>
+          </li>
+
+          <li class="studio-story__mile" data-year="2015">
+            <i class="studio-story__leader" aria-hidden="true"></i>
+            <p class="studio-story__mile-year t-num">2015</p>
+            <h4 class="studio-story__mile-title">The civil desk</h4>
+            <p class="studio-story__mile-body">
+              Site plans stop being somebody else&rsquo;s problem. Grading, drainage and impervious
+              cover move in house, and the permit calendar loses whole weeks of waiting.
+            </p>
+          </li>
+
+          <li class="studio-story__mile" data-year="2018">
+            <i class="studio-story__leader" aria-hidden="true"></i>
+            <p class="studio-story__mile-year t-num">2018</p>
+            <h4 class="studio-story__mile-title">Renders off the model</h4>
+            <p class="studio-story__mile-body">
+              Visualisation comes in house on one condition: no material appears in an image that is
+              not specified in the set. The renders become evidence rather than marketing.
+            </p>
+          </li>
+
+          <li class="studio-story__mile" data-year="2021">
+            <i class="studio-story__leader" aria-hidden="true"></i>
+            <p class="studio-story__mile-year t-num">2021</p>
+            <h4 class="studio-story__mile-title">One sheet standard</h4>
+            <p class="studio-story__mile-body">
+              We write the modelling and sheet-numbering standard the whole studio now argues about.
+              Schedules generate from the model, so a beam cannot be one size in plan and another in
+              section.
+            </p>
+          </li>
+
+          <li class="studio-story__mile" data-year="2023">
+            <i class="studio-story__leader" aria-hidden="true"></i>
+            <p class="studio-story__mile-year t-num">2023</p>
+            <h4 class="studio-story__mile-title">Three hundred sets</h4>
+            <p class="studio-story__mile-body">
+              The three-hundredth permit-ready set leaves the office in the spring. The
+              four-hundredth takes less than two years to follow it.
+            </p>
+          </li>
+
+          <li class="studio-story__mile studio-story__mile--now" data-year="today">
+            <i class="studio-story__leader" aria-hidden="true"></i>
+            <p class="studio-story__mile-year t-num">Today</p>
+            <h4 class="studio-story__mile-title">Still one room</h4>
+            <p class="studio-story__mile-body">
+              Three disciplines, one model, and a first-submittal approval rate we publish rather
+              than claim. The next set starts on Monday.
+            </p>
+          </li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- 04 --------------------------------------------- SETUP + CREDENTIALS -->
+    <div class="studio-story__setup">
+      <div class="studio-story__head">
+        <p class="eyebrow">Setup</p>
+        <span class="studio-story__idx t-num" aria-hidden="true">04 / 05</span>
+      </div>
+
+      <div class="studio-story__tables">
+
+        <div class="studio-story__table">
+          <h3 class="studio-story__table-title" id="studio-story-caps">How the studio is set up</h3>
+          <dl data-ss-caps aria-labelledby="studio-story-caps">
+            <div class="studio-story__row">
+              <i class="studio-story__row-rule" aria-hidden="true"></i>
+              <dt class="studio-story__row-k">BIM-first</dt>
+              <dd class="studio-story__row-v">One coordinated model behind every deliverable</dd>
+            </div>
+            <div class="studio-story__row">
+              <i class="studio-story__row-rule" aria-hidden="true"></i>
+              <dt class="studio-story__row-k">Sealed sets</dt>
+              <dd class="studio-story__row-v">Architect and PE stamps in house</dd>
+            </div>
+            <div class="studio-story__row">
+              <i class="studio-story__row-rule" aria-hidden="true"></i>
+              <dt class="studio-story__row-k">Single studio</dt>
+              <dd class="studio-story__row-v">No outsourced drafting, no outsourced renders</dd>
+            </div>
+            <div class="studio-story__row">
+              <i class="studio-story__row-rule" aria-hidden="true"></i>
+              <dt class="studio-story__row-k">Fixed fees</dt>
+              <dd class="studio-story__row-v">Scope written down before work begins</dd>
+            </div>
+          </dl>
+          <i class="studio-story__row-rule studio-story__row-rule--end" aria-hidden="true"></i>
+        </div>
+
+        <div class="studio-story__table">
+          <h3 class="studio-story__table-title" id="studio-story-creds">Registration and cover</h3>
+          <dl data-ss-creds aria-labelledby="studio-story-creds">
+            <div class="studio-story__row studio-story__row--cred">
+              <i class="studio-story__row-rule" aria-hidden="true"></i>
+              <dt class="studio-story__row-k">Licensed Architecture</dt>
+              <dd class="studio-story__row-v">
+                <span class="studio-story__row-val t-num">TX Reg. No. 00-0000</span>
+                <span class="studio-story__row-note">Registered practice</span>
+              </dd>
+            </div>
+            <div class="studio-story__row studio-story__row--cred">
+              <i class="studio-story__row-rule" aria-hidden="true"></i>
+              <dt class="studio-story__row-k">Professional Engineering</dt>
+              <dd class="studio-story__row-v">
+                <span class="studio-story__row-val t-num">TX PE Firm F-00000</span>
+                <span class="studio-story__row-note">Structural and civil</span>
+              </dd>
+            </div>
+            <div class="studio-story__row studio-story__row--cred">
+              <i class="studio-story__row-rule" aria-hidden="true"></i>
+              <dt class="studio-story__row-k">Insurance</dt>
+              <dd class="studio-story__row-v">
+                <span class="studio-story__row-val t-num">Professional liability</span>
+                <span class="studio-story__row-note">$2M per claim / aggregate</span>
+              </dd>
+            </div>
+            <div class="studio-story__row studio-story__row--cred">
+              <i class="studio-story__row-rule" aria-hidden="true"></i>
+              <dt class="studio-story__row-k">Software</dt>
+              <dd class="studio-story__row-v">
+                <span class="studio-story__row-val t-num">Revit &middot; Civil 3D &middot; Corona</span>
+                <span class="studio-story__row-note">BIM-first documentation</span>
+              </dd>
+            </div>
+          </dl>
+          <i class="studio-story__row-rule studio-story__row-rule--end" aria-hidden="true"></i>
+        </div>
+
+      </div>
+
+      <p class="studio-story__method">
+        <span class="studio-story__method-k">Every project runs the same six stages</span>
+        <span class="studio-story__method-steps" data-ss-steps>
+          <span class="studio-story__step"><i class="t-num">01</i>Site &amp; brief</span>
+          <span class="studio-story__step"><i class="t-num">02</i>Test fits</span>
+          <span class="studio-story__step"><i class="t-num">03</i>Coordinated model</span>
+          <span class="studio-story__step"><i class="t-num">04</i>Visualisation</span>
+          <span class="studio-story__step"><i class="t-num">05</i>Documentation</span>
+          <span class="studio-story__step"><i class="t-num">06</i>Permit &amp; build</span>
+        </span>
+        <a class="studio-story__method-link link-u" href="/services/">
+          See the three services<span aria-hidden="true"> &rarr;</span>
+        </a>
+      </p>
+    </div>
+
+    <!-- 05 -------------------------------------------------------- NUMBERS -->
+    <div class="studio-story__figures">
+      <div class="studio-story__head">
+        <p class="eyebrow">The numbers</p>
+        <span class="studio-story__idx t-num" aria-hidden="true">05 / 05</span>
+      </div>
+
+      <h3 class="u-sr" id="studio-story-figures">The practice in figures</h3>
+
+      <div class="studio-story__stats" data-ss-stats aria-labelledby="studio-story-figures">
+        <i class="studio-story__stats-rule" aria-hidden="true"></i>
+
+        <div class="stat studio-story__stat">
+          <i class="studio-story__stat-rule studio-story__stat-rule--v" aria-hidden="true"></i>
+          <i class="studio-story__stat-rule studio-story__stat-rule--h" aria-hidden="true"></i>
+          <span class="stat__label studio-story__stat-label">Drawing sets issued</span>
+          <span class="stat__num studio-story__stat-num" data-counter="480" data-suffix="+">480+</span>
+          <span class="studio-story__stat-note">Permit-ready packages since 2009</span>
+        </div>
+
+        <div class="stat studio-story__stat">
+          <i class="studio-story__stat-rule studio-story__stat-rule--v" aria-hidden="true"></i>
+          <i class="studio-story__stat-rule studio-story__stat-rule--h" aria-hidden="true"></i>
+          <span class="stat__label studio-story__stat-label">Years in practice</span>
+          <span class="stat__num studio-story__stat-num" data-counter="16">16</span>
+          <span class="studio-story__stat-note">Residential and light commercial</span>
+        </div>
+
+        <div class="stat studio-story__stat">
+          <i class="studio-story__stat-rule studio-story__stat-rule--v" aria-hidden="true"></i>
+          <i class="studio-story__stat-rule studio-story__stat-rule--h" aria-hidden="true"></i>
+          <span class="stat__label studio-story__stat-label">First-submittal approval</span>
+          <span class="stat__num studio-story__stat-num" data-counter="98" data-suffix="%">98%</span>
+          <span class="studio-story__stat-note">Across Central Texas jurisdictions</span>
+        </div>
+
+        <div class="stat studio-story__stat">
+          <i class="studio-story__stat-rule studio-story__stat-rule--v" aria-hidden="true"></i>
+          <i class="studio-story__stat-rule studio-story__stat-rule--h" aria-hidden="true"></i>
+          <span class="stat__label studio-story__stat-label">Jurisdictions permitted</span>
+          <span class="stat__num studio-story__stat-num" data-counter="34">34</span>
+          <span class="studio-story__stat-note">City, county and ETJ reviews</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>

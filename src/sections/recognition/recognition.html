@@ -1,0 +1,74 @@
+<!-- ==========================================================================
+     RECOGNITION — a hairline-ruled list of the few times a jury agreed.
+
+     The rows are rendered from `recognitions` in src/data/site.js by
+     recognition.js. Everything else — the header, the sticky note about how
+     the studio actually thinks about awards, and the placeholder disclosure —
+     is authored here so the section reads correctly before any script runs.
+     ========================================================================== -->
+<section class="section recognition" data-section="recognition" id="recognition" aria-labelledby="recognition-title">
+
+  <span class="recognition__edge" aria-hidden="true"></span>
+
+  <div class="shell">
+
+    <div class="sec-head">
+      <div class="sec-head__label">
+        <p class="eyebrow eyebrow--accent" data-reveal="up">Recognition</p>
+      </div>
+
+      <div class="sec-head__title">
+        <h2 class="t-h2 recognition__heading" id="recognition-title" data-split="lines">
+          Now and then, <em>a jury agrees</em>.
+        </h2>
+      </div>
+
+      <div class="sec-head__aside">
+        <p class="recognition__count t-num" data-reveal="up" data-delay="0.1">
+          <span data-rec-count>05</span><span class="recognition__count-sep" aria-hidden="true"></span><span data-rec-span>entries</span>
+        </p>
+      </div>
+    </div>
+
+    <div class="recognition__layout">
+
+      <div class="recognition__main">
+        <ol class="recognition__list" data-rec-list role="list"></ol>
+        <span class="recognition__list-rule" data-rec-endrule aria-hidden="true"></span>
+
+        <p class="recognition__disclaimer" data-reveal="up" data-start="top 92%">
+          <span class="recognition__disclaimer-mark" aria-hidden="true">Note</span>
+          The recognitions listed above are illustrative placeholder content for this
+          demonstration site.
+        </p>
+      </div>
+
+      <aside class="recognition__aside" aria-label="How the studio thinks about awards">
+        <div class="sticky recognition__sticky">
+          <p class="eyebrow" data-reveal="up">On awards</p>
+
+          <p class="recognition__aside-body t-body" data-reveal="up" data-delay="0.08">
+            We enter two or three a year, when the category actually fits the work. A jury
+            reads a set for twenty minutes; a client lives inside the result for thirty
+            years — so this list is not how we keep score.
+          </p>
+
+          <p class="recognition__aside-body t-body" data-reveal="up" data-delay="0.14">
+            It is here because people ask, and because the projects behind it are worth
+            looking at. The drawings are the argument.
+          </p>
+
+          <div class="recognition__aside-cta" data-reveal="up" data-delay="0.2">
+            <a class="btn btn--ghost btn--sm recognition__link" href="/projects/" data-arrow>
+              <span class="btn__fill" aria-hidden="true"></span>
+              <span class="btn__label"><span data-text="See the work">See the work</span></span>
+            </a>
+          </div>
+        </div>
+      </aside>
+
+    </div>
+
+  </div>
+
+</section>

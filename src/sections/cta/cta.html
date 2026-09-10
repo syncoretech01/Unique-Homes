@@ -1,0 +1,90 @@
+<!-- ==========================================================================
+     CTA — the closing call to action.
+     Shared by the home page and every inner page (services, projects, studio,
+     journal), so it is entirely self-contained and page-agnostic.
+     Copy mirrors `cta` and `contact` in src/data/site.js; cta.js rewrites the
+     headline, lede and contact register from that data at boot so the two can
+     never drift. The markup below is the no-JS fallback.
+     ========================================================================== -->
+<section class="section section--lg cta" data-section="cta" id="cta" aria-labelledby="cta-title">
+
+  <div class="cta__bg" aria-hidden="true">
+    <div class="cta__bg-art" data-parallax="-0.14"></div>
+    <div class="cta__glow"></div>
+    <div class="cta__grain"></div>
+  </div>
+
+  <div class="cta__inner shell">
+
+    <div class="cta__top">
+      <p class="cta__eyebrow eyebrow eyebrow--accent" data-reveal="fade">Start a project</p>
+      <p class="cta__note t-mono">Usually a reply in two working days</p>
+    </div>
+
+    <div class="cta__rule rule" data-reveal="mask" data-duration="1.4" aria-hidden="true"></div>
+
+    <div class="cta__head">
+      <h2 class="cta__title t-display" id="cta-title" data-split="lines" data-start="top 84%">
+        Let us <em>draw</em> the<br>next one together.
+      </h2>
+    </div>
+
+    <div class="cta__act">
+
+      <p class="cta__lede t-lead" data-reveal="up" data-delay="0.06">
+        Send the site address, a sketch, or nothing at all. We will tell you what the
+        drawing set needs to contain and what it will cost — usually within two working days.
+      </p>
+
+      <div class="cta__dial" data-reveal="scale-down" data-delay="0.12" data-duration="1.1">
+        <div class="cta__ring" aria-hidden="true"></div>
+        <a class="cta__circle btn-circle" href="/contact/" data-magnetic="0.26" data-cursor="link">
+          <span class="cta__circle-in" data-magnetic-inner="0.1">
+            <span class="cta__circle-label">Start<br>a project</span>
+            <svg class="cta__arrow" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path class="cta__arrow-shaft" d="M5 19 L18.4 5.6" pathLength="1" />
+              <path class="cta__arrow-head" d="M9.2 5 H19 V14.8" pathLength="1" />
+            </svg>
+          </span>
+        </a>
+      </div>
+
+      <a class="cta__secondary" href="/services/" data-cursor="link">
+        <span class="cta__secondary-label link-u">See our services</span>
+        <svg class="cta__secondary-arrow" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+          <path d="M3.4 12.6 L12.6 3.4 M5.6 3.4 H12.6 V10.4" />
+        </svg>
+      </a>
+
+    </div>
+
+    <div class="cta__contact" data-reveal-group=":scope > .cta__cell" data-stagger="0.07" data-start="top 88%">
+      <div class="cta__cell">
+        <span class="cta__cell-label t-mono">Email</span>
+        <div class="cta__cell-body">
+          <a class="cta__value link-u" href="mailto:studio@uniquehomesanddesign.com">studio@uniquehomesanddesign.com</a>
+        </div>
+      </div>
+      <div class="cta__cell">
+        <span class="cta__cell-label t-mono">Telephone</span>
+        <div class="cta__cell-body">
+          <a class="cta__value link-u" href="tel:+15125550142">+1 (512) 555-0142</a>
+        </div>
+      </div>
+      <div class="cta__cell">
+        <span class="cta__cell-label t-mono">Studio</span>
+        <div class="cta__cell-body">
+          <span class="cta__value">1204 East Sixth Street, Suite 300</span>
+          <span class="cta__sub">Austin, TX 78702</span>
+        </div>
+      </div>
+      <div class="cta__cell">
+        <span class="cta__cell-label t-mono">Hours</span>
+        <div class="cta__cell-body">
+          <span class="cta__value">Monday – Friday, 8:30 – 18:00 CT</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>

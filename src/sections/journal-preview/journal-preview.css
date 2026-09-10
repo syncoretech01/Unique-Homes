@@ -1,0 +1,376 @@
+/* ============================================================================
+   JOURNAL PREVIEW
+   A hairline-ruled editorial index. On fine pointers a floating preview card
+   trails the cursor and carries the entry's procedural drawing; on coarse
+   pointers each row grows an inline thumbnail and an excerpt instead.
+
+   Two interaction modes are set by the module on the section root:
+     .is-hover   floating card, terse rows, "Read" cue
+     .is-static  inline thumbnails + excerpts, no cursor work
+   ========================================================================== */
+
+.journal-preview {
+  --jp-idx: 3.25rem;
+  --jp-gap: clamp(0.9rem, 1.9vw, 2.25rem);
+  --jp-meta: var(--fg-muted);
+  background: var(--bg-raised);
+}
+
+/* ---------------------------------------------------------------- HEADER */
+
+.journal-preview__lede {
+  margin-top: clamp(0.9rem, 1.6vw, 1.5rem);
+  max-width: 44ch;
+}
+
+.journal-preview__aside {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+}
+
+.journal-preview__all {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8em;
+  padding-bottom: 0.45em;
+  border-bottom: 1px solid var(--line-strong);
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  font-weight: 500;
+  letter-spacing: var(--tr-wider);
+  text-transform: uppercase;
+  color: var(--fg);
+  transition: color var(--d-base) var(--e-out-quart),
+              border-color var(--d-base) var(--e-out-quart);
+}
+.journal-preview__all:hover,
+.journal-preview__all:focus-visible {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+.journal-preview__all-arrow {
+  display: block;
+  width: 0.8em;
+  height: 0.8em;
+  transition: transform var(--d-base) var(--e-out-expo);
+}
+.journal-preview__all-arrow svg { width: 100%; height: 100%; }
+.journal-preview__all:hover .journal-preview__all-arrow,
+.journal-preview__all:focus-visible .journal-preview__all-arrow {
+  transform: translate3d(0.2em, -0.2em, 0);
+}
+
+/* ------------------------------------------------------------------ LIST */
+
+.journal-preview__index { position: relative; }
+
+/* Hairlines — one at the top of every row, one closing the index.
+   They draw in left-to-right on reveal, so transform-origin matters. */
+.journal-preview__rule {
+  display: block;
+  width: 100%;
+  height: 1px;
+  background: var(--line);
+  transform-origin: left center;
+}
+.journal-preview__row > .journal-preview__rule {
+  position: absolute;
+  inset: 0 0 auto 0;
+  width: auto;
+}
+
+.journal-preview__row {
+  position: relative;
+  display: grid;
+  align-items: center;
+  gap: 0.5rem var(--jp-gap);
+  padding-block: clamp(1.15rem, 2.4vw, 2rem);
+  color: var(--fg);
+  transition: color var(--d-base) var(--e-out-quart);
+
+  /* ≤ 560px — index and category share a line above the title */
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "idx  cat"
+    "body body"
+    "meta meta";
+}
+
+.journal-preview__idx {
+  grid-area: idx;
+  font-family: var(--ff-mono);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "zero" 1, "tnum" 1;
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wider);
+  color: var(--jp-meta);
+  transition: color var(--d-base) var(--e-out-quart);
+}
+
+.journal-preview__body {
+  grid-area: body;
+  display: flex;
+  align-items: flex-start;
+  gap: clamp(0.85rem, 1.6vw, 1.35rem);
+  min-width: 0;
+}
+
+.journal-preview__thumb {
+  display: none;
+  position: relative;
+  flex: none;
+  width: clamp(3.5rem, 13vw, 5.25rem);
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: var(--bg-sunken);
+}
+
+.journal-preview__text {
+  display: block;
+  min-width: 0;
+}
+
+.journal-preview__entry-title {
+  display: block;
+  font-family: var(--ff-display);
+  font-size: var(--fs-xl);
+  font-weight: 300;
+  line-height: var(--lh-snug);
+  letter-spacing: var(--tr-snug);
+  font-variation-settings: "SOFT" 0, "WONK" 0, "opsz" 40;
+  text-wrap: balance;
+  transition: transform var(--d-slow) var(--e-out-expo);
+}
+
+/* In hover mode the excerpt lives on the floating card instead — but it stays
+   in the accessibility tree rather than being switched off. */
+.journal-preview__excerpt {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+  color: var(--fg-soft);
+  max-width: 52ch;
+}
+
+.journal-preview__cat {
+  grid-area: cat;
+  justify-self: end;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wider);
+  text-transform: uppercase;
+  color: var(--jp-meta);
+  white-space: nowrap;
+  transition: color var(--d-base) var(--e-out-quart);
+}
+
+.journal-preview__meta {
+  grid-area: meta;
+  display: flex;
+  align-items: center;
+  gap: 0.7em;
+  font-family: var(--ff-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wide);
+  text-transform: uppercase;
+  color: var(--jp-meta);
+  white-space: nowrap;
+  transition: color var(--d-base) var(--e-out-quart);
+}
+.journal-preview__sep {
+  flex: none;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.5;
+}
+
+/* The "Read" cue wipes in from the left edge of its own cell. */
+.journal-preview__read {
+  grid-area: read;
+  display: none;
+  align-items: center;
+  justify-self: end;
+  gap: 0.5em;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  font-weight: 500;
+  letter-spacing: var(--tr-wider);
+  text-transform: uppercase;
+  color: var(--accent);
+  white-space: nowrap;
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 640ms var(--e-out-expo);
+}
+.journal-preview__read-inner {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  transform: translate3d(-0.5rem, 0, 0);
+  transition: transform 640ms var(--e-out-expo);
+}
+.journal-preview__read svg {
+  width: 0.8em;
+  height: 0.8em;
+  flex: none;
+}
+
+/* -------------------------------------------------------- HOVER STATES  */
+
+.journal-preview__row.is-hovered .journal-preview__entry-title,
+.journal-preview__row:focus-visible .journal-preview__entry-title {
+  transform: translate3d(clamp(0.4rem, 1vw, 1.1rem), 0, 0);
+}
+.journal-preview__row.is-hovered .journal-preview__idx,
+.journal-preview__row:focus-visible .journal-preview__idx {
+  color: var(--accent);
+}
+.journal-preview__row.is-hovered .journal-preview__read,
+.journal-preview__row:focus-visible .journal-preview__read {
+  clip-path: inset(0 0 0 0);
+}
+.journal-preview__row.is-hovered .journal-preview__read-inner,
+.journal-preview__row:focus-visible .journal-preview__read-inner {
+  transform: translate3d(0, 0, 0);
+}
+
+/* Everything that is not under the pointer recedes. */
+.journal-preview__list.is-active .journal-preview__row:not(.is-hovered) {
+  color: var(--fg-muted);
+  --jp-meta: color-mix(in oklab, var(--fg-muted) 58%, transparent);
+}
+
+.journal-preview__row:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 6px;
+}
+
+/* -------------------------------------------------------------- MODES   */
+
+.journal-preview.is-static .journal-preview__thumb { display: block; }
+.journal-preview.is-static .journal-preview__excerpt {
+  position: static;
+  width: auto;
+  height: auto;
+  margin: 0.55rem 0 0;
+  clip-path: none;
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
+}
+
+/* --------------------------------------------------------- FLOATING CARD */
+
+.journal-preview__card {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: calc(var(--z-sticky) + 8);
+  display: none;
+  width: clamp(13rem, 20vw, 19.5rem);
+  aspect-ratio: 5 / 4;
+  overflow: hidden;
+  pointer-events: none;
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  box-shadow: var(--sh-3);
+  opacity: 0;
+}
+.journal-preview.is-hover .journal-preview__card { display: block; }
+
+.journal-preview__card-art {
+  position: absolute;
+  inset: 0 0 2.4rem 0;
+  display: block;
+  overflow: hidden;
+  background: var(--bg-sunken);
+}
+
+.journal-preview__card-foot {
+  position: absolute;
+  inset: auto 0 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  height: 2.4rem;
+  padding-inline: 0.85rem;
+  border-top: 1px solid var(--line);
+  background: var(--bg-raised);
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wider);
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.journal-preview__card-cat { color: var(--fg); }
+.journal-preview__card-time { color: var(--fg-muted); }
+
+/* The custom cursor hides itself over the list; if the rig is not running,
+   hand the native pointer back rather than leaving the area cursor-less. */
+html:not(.has-custom-cursor) .journal-preview__list[data-cursor],
+html:not(.has-custom-cursor) .journal-preview__row { cursor: pointer; }
+
+/* ---------------------------------------------------------- BREAKPOINTS */
+
+@media (min-width: 561px) {
+  .journal-preview__row {
+    grid-template-columns: var(--jp-idx) minmax(0, 1fr) auto;
+    grid-template-areas:
+      "idx body body"
+      ".   cat  meta";
+  }
+  .journal-preview__cat { justify-self: start; }
+  .journal-preview__meta { justify-self: end; }
+}
+
+@media (min-width: 901px) {
+  .journal-preview__row {
+    grid-template-columns:
+      var(--jp-idx)
+      minmax(0, 1fr)
+      clamp(6rem, 8.5vw, 9.5rem)
+      clamp(8rem, 10vw, 11rem);
+    grid-template-areas: "idx body cat meta";
+    align-items: baseline;
+  }
+  .journal-preview.is-hover .journal-preview__row {
+    grid-template-columns:
+      var(--jp-idx)
+      minmax(0, 1fr)
+      clamp(6rem, 8.5vw, 9.5rem)
+      clamp(8rem, 10vw, 11rem)
+      clamp(4.5rem, 5.5vw, 6.25rem);
+    grid-template-areas: "idx body cat meta read";
+  }
+  .journal-preview.is-hover .journal-preview__read { display: inline-flex; }
+  .journal-preview.is-static .journal-preview__row { align-items: center; }
+}
+
+@media (min-width: 1101px) {
+  .journal-preview__aside { justify-content: flex-end; }
+}
+
+/* ------------------------------------------------------- REDUCED MOTION */
+
+@media (prefers-reduced-motion: reduce) {
+  .journal-preview .journal-preview__card,
+  .journal-preview.is-hover .journal-preview__card { display: none; }
+  .journal-preview__entry-title,
+  .journal-preview__read,
+  .journal-preview__read-inner { transition: none; }
+}

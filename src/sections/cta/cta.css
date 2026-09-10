@@ -1,0 +1,358 @@
+/* ============================================================================
+   CTA — closing call to action
+   The last light moment on every page, immediately before the dark footer.
+   Deliberately paper-bright so the footer lands as a hard tonal cut.
+   ========================================================================== */
+
+.cta {
+  --cta-dial: clamp(12.5rem, 18vw, 17rem);
+  --cta-ring-fs: clamp(0.5rem, 0.8vw, 0.7rem);
+  --cta-title-fs: clamp(1.95rem, 8.6vw, 7.75rem);
+  --cta-circle: clamp(6.25rem, 8.6vw, 8.5rem);
+
+  background: var(--bg-raised);
+  border-top: 1px solid var(--line-soft);
+  isolation: isolate;
+}
+
+/* -------------------------------------------------------------- BACKDROP */
+
+.cta__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Procedural setting-out grid, drifting on scroll. Held far back in tone so
+   it reads as paper tooth rather than as an image. */
+.cta__bg-art {
+  position: absolute;
+  inset: -22% -3%;
+  opacity: 0.17;
+  will-change: transform;
+  -webkit-mask-image: radial-gradient(118% 92% at 50% 42%, #000 18%, transparent 76%);
+  mask-image: radial-gradient(118% 92% at 50% 42%, #000 18%, transparent 76%);
+}
+.cta__bg-art > svg { width: 100%; height: 100%; }
+
+.cta__glow {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(58% 50% at 50% 26%, color-mix(in oklab, var(--c-white) 62%, transparent), transparent 68%),
+    radial-gradient(44% 40% at 84% 90%, color-mix(in oklab, var(--accent) 11%, transparent), transparent 70%),
+    radial-gradient(42% 46% at 6% 76%, color-mix(in oklab, var(--c-blueprint) 7%, transparent), transparent 72%);
+}
+
+.cta__grain {
+  position: absolute;
+  inset: 0;
+  background-repeat: repeat;
+  background-size: 168px 168px;
+  mix-blend-mode: multiply;
+  opacity: 0.55;
+}
+
+/* ---------------------------------------------------------------- SHELL  */
+
+.cta__inner {
+  position: relative;
+  z-index: 1;
+}
+
+/* ------------------------------------------------------------------ TOP  */
+
+.cta__top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-3) var(--sp-6);
+}
+.cta__note { color: var(--fg-muted); }
+@media (min-width: 641px) {
+  .cta__note { white-space: nowrap; }
+}
+
+.cta__rule {
+  margin-top: clamp(1.25rem, 2.6vw, 2rem);
+}
+
+/* -------------------------------------------------------------- HEADLINE */
+
+.cta__head {
+  margin-top: clamp(2.25rem, 5.6vw, 4.75rem);
+  will-change: transform;
+}
+.cta__title {
+  font-size: var(--cta-title-fs);
+  line-height: 0.95;
+  color: var(--fg);
+}
+/* The masked line entrance owns first paint; keep the unsplit text out of
+   sight only while the motion layer is actually going to run. */
+.js .cta__title[data-split] { visibility: hidden; }
+
+/* ----------------------------------------------------------- ACTION ROW  */
+
+.cta__act {
+  margin-top: clamp(2.5rem, 5.6vw, 5rem);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "lede dial"
+    "link dial";
+  align-items: end;
+  column-gap: clamp(2rem, 5vw, 5.5rem);
+  row-gap: clamp(1.5rem, 3vw, 2.5rem);
+}
+.cta__lede {
+  grid-area: lede;
+  max-width: 44ch;
+}
+.cta__secondary { grid-area: link; }
+
+@media (max-width: 900px) {
+  .cta__act {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "lede"
+      "dial"
+      "link";
+    justify-items: start;
+    row-gap: clamp(2rem, 5vw, 3rem);
+  }
+}
+
+/* ------------------------------------------------------- SECONDARY LINK  */
+
+.cta__secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6em;
+  justify-self: start;
+  font-size: var(--fs-base);
+  color: var(--fg);
+  transition: color var(--d-fast) var(--e-out-quart);
+}
+.cta__secondary:hover { color: var(--accent); }
+.cta__secondary-arrow {
+  width: 0.85em;
+  height: 0.85em;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform var(--d-base) var(--e-out-expo);
+}
+.cta__secondary:hover .cta__secondary-arrow,
+.cta__secondary:focus-visible .cta__secondary-arrow {
+  transform: translate3d(0.26em, -0.26em, 0);
+}
+.cta__secondary:hover .cta__secondary-label,
+.cta__secondary:focus-visible .cta__secondary-label {
+  background-size: 100% 1px;
+}
+
+/* -------------------------------------------------- DIAL: RING + BUTTON  */
+
+.cta__dial {
+  grid-area: dial;
+  align-self: center;
+  justify-self: start;
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: var(--cta-dial);
+  height: var(--cta-dial);
+  flex: none;
+}
+@media (min-width: 901px) {
+  .cta__dial { justify-self: end; }
+}
+/* Hairline setting-out circle between the button and the type ring. */
+.cta__dial::before {
+  content: "";
+  position: absolute;
+  inset: 12%;
+  border: 1px solid var(--line-soft);
+  border-radius: 50%;
+  transition: border-color var(--d-base) var(--e-out-quart);
+  pointer-events: none;
+}
+.cta__dial.is-live::before { border-color: var(--line); }
+
+.cta__ring {
+  position: absolute;
+  inset: 0;
+  font-family: var(--ff-mono);
+  font-size: var(--cta-ring-fs);
+  font-weight: 500;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  pointer-events: none;
+  transition: color var(--d-base) var(--e-out-quart);
+  will-change: transform;
+}
+.cta__dial.is-live .cta__ring { color: var(--fg-soft); }
+
+/* Each glyph is a hairline strip running from the dial centre to its rim;
+   rotating the strip places the character on the circle. */
+.cta__ring-char {
+  position: absolute;
+  top: 0.18em;
+  left: 50%;
+  width: 1em;
+  height: calc(50% - 0.18em);
+  margin-left: -0.5em;
+  line-height: 1;
+  text-align: center;
+  transform: rotate(var(--rot, 0deg));
+  transform-origin: 50% 100%;
+}
+.cta__ring-char.is-dot { color: var(--accent); }
+
+.cta__circle {
+  width: var(--cta-circle);
+  height: var(--cta-circle);
+  font-size: var(--fs-2xs);
+  line-height: 1.4;
+  text-align: center;
+  box-shadow: var(--sh-2);
+}
+.cta__circle:focus-visible {
+  outline-color: var(--fg);
+  outline-offset: 5px;
+}
+.cta__circle-in {
+  display: grid;
+  justify-items: center;
+  gap: 0.55em;
+}
+.cta__circle-label {
+  display: block;
+  letter-spacing: var(--tr-wide);
+}
+
+/* Arrow that draws itself on hover (pathLength = 1, so the dash maths is
+   independent of the glyph geometry). */
+.cta__arrow {
+  width: clamp(1rem, 1.5vw, 1.4rem);
+  height: clamp(1rem, 1.5vw, 1.4rem);
+}
+.cta__arrow path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 540ms var(--e-out-expo);
+}
+.cta__arrow .cta__arrow-head { transition-delay: 130ms; }
+.cta__circle:hover .cta__arrow path,
+.cta__circle:focus-visible .cta__arrow path { stroke-dashoffset: 0; }
+
+/* ------------------------------------------------------- CONTACT REGISTER */
+
+.cta__contact {
+  margin-top: clamp(3rem, 7vw, 6rem);
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  column-gap: var(--gutter);
+  row-gap: clamp(1.75rem, 3vw, 2.5rem);
+}
+@media (max-width: 1000px) {
+  .cta__contact { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 520px) {
+  .cta__contact { grid-template-columns: minmax(0, 1fr); }
+}
+
+.cta__cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  padding-top: clamp(0.85rem, 1.4vw, 1.2rem);
+  border-top: 1px solid var(--line);
+}
+.cta__cell-body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.45rem;
+}
+.cta__value {
+  font-size: var(--fs-base);
+  line-height: 1.45;
+  color: var(--fg);
+  overflow-wrap: anywhere;
+}
+.cta__sub {
+  font-size: var(--fs-sm);
+  color: var(--fg-muted);
+}
+
+.cta__copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  margin-top: 0.2rem;
+  padding: 0.4em 0.85em;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wide);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  transition: color var(--d-fast) var(--e-out-quart),
+              border-color var(--d-fast) var(--e-out-quart);
+}
+.cta__copy:hover { color: var(--fg); border-color: var(--line-strong); }
+.cta__copy.is-copied { border-color: color-mix(in oklab, var(--accent) 45%, transparent); }
+.cta__copy-icon {
+  width: 0.85em;
+  height: 0.85em;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+}
+.cta__copy-label {
+  display: inline-block;
+  min-width: 4.2em;
+  text-align: left;
+}
+
+/* -------------------------------------------------------------- FALLBACKS */
+
+.no-js .cta__title[data-split] { visibility: visible; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cta__title[data-split],
+  .js .cta__title[data-split] { visibility: visible; }
+  /* The shared reveal pre-states are CSS, so clear them here too — nothing in
+     this section may depend on a tween having run. */
+  .cta [data-reveal],
+  .cta [data-reveal-group] > * {
+    opacity: 1;
+    transform: none;
+    clip-path: none;
+  }
+  .cta__arrow path { stroke-dashoffset: 0; transition: none; }
+  .cta__secondary-arrow,
+  .cta__ring,
+  .cta__bg-art { transition: none; will-change: auto; }
+}
+
+@media (hover: none), (pointer: coarse) {
+  .cta__arrow path { stroke-dashoffset: 0; }
+  .cta__note { white-space: normal; }
+}

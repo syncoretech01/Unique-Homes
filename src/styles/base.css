@@ -1,0 +1,116 @@
+/* ============================================================================
+   BASE / RESET
+   ========================================================================== */
+*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; padding: 0; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-behavior: auto;
+  background: var(--c-ink);
+}
+
+body {
+  font-family: var(--ff-sans);
+  font-size: var(--fs-base);
+  line-height: var(--lh-base);
+  font-weight: 400;
+  color: var(--fg);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+  overflow-x: clip;
+  min-height: 100svh;
+  overscroll-behavior-y: none;
+}
+
+/* Lenis */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }
+
+img, svg, video, canvas { display: block; max-width: 100%; }
+img, video { height: auto; object-fit: cover; }
+svg { fill: currentColor; }
+
+button, input, textarea, select {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  outline: none;
+}
+button { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+
+a { color: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+
+ul, ol { list-style: none; }
+
+::selection { background: var(--accent); color: var(--accent-fg); }
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: var(--radius-1);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 9px; height: 9px; }
+::-webkit-scrollbar-track { background: var(--c-shell); }
+::-webkit-scrollbar-thumb {
+  background: var(--c-stone);
+  border: 2px solid var(--c-shell);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--c-ash); }
+
+/* Utility */
+.u-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.u-hide { display: none !important; }
+[hidden] { display: none !important; }
+
+/* Page-level film grain — subtle paper tooth over the whole site */
+.grain {
+  position: fixed;
+  inset: -50%;
+  z-index: 88;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: multiply;
+  background-repeat: repeat;
+  background-size: 200px 200px;
+  will-change: transform;
+  animation: grain-shift 6s steps(5) infinite;
+}
+@keyframes grain-shift {
+  0%   { transform: translate3d(0, 0, 0); }
+  20%  { transform: translate3d(-3%, -4%, 0); }
+  40%  { transform: translate3d(-7%, 2%, 0); }
+  60%  { transform: translate3d(4%, -5%, 0); }
+  80%  { transform: translate3d(-2%, 6%, 0); }
+  100% { transform: translate3d(0, 0, 0); }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .grain { animation: none; }
+}

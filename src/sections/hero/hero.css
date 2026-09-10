@@ -1,0 +1,328 @@
+/* ============================================================================
+   HERO — full-bleed live render behind the studio's promise.
+
+   Stacking: the shared WebGL canvas is fixed at z-index 2 in the root
+   stacking context. `.hero__viewport` sits at z-index 5 with a transparent
+   background, so the section's own background paints under the canvas and
+   every DOM layer paints over it. That holds in both the static and the
+   pinned (position: fixed) state, which is why the viewport — not the
+   section — carries the z-index.
+   ========================================================================== */
+
+.hero {
+  padding-block: 0;
+  background: var(--bg);
+  color: var(--fg);
+}
+
+.hero__viewport {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100svh;
+  padding-top: calc(var(--header-h) + clamp(0.5rem, 2.6vh, 2.5rem));
+  padding-bottom: clamp(0.85rem, 2.2vh, 1.75rem);
+  background: transparent;
+}
+
+/* ------------------------------------------------------------------- 3D  */
+.hero .hero__stage {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.hero .hero__fallback {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  transform-origin: 62% 56%;
+}
+html.no-webgl .hero .hero__fallback { will-change: transform; }
+.hero .hero__fallback > svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.78;
+  -webkit-mask-image: radial-gradient(115% 105% at 64% 54%, #000 34%, transparent 82%);
+  mask-image: radial-gradient(115% 105% at 64% 54%, #000 34%, transparent 82%);
+}
+
+/* --------------------------------------------------------------- SCRIM  */
+/* Light, directional wash — it lifts the type off the render without
+   flattening the image. Never a heavy overlay. */
+.hero__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background:
+    radial-gradient(72% 88% at 6% 44%, color-mix(in oklab, var(--bg) 86%, transparent), transparent 72%),
+    linear-gradient(96deg,
+      color-mix(in oklab, var(--bg) 74%, transparent) 0%,
+      color-mix(in oklab, var(--bg) 46%, transparent) 34%,
+      color-mix(in oklab, var(--bg) 8%, transparent) 60%,
+      transparent 78%),
+    linear-gradient(to top, color-mix(in oklab, var(--bg) 82%, transparent) 0%, transparent 24%);
+}
+
+/* Sunlight bloom — the last beat of the scroll dive, as the camera crosses
+   the glazing. Driven from hero.js. */
+.hero__flare {
+  position: absolute;
+  inset: 0;
+  z-index: 7;
+  opacity: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(58% 62% at 62% 48%, var(--c-white) 0%, color-mix(in oklab, var(--c-paper) 92%, transparent) 46%, transparent 82%),
+    linear-gradient(180deg, color-mix(in oklab, var(--c-paper) 70%, transparent), color-mix(in oklab, var(--bg) 80%, transparent));
+  will-change: opacity;
+}
+
+/* -------------------------------------------------------------- CONTENT */
+.hero__main {
+  position: relative;
+  z-index: 6;
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  will-change: transform, opacity;
+}
+.hero__shell { width: 100%; }
+.hero__grid { align-items: center; }
+
+.hero__body {
+  grid-column: 1 / -1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: clamp(0.85rem, 2.1vh, 1.6rem);
+}
+
+/* ---------------------------------------------------------------- TYPE  */
+.hero__eyebrow { color: var(--fg-soft); }
+
+.hero__title {
+  margin: 0;
+  max-width: 13ch;
+  font-family: var(--ff-display);
+  font-weight: 300;
+  font-size: clamp(3.35rem, min(7.2vw, 12vh) + 0.6rem, 8.6rem);
+  font-size: clamp(3.35rem, min(7.2vw, 12svh) + 0.6rem, 8.6rem);
+  line-height: 0.94;
+  letter-spacing: var(--tr-mega);
+  font-variation-settings: "SOFT" 0, "WONK" 0, "opsz" 144;
+  text-wrap: balance;
+}
+.hero__title em {
+  font-style: italic;
+  font-weight: 300;
+  color: var(--accent);
+  font-variation-settings: "SOFT" 6, "WONK" 1, "opsz" 144;
+}
+/* SplitText writes these. The line mask clips to the line box, so the line
+   is padded (and the mask pulled back) to keep descenders off the knife. */
+.hero__title .split-line { padding-bottom: 0.15em; }
+.hero__title .split-line-mask { margin-bottom: -0.15em; }
+.hero__title .split-char { will-change: transform; }
+
+.hero__lede {
+  max-width: 46ch;
+  color: var(--fg-soft);
+}
+
+/* --------------------------------------------------------------- CHIPS  */
+.hero__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.hero__chip-item { display: inline-flex; }
+.hero__chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7em;
+  padding: 0.62em 1.05em;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: color-mix(in oklab, var(--bg-raised) 68%, transparent);
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  font-weight: 500;
+  letter-spacing: var(--tr-wide);
+  text-transform: uppercase;
+  color: var(--fg-soft);
+  white-space: nowrap;
+  transition:
+    color var(--d-fast) var(--e-out-quart),
+    border-color var(--d-fast) var(--e-out-quart),
+    background-color var(--d-fast) var(--e-out-quart),
+    transform var(--d-base) var(--e-out-expo);
+}
+.hero__chip-idx {
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+  transition: transform var(--d-base) var(--e-out-expo);
+}
+.hero__chip:hover,
+.hero__chip:focus-visible {
+  color: var(--fg);
+  border-color: var(--line-strong);
+  background: var(--bg-raised);
+  transform: translate3d(0, -2px, 0);
+}
+.hero__chip:hover .hero__chip-idx { transform: translate3d(0, -0.12em, 0); }
+
+/* ------------------------------------------------------------- ACTIONS  */
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: clamp(0.6rem, 1vw, 0.9rem);
+  margin-top: clamp(0.1rem, 0.6vh, 0.5rem);
+}
+.hero .btn--ghost {
+  --btn-bg: color-mix(in oklab, var(--bg) 66%, transparent);
+}
+
+/* ------------------------------------------------------- INSTRUMENT BAR */
+.hero__foot {
+  position: relative;
+  z-index: 6;
+  flex: 0 0 auto;
+  width: 100%;
+  will-change: transform, opacity;
+}
+.hero__foot-shell { width: 100%; }
+
+.hero__cue-row {
+  display: flex;
+  justify-content: center;
+  padding-bottom: clamp(0.7rem, 1.7vh, 1.3rem);
+}
+.hero__cue {
+  color: var(--fg-muted);
+  transition: color var(--d-base) var(--e-out-quart);
+}
+.hero__cue-label { display: block; }
+.hero .scroll-cue__rail { height: clamp(1.9rem, 4.4vh, 3.4rem); }
+.hero__cue:hover,
+.hero__cue:focus-visible { color: var(--fg); }
+
+.hero__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.45rem clamp(1rem, 3vw, 2.5rem);
+  padding-top: clamp(0.6rem, 1.4vh, 1rem);
+  border-top: 1px solid var(--line);
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  font-weight: 500;
+  letter-spacing: var(--tr-wide);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+.hero__meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.4rem 0.85rem;
+  margin: 0;
+  min-width: 0;
+}
+.hero__meta-row--tech { justify-content: flex-end; }
+
+.hero__meta-tag { position: relative; }
+.hero__meta-tag + .hero__meta-tag::before {
+  content: "·";
+  position: absolute;
+  left: -0.5rem;
+  color: var(--line-strong);
+}
+
+.hero__live {
+  position: relative;
+  align-self: center;
+  width: 6px;
+  height: 6px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.hero__live::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  border: 1px solid var(--accent);
+  opacity: 0;
+  animation: hero-live 2.6s var(--e-out-quart) infinite;
+}
+@keyframes hero-live {
+  0%   { transform: scale(0.6); opacity: 0.7; }
+  70%  { transform: scale(1.9); opacity: 0; }
+  100% { transform: scale(1.9); opacity: 0; }
+}
+
+.hero__meta-cell {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.55em;
+  white-space: nowrap;
+  color: var(--fg-soft);
+}
+.hero__meta-key { color: var(--fg-muted); }
+
+/* ---------------------------------------------------------- BREAKPOINTS */
+@media (min-width: 1200px) {
+  .hero__body { grid-column: 1 / span 8; }
+  .hero__meta { gap: 0.45rem 3rem; }
+}
+
+@media (min-width: 1024px) {
+  .hero__cue-row { justify-content: flex-end; }
+}
+
+@media (max-width: 900px) {
+  .hero__scrim {
+    background:
+      linear-gradient(180deg,
+        color-mix(in oklab, var(--bg) 88%, transparent) 0%,
+        color-mix(in oklab, var(--bg) 66%, transparent) 34%,
+        color-mix(in oklab, var(--bg) 34%, transparent) 58%,
+        color-mix(in oklab, var(--bg) 76%, transparent) 100%);
+  }
+  .hero__meta-row--tech { justify-content: flex-start; }
+}
+
+@media (max-width: 640px) {
+  .hero__viewport { padding-bottom: clamp(0.75rem, 2vh, 1.25rem); }
+  .hero__lede { font-size: var(--fs-base); max-width: 42ch; }
+  .hero__actions { width: 100%; }
+  .hero__actions .btn { flex: 1 1 auto; justify-content: center; }
+  .hero__meta { gap: 0.5rem 1rem; }
+  .hero__meta-row--tech { width: 100%; justify-content: space-between; gap: 0.4rem 0.75rem; }
+}
+
+
+/* -------------------------------------------------------- REDUCED MOTION */
+@media (prefers-reduced-motion: reduce) {
+  .hero__main,
+  .hero__foot,
+  .hero .hero__fallback { will-change: auto; }
+  .hero__live::after { animation: none; opacity: 0; }
+}

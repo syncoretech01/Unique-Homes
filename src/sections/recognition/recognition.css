@@ -1,0 +1,274 @@
+/* ============================================================================
+   RECOGNITION
+   ----------------------------------------------------------------------------
+   A hairline-ruled list on paper, with a sticky note beside it. The section
+   sits on --bg-raised so it separates cleanly from the bone-coloured sections
+   either side of it, which leaves --bg-sunken free to be the row hover wipe.
+
+   Every entrance state (rule scaleX, text translateY) is written by
+   recognition.js, never by this stylesheet — so with reduced motion, or no
+   JS at all, the list is already fully drawn and readable.
+   ========================================================================== */
+
+.recognition {
+  --rec-pad: clamp(0.5rem, 1vw, 0.9rem);
+  background: var(--bg-raised);
+}
+
+.recognition__edge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 1px;
+  background: var(--line);
+}
+
+/* ------------------------------------------------------------------ HEAD */
+
+.recognition__heading { margin: 0; }
+
+/* Held back until reveal.js has split the lines, so the heading never paints
+   once and then jumps into its masks. Never hidden without JS. */
+.js .recognition__heading[data-split] { visibility: hidden; }
+.no-js .recognition__heading[data-split] { visibility: visible; }
+
+.recognition__count {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  margin: 0;
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wider);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+.recognition__count-sep {
+  width: 1.4rem;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.5;
+}
+
+/* ---------------------------------------------------------------- LAYOUT */
+
+.recognition__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 0.85fr);
+  gap: clamp(2.5rem, 5vw, 6rem);
+  /* Both columns stretch on purpose: the aside must be taller than the note
+     inside it, or the sticky block has no room in which to stick. */
+  align-items: stretch;
+}
+@media (max-width: 1000px) {
+  .recognition__layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(2.5rem, 6vw, 4rem);
+  }
+}
+
+.recognition__main { min-width: 0; }
+
+/* ------------------------------------------------------------------ LIST */
+
+.recognition__list {
+  margin: 0 calc(var(--rec-pad) * -1);
+  padding: 0;
+}
+
+.recognition__row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 5rem minmax(0, 1fr) minmax(0, auto) 1.9rem;
+  align-items: baseline;
+  gap: 0 clamp(0.75rem, 1.6vw, 1.75rem);
+  padding: clamp(1.05rem, 1.8vw, 1.6rem) var(--rec-pad);
+}
+
+/* Hairline that draws in from the left, one per row. */
+.recognition__rule,
+.recognition__list-rule {
+  position: absolute;
+  top: 0;
+  right: var(--rec-pad);
+  left: var(--rec-pad);
+  z-index: 2;
+  height: 1px;
+  background: var(--line);
+  transform-origin: left center;
+}
+.recognition__list-rule {
+  position: relative;
+  display: block;
+  right: auto;
+  left: auto;
+  width: 100%;
+}
+
+/* Background wipe, left to right, under the text. */
+.recognition__wipe {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: block;
+  background: var(--bg-sunken);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 720ms var(--e-out-expo);
+}
+
+/* The three text cells sit above the wipe. Their entrance is a clip-path
+   mask plus a short rise, written and then cleared by recognition.js — a
+   clip never disturbs baseline alignment the way an overflow wrapper does. */
+.recognition__year,
+.recognition__name,
+.recognition__award,
+.recognition__glyph {
+  position: relative;
+  z-index: 1;
+}
+
+.recognition__year {
+  grid-column: 1;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  letter-spacing: var(--tr-wide);
+  color: var(--fg-muted);
+  transition: color 420ms var(--e-out-quart);
+}
+
+.recognition__name {
+  grid-column: 2;
+  font-family: var(--ff-display);
+  font-size: var(--fs-lg);
+  font-weight: 300;
+  line-height: var(--lh-snug);
+  letter-spacing: var(--tr-snug);
+  font-variation-settings: "SOFT" 0, "WONK" 0, "opsz" 40;
+  color: var(--fg);
+}
+
+.recognition__award {
+  grid-column: 3;
+  max-width: 26ch;
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+  text-align: right;
+  color: var(--fg-muted);
+  transition: color 420ms var(--e-out-quart);
+}
+
+.recognition__glyph {
+  grid-column: 4;
+  align-self: center;
+  justify-self: end;
+  display: block;
+  width: 1.35rem;
+  height: 1.35rem;
+  color: var(--accent);
+  opacity: 0;
+  transform: translate3d(-8px, 0, 0);
+  transition:
+    opacity 420ms var(--e-out-quart),
+    transform 520ms var(--e-out-expo);
+}
+.recognition__glyph svg { display: block; width: 100%; height: 100%; }
+
+@media (hover: hover) and (pointer: fine) {
+  .recognition__row:hover .recognition__wipe { transform: scaleX(1); }
+  .recognition__row:hover .recognition__year { color: var(--accent); }
+  .recognition__row:hover .recognition__award { color: var(--fg-soft); }
+  .recognition__row:hover .recognition__glyph {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* Narrow: the row stacks into year / title / award. */
+@media (max-width: 720px) {
+  .recognition__row {
+    grid-template-columns: minmax(0, 1fr) 1.5rem;
+    align-items: start;
+    gap: 0.4rem clamp(0.75rem, 2vw, 1rem);
+  }
+  .recognition__year { grid-column: 1; grid-row: 1; }
+  .recognition__glyph { grid-column: 2; grid-row: 1; align-self: start; }
+  .recognition__name { grid-column: 1 / -1; grid-row: 2; }
+  .recognition__award { grid-column: 1 / -1; grid-row: 3; text-align: left; }
+}
+
+/* ------------------------------------------------------------ DISCLAIMER */
+
+.recognition__disclaimer {
+  display: flex;
+  align-items: baseline;
+  gap: 0.8rem;
+  max-width: 56ch;
+  margin: clamp(1.75rem, 3vw, 2.75rem) 0 0;
+  font-size: var(--fs-xs);
+  line-height: 1.62;
+  color: var(--fg-muted);
+}
+.recognition__disclaimer-mark {
+  flex: none;
+  padding: 0.22em 0.7em;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wider);
+  text-transform: uppercase;
+  color: var(--accent);
+  border: 1px solid color-mix(in oklab, var(--accent) 32%, transparent);
+  border-radius: var(--radius-pill);
+}
+
+/* ----------------------------------------------------------------- ASIDE */
+
+/* The hairline lives on the column, not the sticky block, so it runs the
+   full height of the list rather than only as far as the note. */
+.recognition__aside {
+  min-width: 0;
+  padding-left: clamp(1.25rem, 2vw, 2.25rem);
+  border-left: 1px solid var(--line);
+}
+
+.recognition__sticky {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+/* Doubled up so it always beats .t-body from the shared type scale. */
+.recognition .recognition__aside-body {
+  margin: 0;
+  font-size: var(--fs-sm);
+  line-height: var(--lh-relaxed);
+  color: var(--fg-soft);
+  max-width: 46ch;
+}
+.recognition__aside-cta { margin-top: var(--sp-2); }
+.recognition__link { align-self: flex-start; }
+
+@media (max-width: 1000px) {
+  .recognition__aside {
+    padding-left: 0;
+    padding-top: var(--sp-5);
+    border-left: 0;
+    border-top: 1px solid var(--line);
+  }
+  /* Doubled up so it always beats .sticky from the layout primitives. */
+  .recognition .recognition__sticky {
+    position: static;
+    top: auto;
+  }
+  .recognition .recognition__aside-body { max-width: 62ch; }
+}
+
+/* --------------------------------------------------------- REDUCED MOTION */
+
+@media (prefers-reduced-motion: reduce) {
+  .js .recognition__heading[data-split] { visibility: visible; }
+  .recognition__wipe,
+  .recognition__glyph,
+  .recognition__year,
+  .recognition__award { transition: none; }
+}

@@ -1,0 +1,87 @@
+<!-- ==========================================================================
+     PAGE HERO — the shared hero for services, projects, studio, journal and
+     contact. One partial, five identities: every string, the drawing kind and
+     the drawing seed are selected at runtime in page-hero.js from ctx.page.
+
+     The copy written below is brand-level and true on every one of those five
+     pages, so the section still reads correctly in the moment before the
+     module runs. Empty nodes (breadcrumb tail, coordinates, meta, caption)
+     collapse until JS fills them.
+     ========================================================================== -->
+<section class="section page-hero" data-section="page-hero" id="page-hero" aria-labelledby="page-hero-title">
+
+  <div class="page-hero__art" aria-hidden="true">
+    <div
+      class="page-hero__art-scroll"
+      data-parallax="0.18"
+      data-parallax-scope="[data-section='page-hero']"
+      data-parallax-start="top top"
+      data-parallax-end="bottom top"
+    >
+      <div class="page-hero__art-point" data-ph-art-point>
+        <div class="page-hero__art-draw" data-ph-drawing></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-hero__inner shell">
+
+    <div class="page-hero__top">
+      <nav class="page-hero__crumbs" aria-label="Breadcrumb">
+        <ol class="page-hero__crumb-list">
+          <li class="page-hero__crumb">
+            <a class="page-hero__crumb-link link-u" href="/">Home</a>
+          </li>
+          <li class="page-hero__crumb-sep" aria-hidden="true">/</li>
+          <li class="page-hero__crumb">
+            <span class="page-hero__crumb-current" data-ph-crumb aria-current="page"></span>
+          </li>
+        </ol>
+      </nav>
+      <p class="page-hero__coords t-num" data-ph-coords></p>
+    </div>
+
+    <div class="page-hero__body">
+
+      <div class="page-hero__lead">
+        <p class="eyebrow page-hero__eyebrow">
+          <span class="page-hero__eyebrow-text" data-ph-eyebrow>Unique Homes and Design</span>
+          <span class="page-hero__eyebrow-index t-num" data-ph-index></span>
+        </p>
+
+        <h1 class="page-hero__title" id="page-hero-title" data-ph-title>Architecture, engineering<br>and visualisation.</h1>
+
+        <p class="t-lead page-hero__lede" data-ph-lede>A residential architecture and engineering studio in Austin, Texas, producing permit-ready drawing sets, site-tailored civil packages and photoreal visualisation — all in house.</p>
+      </div>
+
+      <figure
+        class="page-hero__plate"
+        data-parallax="-0.12"
+        data-parallax-scope="[data-section='page-hero']"
+        data-parallax-start="top top"
+        data-parallax-end="bottom top"
+      >
+        <div class="frame page-hero__plate-frame" data-ph-plate></div>
+        <figcaption class="page-hero__cap" data-ph-cap></figcaption>
+      </figure>
+
+    </div>
+
+    <div class="page-hero__foot">
+      <ul class="page-hero__meta" data-ph-meta></ul>
+
+      <div class="page-hero__cue-wrap">
+        <button class="scroll-cue page-hero__cue" type="button" data-ph-cue>
+          <span class="page-hero__cue-label">Scroll<span class="u-sr"> to the next section</span></span>
+          <span class="scroll-cue__rail" aria-hidden="true"></span>
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="page-hero__rule" aria-hidden="true">
+    <span class="page-hero__rule-line" data-ph-rule></span>
+  </div>
+
+</section>

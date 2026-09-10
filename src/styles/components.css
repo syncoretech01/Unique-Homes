@@ -1,0 +1,429 @@
+/* ============================================================================
+   UI KIT — shared components used across every page
+   ========================================================================== */
+
+/* ---------------------------------------------------------------- BUTTONS */
+.btn {
+  --btn-bg: var(--fg);
+  --btn-fg: var(--bg);
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75em;
+  padding: 1.05em 1.9em;
+  border-radius: var(--radius-pill);
+  font-family: var(--ff-sans);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: var(--btn-fg);
+  background: var(--btn-bg);
+  overflow: hidden;
+  isolation: isolate;
+  white-space: nowrap;
+  /* A pill button must never be squeezed below its label by a flex parent. */
+  flex: 0 0 auto;
+  transition: color var(--d-base) var(--e-out-expo),
+              transform var(--d-base) var(--e-out-expo);
+  will-change: transform;
+}
+.btn__fill {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--accent);
+  transform: translate3d(0, 101%, 0);
+  border-radius: 50% 50% 0 0 / 22% 22% 0 0;
+  transition: transform 620ms var(--e-out-expo),
+              border-radius 620ms var(--e-out-expo);
+}
+.btn:hover .btn__fill,
+.btn:focus-visible .btn__fill {
+  transform: translate3d(0, 0, 0);
+  border-radius: 0;
+}
+.btn:hover { color: var(--accent-fg); }
+.btn:active { transform: scale(0.975); }
+
+.btn__label {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  height: 1.15em;
+}
+.btn__label span {
+  display: block;
+  transition: transform 520ms var(--e-out-expo);
+}
+.btn__label span::after {
+  content: attr(data-text);
+  display: block;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  white-space: nowrap;
+}
+.btn:hover .btn__label span { transform: translateY(-100%); }
+
+.btn--ghost {
+  --btn-bg: transparent;
+  --btn-fg: var(--fg);
+  border: 1px solid var(--line-strong);
+}
+.btn--ghost:hover { border-color: transparent; }
+.btn--accent { --btn-bg: var(--accent); --btn-fg: var(--accent-fg); }
+.btn--accent .btn__fill { background: var(--fg); }
+.btn--accent:hover { color: var(--bg); }
+.btn--lg { padding: 1.25em 2.4em; font-size: var(--fs-base); }
+.btn--sm { padding: 0.8em 1.4em; font-size: var(--fs-xs); }
+.btn--block { display: flex; width: 100%; }
+
+/* Arrow glyph that slides on hover */
+.btn__arrow {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 1.1em;
+  height: 1.1em;
+  overflow: hidden;
+  flex: none;
+}
+.btn__arrow svg {
+  width: 100%;
+  height: 100%;
+  transition: transform 520ms var(--e-out-expo);
+}
+.btn:hover .btn__arrow svg { transform: translate3d(130%, -130%, 0); }
+.btn__arrow svg:last-child { position: absolute; transform: translate3d(-130%, 130%, 0); }
+.btn:hover .btn__arrow svg:last-child { transform: translate3d(0, 0, 0); }
+
+/* Circular magnetic action button */
+.btn-circle {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: clamp(6rem, 10vw, 9.5rem);
+  height: clamp(6rem, 10vw, 9.5rem);
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--accent-fg);
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wider);
+  text-transform: uppercase;
+  overflow: hidden;
+  will-change: transform;
+}
+.btn-circle::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--fg);
+  transform: scale(0);
+  border-radius: 50%;
+  transition: transform 620ms var(--e-out-expo);
+}
+.btn-circle:hover::before { transform: scale(1.05); }
+.btn-circle > * { position: relative; z-index: 1; }
+
+/* ------------------------------------------------------------------ TAGS */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.45em 0.9em;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wide);
+  text-transform: uppercase;
+  color: var(--fg-soft);
+  transition: border-color var(--d-fast) var(--e-out-quart),
+              color var(--d-fast) var(--e-out-quart),
+              background-color var(--d-fast) var(--e-out-quart);
+}
+.tag--accent { color: var(--accent); border-color: color-mix(in oklab, var(--accent) 40%, transparent); }
+.tag--solid { background: var(--fg); color: var(--bg); border-color: transparent; }
+.tag__dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+
+/* ----------------------------------------------------------------- CARDS */
+.card {
+  position: relative;
+  background: var(--bg-raised);
+  border: 1px solid var(--line-soft);
+  overflow: hidden;
+  transition: border-color var(--d-base) var(--e-out-quart),
+              transform var(--d-base) var(--e-out-expo),
+              box-shadow var(--d-base) var(--e-out-expo);
+}
+.card:hover { border-color: var(--line-strong); }
+.card__body { padding: clamp(1.5rem, 2.4vw, 2.5rem); }
+
+/* --------------------------------------------------------------- MARQUEE */
+.marquee {
+  --marquee-duration: 42s;
+  position: relative;
+  display: flex;
+  overflow: hidden;
+  width: 100%;
+  user-select: none;
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+.marquee--edge { mask-image: none; -webkit-mask-image: none; }
+.marquee__track {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--marquee-gap, 3rem);
+  padding-right: var(--marquee-gap, 3rem);
+  min-width: 100%;
+  will-change: transform;
+  animation: marquee-run var(--marquee-duration) linear infinite;
+}
+.marquee--reverse .marquee__track { animation-direction: reverse; }
+.marquee:hover .marquee__track { animation-play-state: var(--marquee-hover, running); }
+@keyframes marquee-run {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-100%, 0, 0); }
+}
+.marquee__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.2rem;
+  flex: none;
+  white-space: nowrap;
+}
+
+/* ------------------------------------------------------------- ACCORDION */
+.acc { border-top: 1px solid var(--line); }
+.acc__item { border-bottom: 1px solid var(--line); }
+.acc__trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-5);
+  width: 100%;
+  padding: clamp(1.35rem, 2.4vw, 2.1rem) 0;
+  text-align: left;
+  color: var(--fg);
+  transition: color var(--d-fast) var(--e-out-quart);
+}
+.acc__trigger:hover { color: var(--accent); }
+.acc__q {
+  font-family: var(--ff-display);
+  font-size: var(--fs-lg);
+  font-weight: 300;
+  letter-spacing: var(--tr-snug);
+  line-height: 1.2;
+}
+.acc__icon {
+  position: relative;
+  flex: none;
+  width: 2.6rem;
+  height: 2.6rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  transition: background-color var(--d-base) var(--e-out-expo),
+              border-color var(--d-base) var(--e-out-expo),
+              transform var(--d-base) var(--e-out-expo);
+}
+.acc__icon::before,
+.acc__icon::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 11px;
+  height: 1px;
+  background: currentColor;
+  transform: translate(-50%, -50%);
+  transition: transform var(--d-base) var(--e-out-expo),
+              opacity var(--d-base) var(--e-out-expo);
+}
+.acc__icon::after { transform: translate(-50%, -50%) rotate(90deg); }
+.acc__item.is-open .acc__icon { background: var(--accent); border-color: var(--accent); color: var(--accent-fg); transform: rotate(180deg); }
+.acc__item.is-open .acc__icon::after { transform: translate(-50%, -50%) rotate(0deg); opacity: 0; }
+.acc__panel { overflow: hidden; height: 0; }
+.acc__panel-inner { padding-bottom: clamp(1.35rem, 2.4vw, 2.1rem); }
+
+/* ------------------------------------------------------------------ FORM */
+.field { position: relative; padding-top: 1.5rem; }
+.field__input {
+  width: 100%;
+  padding: 0.55rem 0 0.85rem;
+  font-size: var(--fs-md);
+  color: var(--fg);
+  background: transparent;
+  border-bottom: 1px solid var(--line);
+  transition: border-color var(--d-base) var(--e-out-quart);
+  border-radius: 0;
+}
+.field__input::placeholder { color: transparent; }
+.field__label {
+  position: absolute;
+  top: 2.05rem;
+  left: 0;
+  font-size: var(--fs-md);
+  color: var(--fg-muted);
+  pointer-events: none;
+  transform-origin: left top;
+  transition: transform 420ms var(--e-out-expo), color 420ms var(--e-out-expo);
+}
+.field__input:focus + .field__label,
+.field__input:not(:placeholder-shown) + .field__label {
+  transform: translateY(-1.75rem) scale(0.66);
+  color: var(--fg-muted);
+}
+.field__line {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 1px;
+  width: 100%;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 620ms var(--e-out-expo);
+}
+.field__input:focus ~ .field__line { transform: scaleX(1); }
+.field textarea.field__input { resize: none; min-height: 8rem; }
+.field.is-invalid .field__input { border-color: var(--c-terra); }
+.field__error {
+  display: block;
+  margin-top: 0.5rem;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wide);
+  text-transform: uppercase;
+  color: var(--c-terra);
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity var(--d-fast) var(--e-out-quart), transform var(--d-fast) var(--e-out-quart);
+}
+.field.is-invalid .field__error { opacity: 1; transform: translateY(0); }
+
+/* Selectable chip group */
+.chip {
+  padding: 0.7em 1.15em;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-sm);
+  color: var(--fg-soft);
+  transition: all var(--d-fast) var(--e-out-quart);
+}
+.chip:hover { border-color: var(--fg); color: var(--fg); }
+.chip.is-active {
+  background: var(--fg);
+  border-color: var(--fg);
+  color: var(--bg);
+}
+
+/* -------------------------------------------------------------- REVEALS  */
+/* Base states consumed by src/core/reveal.js. JS clears them on animate-in. */
+[data-reveal] { will-change: transform, opacity; }
+[data-reveal="fade"]   { opacity: 0; }
+[data-reveal="up"]     { opacity: 0; transform: translate3d(0, 2.2rem, 0); }
+[data-reveal="scale"]  { opacity: 0; transform: scale(1.06); }
+[data-reveal="clip"]   { clip-path: inset(0 0 100% 0); }
+[data-reveal="mask"]   { clip-path: inset(0 100% 0 0); }
+html.no-js [data-reveal] { opacity: 1 !important; transform: none !important; clip-path: none !important; }
+
+/* Media that scales down into place as it enters */
+.reveal-media { overflow: hidden; }
+.reveal-media > * { will-change: transform; }
+
+/* ------------------------------------------------------------ SCROLL CUE */
+.scroll-cue {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-widest);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+.scroll-cue__rail {
+  position: relative;
+  width: 1px;
+  height: 4.5rem;
+  background: var(--line-strong);
+  overflow: hidden;
+}
+.scroll-cue__rail::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 40%;
+  background: var(--accent);
+  animation: cue-run 2.1s var(--e-in-out-quart) infinite;
+}
+@keyframes cue-run {
+  0%   { transform: translateY(-100%); }
+  100% { transform: translateY(250%); }
+}
+
+/* ---------------------------------------------------------- MEDIA / ART  */
+/* Procedural art plate: a generated architectural drawing on a tinted field */
+.plate {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: linear-gradient(150deg, var(--plate-a, var(--c-shell)), var(--plate-b, var(--c-sand)));
+}
+.plate__svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.plate__glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(120% 90% at 30% 15%, rgb(255 255 255 / 0.55), transparent 62%);
+  mix-blend-mode: soft-light;
+  pointer-events: none;
+}
+.plate__noise {
+  position: absolute;
+  inset: 0;
+  opacity: 0.28;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------- BADGES  */
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.stat__num {
+  font-family: var(--ff-display);
+  font-size: var(--fs-3xl);
+  font-weight: 300;
+  line-height: 0.9;
+  letter-spacing: var(--tr-tight);
+  font-variation-settings: "SOFT" 0, "WONK" 0, "opsz" 144;
+}
+.stat__label {
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wider);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+/* --------------------------------------------------------------- CURSOR  */
+/* Elements can declare cursor intent: data-cursor="view|drag|link|hide" */
+[data-cursor] { cursor: none; }
+@media (hover: none), (pointer: coarse) {
+  [data-cursor] { cursor: auto; }
+}

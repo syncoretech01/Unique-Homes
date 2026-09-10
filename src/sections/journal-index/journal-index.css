@@ -1,0 +1,648 @@
+/* ============================================================================
+   JOURNAL INDEX
+   Featured entry · filterable editorial index · list sign-up.
+
+   Layout notes
+   · The index is a two-column editorial grid; every third card takes the full
+     measure, which keeps the half-width cards in clean pairs and gives the
+     page a rhythm rather than a wall of tiles.
+   · An opened card also takes the full measure and grows a reading panel
+     underneath its masthead. Nothing but transform, opacity and clip-path is
+     ever animated, so GSAP Flip can move the survivors around it freely.
+   ========================================================================== */
+
+.journal-index {
+  overflow: clip;
+}
+
+.journal-index__dot {
+  display: inline-block;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.55;
+  vertical-align: middle;
+}
+
+/* ========================================================================== */
+/*  FEATURED                                                                  */
+/* ========================================================================== */
+
+.journal-index__featured {
+  position: relative;
+}
+
+.journal-index__f-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  flex-wrap: wrap;
+  padding-bottom: clamp(0.9rem, 1.6vw, 1.4rem);
+  border-bottom: 1px solid var(--line);
+}
+
+.journal-index__f-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8em;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wider);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.journal-index__f-headline {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: var(--sp-4) var(--sp-6);
+  padding-block: clamp(1.75rem, 3.6vw, 3.25rem);
+}
+
+.journal-index__f-title {
+  font-family: var(--ff-display);
+  font-size: var(--fs-3xl);
+  font-weight: 300;
+  line-height: var(--lh-tight);
+  letter-spacing: var(--tr-tight);
+  font-variation-settings: "SOFT" 0, "WONK" 0, "opsz" 144;
+  text-wrap: balance;
+  max-width: 20ch;
+}
+
+.journal-index__f-time {
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wider);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  white-space: nowrap;
+  padding-bottom: 0.5em;
+}
+
+.journal-index__f-art {
+  margin: 0;
+}
+
+.journal-index__f-frame {
+  aspect-ratio: 16 / 7;
+  background: var(--bg-sunken);
+}
+
+/* Oversized so the scrubbed drift never exposes an edge. The compound
+   selector outranks `.frame > *`, which would otherwise pin it to inset 0. */
+.journal-index__f-frame > .journal-index__f-shift {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -12%;
+  bottom: auto;
+  width: 100%;
+  height: 124%;
+  will-change: transform;
+}
+
+.journal-index__f-cap {
+  margin-top: var(--sp-3);
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wider);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.journal-index__f-foot {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  align-items: start;
+  gap: clamp(1.5rem, 4vw, 4rem);
+  padding-top: clamp(1.75rem, 3.2vw, 2.75rem);
+}
+
+.journal-index__f-excerpt {
+  max-width: 46ch;
+}
+
+.journal-index__f-actions {
+  justify-self: end;
+}
+
+@media (max-width: 900px) {
+  .journal-index__f-headline,
+  .journal-index__f-foot {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .journal-index__f-time { padding-bottom: 0; }
+  .journal-index__f-actions { justify-self: start; }
+  .journal-index__f-frame { aspect-ratio: 4 / 3; }
+  .journal-index__f-title { max-width: none; }
+}
+
+/* ========================================================================== */
+/*  SECTION HEADER + FILTERS                                                  */
+/* ========================================================================== */
+
+.journal-index__head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+  margin-top: clamp(4.5rem, 9vw, 8rem);
+  padding-top: clamp(1.75rem, 3vw, 2.5rem);
+  border-top: 1px solid var(--line-strong);
+}
+
+.journal-index__head-lead {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.journal-index__heading {
+  font-family: var(--ff-display);
+  font-size: var(--fs-2xl);
+  font-weight: 300;
+  line-height: var(--lh-snug);
+  letter-spacing: var(--tr-snug);
+  font-variation-settings: "SOFT" 0, "WONK" 0, "opsz" 72;
+  max-width: 16ch;
+}
+
+.journal-index__controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4) var(--sp-6);
+  flex-wrap: wrap;
+}
+
+.journal-index__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.journal-index__chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.6em;
+}
+
+.journal-index__chip-n {
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wide);
+  opacity: 0.6;
+}
+
+.journal-index__count {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.45em;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wider);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  white-space: nowrap;
+}
+
+.journal-index__count-now { color: var(--fg); }
+.journal-index__count-sep { opacity: 0.45; }
+.journal-index__count-label { margin-left: 0.25em; }
+
+/* ========================================================================== */
+/*  THE INDEX GRID                                                            */
+/* ========================================================================== */
+
+.journal-index__grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(2.75rem, 5vw, 5rem) var(--gutter);
+  margin-top: clamp(2.5rem, 5vw, 4.5rem);
+}
+
+.journal-index__empty {
+  margin-top: var(--sp-6);
+  font-size: var(--fs-base);
+  line-height: var(--lh-relaxed);
+  color: var(--fg-muted);
+  max-width: 52ch;
+}
+
+.journal-index__card {
+  position: relative;
+  grid-column: span 1;
+}
+
+.journal-index__card--wide,
+.journal-index__card.is-open {
+  grid-column: 1 / -1;
+}
+
+.journal-index__card.is-filtered-out { display: none; }
+
+@media (max-width: 860px) {
+  .journal-index__grid { grid-template-columns: minmax(0, 1fr); }
+  .journal-index__card { grid-column: 1 / -1; }
+}
+
+/* ---------------------------------------------------------------- card box */
+
+.journal-index__card-main {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.1rem, 2vw, 1.6rem);
+  transition: transform var(--d-slow) var(--e-out-expo);
+  will-change: transform;
+}
+
+.journal-index__card-frame {
+  aspect-ratio: 4 / 3;
+  background: var(--bg-sunken);
+  border: 1px solid var(--line-soft);
+}
+
+.journal-index__card-plate {
+  transform-origin: 50% 50%;
+  transition: transform 900ms var(--e-out-expo), filter var(--d-slow) var(--e-out-quart);
+}
+
+.journal-index__card-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.journal-index__card-top {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.journal-index__card-idx {
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wider);
+  color: var(--fg-muted);
+}
+
+.journal-index__card-tag {
+  padding: 0.35em 0.8em;
+}
+
+.journal-index__card-title {
+  font-family: var(--ff-display);
+  font-size: var(--fs-xl);
+  font-weight: 300;
+  line-height: var(--lh-snug);
+  letter-spacing: var(--tr-snug);
+  font-variation-settings: "SOFT" 0, "WONK" 0, "opsz" 40;
+  transition: transform var(--d-slow) var(--e-out-expo), color var(--d-base) var(--e-out-quart);
+}
+
+.journal-index__card-link { color: inherit; }
+
+/* The whole tile is the target while the entry is closed. */
+.journal-index__card:not(.is-open) .journal-index__card-link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+}
+
+.journal-index__card-excerpt {
+  font-size: var(--fs-sm);
+  line-height: var(--lh-relaxed);
+  color: var(--fg-soft);
+  max-width: 46ch;
+}
+
+.journal-index__card-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.8em;
+  margin-top: 0.15rem;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wider);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+/* ------------------------------------------------------------- read affordance */
+
+.journal-index__read {
+  display: block;
+  overflow: hidden;
+  margin-top: 0.35rem;
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 620ms var(--e-out-expo);
+}
+
+.journal-index__read-in {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6em;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  font-weight: 500;
+  letter-spacing: var(--tr-wider);
+  text-transform: uppercase;
+  color: var(--accent);
+  transform: translateX(-0.8em);
+  transition: transform 620ms var(--e-out-expo);
+}
+
+.journal-index__read-in svg {
+  width: 0.72em;
+  height: 0.72em;
+  overflow: visible;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .journal-index__card:not(.is-open):hover .journal-index__card-main,
+  .journal-index__card:not(.is-open):focus-within .journal-index__card-main {
+    transform: translate3d(0, -8px, 0);
+  }
+  .journal-index__card:not(.is-open):hover .journal-index__card-plate,
+  .journal-index__card:not(.is-open):focus-within .journal-index__card-plate {
+    transform: scale(1.055);
+    filter: contrast(1.1) saturate(1.14) brightness(1.02);
+  }
+  .journal-index__card:not(.is-open):hover .journal-index__card-title,
+  .journal-index__card:not(.is-open):focus-within .journal-index__card-title {
+    transform: translate3d(0.4rem, 0, 0);
+    color: var(--accent);
+  }
+  .journal-index__card:not(.is-open):hover .journal-index__read,
+  .journal-index__card:not(.is-open):focus-within .journal-index__read {
+    clip-path: inset(0 0 0 0);
+  }
+  .journal-index__card:not(.is-open):hover .journal-index__read-in,
+  .journal-index__card:not(.is-open):focus-within .journal-index__read-in {
+    transform: translateX(0);
+  }
+  .journal-index__card:not(.is-open):hover .journal-index__card-frame,
+  .journal-index__card:not(.is-open):focus-within .journal-index__card-frame {
+    border-color: var(--line-strong);
+  }
+}
+
+/* Coarse pointers never hover, so the label simply stands there. */
+@media (hover: none), (pointer: coarse) {
+  .journal-index__read { clip-path: inset(0 0 0 0); }
+  .journal-index__read-in { transform: translateX(0); }
+}
+
+/* --------------------------------------------------- every third: full measure */
+
+@media (min-width: 861px) {
+  .journal-index__card--wide .journal-index__card-main {
+    display: grid;
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    align-items: center;
+    gap: clamp(1.75rem, 4vw, 4rem);
+  }
+  .journal-index__card--wide .journal-index__card-frame { aspect-ratio: 16 / 10; }
+  .journal-index__card--wide .journal-index__card-title { font-size: var(--fs-2xl); }
+  .journal-index__card--wide .journal-index__card-excerpt { font-size: var(--fs-base); }
+}
+
+/* ========================================================================== */
+/*  OPEN ENTRY — the inline reading panel                                     */
+/* ========================================================================== */
+
+.journal-index__card.is-open {
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+}
+
+.journal-index__card.is-open .journal-index__card-main {
+  transform: none;
+}
+
+@media (min-width: 861px) {
+  .journal-index__card.is-open .journal-index__card-main {
+    display: grid;
+    grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.3fr);
+    align-items: end;
+    gap: clamp(1.75rem, 4vw, 3.5rem);
+  }
+  .journal-index__card.is-open .journal-index__card-frame { aspect-ratio: 4 / 3; }
+  .journal-index__card.is-open .journal-index__card-title { font-size: var(--fs-2xl); }
+}
+
+.journal-index__card.is-open .journal-index__read { display: none; }
+.journal-index__card.is-open .journal-index__card-title { transform: none; }
+
+/* ------------------------------------------------------------- close controls */
+
+.journal-index__close-x {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: none;
+  width: 2.6rem;
+  height: 2.6rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  color: var(--fg-soft);
+  background: var(--bg-raised);
+  z-index: 4;
+  transition: background-color var(--d-base) var(--e-out-expo),
+              color var(--d-base) var(--e-out-expo),
+              border-color var(--d-base) var(--e-out-expo),
+              transform var(--d-base) var(--e-out-expo);
+}
+.journal-index__card.is-open .journal-index__close-x { display: block; }
+.journal-index__close-x:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-fg);
+  transform: rotate(90deg);
+}
+.journal-index__close-x::before,
+.journal-index__close-x::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 12px;
+  height: 1px;
+  background: currentColor;
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+.journal-index__close-x::after { transform: translate(-50%, -50%) rotate(-45deg); }
+
+/* ---------------------------------------------------------------- the panel */
+
+.journal-index__panel {
+  position: relative;
+}
+
+.journal-index__panel-inner {
+  display: grid;
+  gap: clamp(1rem, 1.8vw, 1.5rem);
+  max-width: 72ch;
+  margin-inline: auto;
+  margin-top: clamp(2rem, 4vw, 3.25rem);
+  padding-top: clamp(1.75rem, 3.2vw, 2.75rem);
+  border-top: 1px solid var(--line);
+}
+
+.journal-index__panel-lede {
+  font-family: var(--ff-display);
+  font-size: var(--fs-lg);
+  font-weight: 300;
+  line-height: var(--lh-snug);
+  letter-spacing: var(--tr-snug);
+  font-variation-settings: "SOFT" 0, "WONK" 0, "opsz" 40;
+  color: var(--fg);
+}
+
+.journal-index__panel-body {
+  display: grid;
+  gap: clamp(1rem, 1.8vw, 1.35rem);
+}
+
+.journal-index__p {
+  font-size: var(--fs-base);
+  line-height: var(--lh-relaxed);
+  color: var(--fg-soft);
+}
+
+.journal-index__quote {
+  position: relative;
+  margin-block: clamp(0.75rem, 1.6vw, 1.25rem);
+  padding-left: clamp(1.25rem, 3vw, 2.25rem);
+  border-left: 2px solid var(--accent);
+}
+
+.journal-index__quote p {
+  font-family: var(--ff-display);
+  font-size: var(--fs-lg);
+  font-weight: 300;
+  line-height: 1.24;
+  letter-spacing: var(--tr-snug);
+  font-variation-settings: "SOFT" 4, "WONK" 1, "opsz" 72;
+  color: var(--fg);
+  text-wrap: balance;
+}
+
+.journal-index__panel-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  flex-wrap: wrap;
+  margin-top: clamp(0.75rem, 1.6vw, 1.25rem);
+  padding-top: clamp(1.25rem, 2.4vw, 1.75rem);
+  border-top: 1px solid var(--line-soft);
+}
+
+.journal-index__panel-note {
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wide);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.journal-index__panel-note kbd {
+  font-family: var(--ff-mono);
+  font-size: inherit;
+  padding: 0.15em 0.45em;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-1);
+  color: var(--fg-soft);
+}
+
+/* Featured entry: the panel is the only thing that grows. */
+.journal-index__featured .journal-index__panel-inner {
+  margin-top: clamp(2.25rem, 4.5vw, 3.5rem);
+}
+
+/* ========================================================================== */
+/*  NEWSLETTER                                                                */
+/* ========================================================================== */
+
+.journal-index__news {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  margin-top: clamp(5rem, 10vw, 9rem);
+  padding: clamp(1.5rem, 5vw, 4.5rem);
+  background: var(--bg);
+  color: var(--fg);
+  border: 1px solid var(--line);
+}
+
+.journal-index__news-grid {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 0.75;
+  pointer-events: none;
+  mask-image: radial-gradient(120% 100% at 12% 0%, #000 20%, transparent 78%);
+  -webkit-mask-image: radial-gradient(120% 100% at 12% 0%, #000 20%, transparent 78%);
+}
+
+.journal-index__news-inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: start;
+  gap: clamp(2rem, 5vw, 5rem);
+}
+
+.journal-index__news-copy {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.journal-index__news-title {
+  font-family: var(--ff-display);
+  font-size: var(--fs-2xl);
+  font-weight: 300;
+  line-height: var(--lh-snug);
+  letter-spacing: var(--tr-snug);
+  font-variation-settings: "SOFT" 0, "WONK" 0, "opsz" 72;
+  max-width: 18ch;
+}
+
+.journal-index__news-body { max-width: 46ch; }
+
+.journal-index__news-form { align-self: end; }
+
+.journal-index__form {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--sp-4);
+}
+
+.journal-index__field {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.journal-index__submit { margin-bottom: 0.15rem; }
+
+.journal-index__news .ui-form-success { max-width: 46ch; }
+
+@media (max-width: 900px) {
+  .journal-index__news-inner { grid-template-columns: minmax(0, 1fr); }
+  .journal-index__news-title { max-width: none; }
+}
+
+@media (max-width: 560px) {
+  .journal-index__form {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--sp-5);
+  }
+  .journal-index__submit { align-self: flex-start; }
+}

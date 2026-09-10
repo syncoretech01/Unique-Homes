@@ -1,0 +1,231 @@
+/* ============================================================================
+   CUSTOM CURSOR
+   Two layers — a near 1:1 dot and an eased outline ring that morphs into the
+   intent declared by the element under the pointer (data-cursor).
+   Geometry is an SVG rect so the hairline never distorts while it morphs;
+   colour comes from tokens only, and the whole rig is transform-driven.
+   Every selector is scoped to .uhd-cursor or html.has-custom-cursor.
+   ========================================================================== */
+
+/* The native cursor is only suppressed once JS has proved the rig is live. */
+html.has-custom-cursor,
+html.has-custom-cursor a,
+html.has-custom-cursor button,
+html.has-custom-cursor input,
+html.has-custom-cursor textarea,
+html.has-custom-cursor select,
+html.has-custom-cursor label,
+html.has-custom-cursor summary,
+html.has-custom-cursor [data-cursor],
+html.has-custom-cursor [data-cursor-stick] {
+  cursor: none;
+}
+
+/* ------------------------------------------------------------------- ROOT */
+.uhd-cursor {
+  --uhd-ink: var(--fg);
+  --uhd-fill: var(--accent);
+  --uhd-label: var(--fg);
+  --uhd-arrow-x: 34px;
+
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-cursor);
+  pointer-events: none;
+  contain: layout style;
+  mix-blend-mode: normal;
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* ----------------------------------------------------------------- LAYERS */
+.uhd-cursor__trail,
+.uhd-cursor__ring,
+.uhd-cursor__dot {
+  position: absolute;
+  top: 0;
+  left: 0;
+  will-change: transform;
+}
+
+/* Solid dot — tracks the pointer almost exactly */
+.uhd-cursor__dot {
+  width: 8px;
+  height: 8px;
+  margin: -4px 0 0 -4px;
+  border-radius: 50%;
+  background: var(--uhd-ink);
+}
+
+/* Warm haze that lags furthest behind. Gradient, never a filter — no repaint
+   cost beyond a single composited layer. */
+.uhd-cursor__trail {
+  width: 56px;
+  height: 56px;
+  margin: -28px 0 0 -28px;
+  border-radius: 50%;
+  opacity: 0;
+  background: radial-gradient(
+    circle at 50% 50%,
+    color-mix(in oklab, var(--accent) 26%, transparent) 0%,
+    color-mix(in oklab, var(--accent) 9%, transparent) 46%,
+    transparent 70%
+  );
+}
+
+/* Ring layer is a zero-size point; everything inside is centred on it so the
+   press scale pivots exactly on the pointer. */
+.uhd-cursor__ring {
+  width: 0;
+  height: 0;
+}
+
+/* overflow: visible lets a magnetic snap draw a shape far larger than the box */
+.uhd-cursor__svg {
+  position: absolute;
+  top: -160px;
+  left: -160px;
+  width: 320px;
+  height: 320px;
+  overflow: visible;
+}
+
+.uhd-cursor__rect {
+  fill: var(--uhd-fill);
+  fill-opacity: 0;
+  stroke: var(--uhd-ink);
+  stroke-opacity: 1;
+  stroke-width: 1.1;
+  vector-effect: non-scaling-stroke;
+}
+
+/* ------------------------------------------------------------ RING CONTENT */
+.uhd-cursor__label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translate(-50%, -50%) translateY(7px);
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: var(--tr-wider);
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--uhd-label);
+  opacity: 0;
+  transition: opacity 220ms var(--e-out-quart),
+              transform 520ms var(--e-out-expo);
+}
+.uhd-cursor.has-label .uhd-cursor__label {
+  opacity: 1;
+  transform: translate(-50%, -50%);
+}
+
+.uhd-cursor__glyph {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  color: var(--uhd-ink);
+  transform: translate(-50%, -50%) scale(0.35);
+  opacity: 0;
+  transition: opacity 220ms var(--e-out-quart),
+              transform 560ms var(--e-out-expo);
+}
+
+.uhd-cursor__arrow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 13px;
+  height: 13px;
+  color: var(--uhd-ink);
+  opacity: 0;
+  transition: opacity 220ms var(--e-out-quart),
+              transform 620ms var(--e-out-expo);
+}
+.uhd-cursor__arrow--l {
+  transform: translate(-50%, -50%) translateX(calc(var(--uhd-arrow-x) * -0.35));
+}
+.uhd-cursor__arrow--r {
+  transform: translate(-50%, -50%) translateX(calc(var(--uhd-arrow-x) * 0.35));
+}
+
+.uhd-cursor__glyph svg,
+.uhd-cursor__arrow svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.uhd-cursor__glyph path,
+.uhd-cursor__arrow path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ------------------------------------------------------------------ STATES */
+.uhd-cursor[data-state='view'] {
+  --uhd-label: var(--accent-fg);
+}
+
+.uhd-cursor[data-state='text'] {
+  --uhd-fill: var(--uhd-ink);
+}
+
+.uhd-cursor[data-state='drag'] .uhd-cursor__arrow {
+  opacity: 1;
+}
+.uhd-cursor[data-state='drag'] .uhd-cursor__arrow--l {
+  transform: translate(-50%, -50%) translateX(calc(var(--uhd-arrow-x) * -1));
+}
+.uhd-cursor[data-state='drag'] .uhd-cursor__arrow--r {
+  transform: translate(-50%, -50%) translateX(var(--uhd-arrow-x));
+}
+.uhd-cursor[data-state='drag'].is-press .uhd-cursor__arrow--l {
+  transform: translate(-50%, -50%) translateX(calc(var(--uhd-arrow-x) * -0.78));
+}
+.uhd-cursor[data-state='drag'].is-press .uhd-cursor__arrow--r {
+  transform: translate(-50%, -50%) translateX(calc(var(--uhd-arrow-x) * 0.78));
+}
+
+.uhd-cursor[data-state='explore'] .uhd-cursor__glyph {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+.uhd-cursor[data-state='explore'].has-label .uhd-cursor__glyph {
+  transform: translate(-50%, -50%) translateY(-12px) scale(0.9);
+}
+.uhd-cursor[data-state='explore'].has-label .uhd-cursor__label {
+  transform: translate(-50%, -50%) translateY(13px);
+}
+.uhd-cursor[data-state='explore'].is-press .uhd-cursor__glyph {
+  transform: translate(-50%, -50%) rotate(90deg) scale(1);
+}
+
+/* ------------------------------------------------- DARK SECTIONS (INVERT) */
+/* Over [data-theme="ink"] the rig switches to difference blending so it reads
+   against any backdrop. White is the functional value for that blend. */
+.uhd-cursor.is-ink {
+  mix-blend-mode: difference;
+  --uhd-ink: var(--c-white);
+  --uhd-label: var(--c-white);
+}
+/* A filled accent disc must keep its real colour, so blending steps aside. */
+.uhd-cursor.is-ink[data-state='view'] {
+  mix-blend-mode: normal;
+  --uhd-ink: var(--c-paper);
+  --uhd-label: var(--accent-fg);
+}
+
+/* ------------------------------------------------------------- FAIL-SAFES */
+@media (hover: none), (pointer: coarse) {
+  .uhd-cursor { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .uhd-cursor { display: none; }
+}

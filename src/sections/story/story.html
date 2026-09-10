@@ -1,0 +1,228 @@
+<!-- ==========================================================================
+     STORY — PARALLAX STORYTELLING
+     A pinned, multi-layer narrative: SITE → DRAWINGS → STRUCTURE → RENDER →
+     BUILT. Layers are procedural drawings mounted by story.js; every beat is
+     authored here so the section reads correctly with no JS at all.
+     ========================================================================== -->
+<section class="section story" data-section="story" id="story" data-theme="ink" aria-labelledby="story-title">
+
+  <div class="shell story__intro">
+    <div class="sec-head story__head">
+      <div class="sec-head__label">
+        <p class="eyebrow eyebrow--accent">Sequence</p>
+      </div>
+      <div class="sec-head__title">
+        <h2 class="t-h2 story__title" id="story-title">
+          <span class="story__ln"><span>How a lot becomes</span></span>
+          <span class="story__ln"><span><em>a building</em>.</span></span>
+        </h2>
+      </div>
+      <div class="sec-head__aside">
+        <p class="t-small story__lede">
+          Five moves, in order. One coordinated model carries all of them — which is why the
+          site plan, the permit set and the render never disagree with each other.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="story__stage">
+    <div class="story__viewport">
+
+      <!-- ---------------------------------------------------- DEPTH LAYERS -->
+      <div class="story__layers" aria-hidden="true">
+
+        <!-- back: contour survey wash, drifts slowest -->
+        <div class="story__layer story__layer--wash">
+          <div class="story__art" data-art="contour" data-seed="12" data-density="0.7"
+               data-tone="soft" data-w="1700" data-h="1050" data-stroke="0.9"></div>
+        </div>
+
+        <!-- mid: site plan cross-fading to framing plan -->
+        <div class="story__layer story__layer--mid">
+          <div class="story__art story__art--site" data-art="site" data-seed="41" data-density="0.85"
+               data-tone="mid" data-w="1200" data-h="880"></div>
+          <div class="story__art story__art--framing" data-art="framing" data-seed="73" data-density="0.85"
+               data-tone="mid" data-w="1200" data-h="880"></div>
+        </div>
+
+        <!-- render light: warms the scene for beat 04 -->
+        <div class="story__layer story__layer--glow"><span class="story__glow"></span></div>
+
+        <!-- scrim that keeps the text column readable over the artwork -->
+        <div class="story__scrim"></div>
+
+        <!-- front: drawing sheets, laid down one after another -->
+        <div class="story__layer story__layer--sheets">
+          <figure class="story__sheet" data-sheet="0">
+            <div class="story__sheet-art" data-art="elevation" data-seed="27" data-tone="ink"
+                 data-w="920" data-h="650" data-stroke="1.15"></div>
+            <figcaption class="story__sheet-cap"><span class="t-num">A-3</span><span>Elevation</span></figcaption>
+          </figure>
+          <figure class="story__sheet" data-sheet="1">
+            <div class="story__sheet-art" data-art="section" data-seed="12" data-tone="ink"
+                 data-w="920" data-h="650" data-stroke="1.15"></div>
+            <figcaption class="story__sheet-cap"><span class="t-num">A-2</span><span>Section AA</span></figcaption>
+          </figure>
+          <figure class="story__sheet" data-sheet="2">
+            <div class="story__sheet-art" data-art="detail" data-seed="104" data-tone="ink"
+                 data-w="740" data-h="740" data-stroke="1.2"></div>
+            <figcaption class="story__sheet-cap"><span class="t-num">A-5</span><span>Wall detail</span></figcaption>
+          </figure>
+          <figure class="story__sheet" data-sheet="3">
+            <div class="story__sheet-art" data-art="axon" data-seed="58" data-tone="ink"
+                 data-w="1000" data-h="700" data-stroke="1.1"></div>
+            <figcaption class="story__sheet-cap"><span class="t-num">A-4</span><span>Cutaway axonometric</span></figcaption>
+          </figure>
+
+          <div class="story__stamp">
+            <span class="story__stamp-line">Approved</span>
+            <span class="story__stamp-sub">First submittal</span>
+          </div>
+        </div>
+
+        <!-- foreground: setting-out grid + registration marks, fastest -->
+        <div class="story__layer story__layer--marks">
+          <div class="story__art" data-art="grid" data-seed="5" data-density="0.5"
+               data-tone="soft" data-w="1700" data-h="1050" data-stroke="0.8"></div>
+          <svg class="story__reg story__reg--tr" viewBox="0 0 48 48" focusable="false" aria-hidden="true">
+            <path d="M24 2v44M2 24h44" fill="none" stroke="currentColor" stroke-width="1" />
+            <circle cx="24" cy="24" r="10.5" fill="none" stroke="currentColor" stroke-width="1" />
+          </svg>
+          <svg class="story__reg story__reg--br" viewBox="0 0 48 48" focusable="false" aria-hidden="true">
+            <path d="M24 2v44M2 24h44" fill="none" stroke="currentColor" stroke-width="1" />
+            <circle cx="24" cy="24" r="10.5" fill="none" stroke="currentColor" stroke-width="1" />
+          </svg>
+        </div>
+
+        <div class="story__vignette"></div>
+      </div>
+
+      <!-- ------------------------------------------------ RAIL + TEXT BEATS -->
+      <div class="shell story__frame">
+
+        <div class="story__rail" aria-hidden="true">
+          <span class="story__rail-track"><span class="story__rail-fill"></span></span>
+          <ol class="story__rail-stops">
+            <li class="story__rail-stop"><span class="story__rail-dot"></span><span class="story__rail-i t-num">01</span></li>
+            <li class="story__rail-stop"><span class="story__rail-dot"></span><span class="story__rail-i t-num">02</span></li>
+            <li class="story__rail-stop"><span class="story__rail-dot"></span><span class="story__rail-i t-num">03</span></li>
+            <li class="story__rail-stop"><span class="story__rail-dot"></span><span class="story__rail-i t-num">04</span></li>
+            <li class="story__rail-stop"><span class="story__rail-dot"></span><span class="story__rail-i t-num">05</span></li>
+          </ol>
+        </div>
+
+        <ol class="story__beats">
+
+          <li class="story__beat" id="story-beat-1" data-beat="0">
+            <div class="story__fig">
+              <div class="story__fig-art" data-art="site" data-seed="41" data-tone="mid"
+                   data-w="1100" data-h="760" data-density="0.9"></div>
+              <span class="story__fig-cap"><span class="t-num">C-1</span><span>Site plan</span></span>
+            </div>
+            <div class="story__copy">
+              <span class="story__num" aria-hidden="true">01</span>
+              <p class="story__ln story__meta"><span><span class="t-num">01</span><span class="story__meta-sep"></span>Site</span></p>
+              <h3 class="story__ln story__h"><span>Every lot argues.</span></h3>
+              <p class="story__ln story__p"><span>The survey, the fall, the easements, the trees. We write the constraints down before anybody has an opinion about the house.</span></p>
+            </div>
+          </li>
+
+          <li class="story__beat" id="story-beat-2" data-beat="1">
+            <div class="story__fig">
+              <div class="story__fig-art" data-art="elevation" data-seed="27" data-tone="mid"
+                   data-w="1100" data-h="760" data-density="0.9"></div>
+              <span class="story__fig-cap"><span class="t-num">A-3</span><span>Elevation</span></span>
+            </div>
+            <div class="story__copy">
+              <span class="story__num" aria-hidden="true">02</span>
+              <p class="story__ln story__meta"><span><span class="t-num">02</span><span class="story__meta-sep"></span>Drawings</span></p>
+              <h3 class="story__ln story__h"><span>We answer in lines.</span></h3>
+              <p class="story__ln story__p"><span>Cover sheet through connection details — every sheet drawn at the scale the trade actually works at, and numbered so nothing goes missing.</span></p>
+            </div>
+          </li>
+
+          <li class="story__beat" id="story-beat-3" data-beat="2">
+            <div class="story__fig">
+              <div class="story__fig-art" data-art="framing" data-seed="73" data-tone="mid"
+                   data-w="1100" data-h="760" data-density="0.9"></div>
+              <span class="story__fig-cap"><span class="t-num">S-2</span><span>Framing plan</span></span>
+            </div>
+            <div class="story__copy">
+              <span class="story__num" aria-hidden="true">03</span>
+              <p class="story__ln story__meta"><span><span class="t-num">03</span><span class="story__meta-sep"></span>Structure</span></p>
+              <h3 class="story__ln story__h"><span>Sized while it still moves.</span></h3>
+              <p class="story__ln story__p"><span>Members are designed inside the architecture, not bolted on after it. The beam fits the wall because the wall was drawn around the beam.</span></p>
+            </div>
+          </li>
+
+          <li class="story__beat" id="story-beat-4" data-beat="3">
+            <div class="story__fig">
+              <div class="story__fig-art" data-art="axon" data-seed="58" data-tone="mid"
+                   data-w="1100" data-h="760" data-density="0.9"></div>
+              <span class="story__fig-cap"><span class="t-num">A-4</span><span>Axonometric</span></span>
+            </div>
+            <div class="story__copy">
+              <span class="story__num" aria-hidden="true">04</span>
+              <p class="story__ln story__meta"><span><span class="t-num">04</span><span class="story__meta-sep"></span>Render</span></p>
+              <h3 class="story__ln story__h"><span>Photographed before it exists.</span></h3>
+              <p class="story__ln story__p"><span>The render comes off the same model as the permit set, with the materials we specified. What gets approved is what gets built.</span></p>
+            </div>
+          </li>
+
+          <li class="story__beat" id="story-beat-5" data-beat="4">
+            <div class="story__fig">
+              <div class="story__fig-art" data-art="section" data-seed="12" data-tone="mid"
+                   data-w="1100" data-h="760" data-density="0.9"></div>
+              <span class="story__fig-cap"><span class="t-num">A-2</span><span>Section AA</span></span>
+            </div>
+            <div class="story__copy">
+              <span class="story__num" aria-hidden="true">05</span>
+              <p class="story__ln story__meta"><span><span class="t-num">05</span><span class="story__meta-sep"></span>Built</span></p>
+              <h3 class="story__ln story__h"><span>The promise, kept.</span></h3>
+              <p class="story__ln story__p"><span>Approved on first submittal, then a house on the ridge that matches the set sheet for sheet. The as-built model is yours at the end.</span></p>
+            </div>
+          </li>
+
+        </ol>
+      </div>
+
+      <!-- ------------------------------------------------- BOTTOM TIMELINE -->
+      <nav class="shell story__timeline" aria-label="Story stages">
+        <ol class="story__ticks">
+          <li class="story__tick">
+            <button class="story__tick-btn" type="button" data-jump="0" aria-label="Go to stage 01, Site">
+              <span class="story__tick-line"><span class="story__tick-fill"></span></span>
+              <span class="story__tick-meta"><span class="t-num">01</span><span class="story__tick-name">Site</span></span>
+            </button>
+          </li>
+          <li class="story__tick">
+            <button class="story__tick-btn" type="button" data-jump="1" aria-label="Go to stage 02, Drawings">
+              <span class="story__tick-line"><span class="story__tick-fill"></span></span>
+              <span class="story__tick-meta"><span class="t-num">02</span><span class="story__tick-name">Drawings</span></span>
+            </button>
+          </li>
+          <li class="story__tick">
+            <button class="story__tick-btn" type="button" data-jump="2" aria-label="Go to stage 03, Structure">
+              <span class="story__tick-line"><span class="story__tick-fill"></span></span>
+              <span class="story__tick-meta"><span class="t-num">03</span><span class="story__tick-name">Structure</span></span>
+            </button>
+          </li>
+          <li class="story__tick">
+            <button class="story__tick-btn" type="button" data-jump="3" aria-label="Go to stage 04, Render">
+              <span class="story__tick-line"><span class="story__tick-fill"></span></span>
+              <span class="story__tick-meta"><span class="t-num">04</span><span class="story__tick-name">Render</span></span>
+            </button>
+          </li>
+          <li class="story__tick">
+            <button class="story__tick-btn" type="button" data-jump="4" aria-label="Go to stage 05, Built">
+              <span class="story__tick-line"><span class="story__tick-fill"></span></span>
+              <span class="story__tick-meta"><span class="t-num">05</span><span class="story__tick-name">Built</span></span>
+            </button>
+          </li>
+        </ol>
+      </nav>
+
+    </div>
+  </div>
+</section>

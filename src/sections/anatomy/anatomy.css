@@ -1,0 +1,527 @@
+/* ============================================================================
+   ANATOMY — the exploding object.
+   A pinned, scrubbed exploded assembly: 3D house + projected HTML callouts,
+   a layer index down the right edge, and a text fallback for every degraded
+   case (no WebGL, reduced motion, narrow viewports).
+   ========================================================================== */
+
+/* --------------------------------------------------------------- SHELL   */
+
+.section.anatomy {
+  --anatomy-tick: color-mix(in oklab, var(--fg) 7%, transparent);
+  --anatomy-tick-major: color-mix(in oklab, var(--fg) 13%, transparent);
+  --anatomy-card: color-mix(in oklab, var(--bg-raised) 94%, transparent);
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(115% 78% at 50% 38%, color-mix(in oklab, var(--c-white) 72%, transparent), transparent 68%),
+    repeating-linear-gradient(90deg, var(--anatomy-tick-major) 0 1px, transparent 1px 140px),
+    repeating-linear-gradient(0deg, var(--anatomy-tick-major) 0 1px, transparent 1px 140px),
+    repeating-linear-gradient(90deg, var(--anatomy-tick) 0 1px, transparent 1px 28px),
+    repeating-linear-gradient(0deg, var(--anatomy-tick) 0 1px, transparent 1px 28px);
+  background-position: center top;
+}
+
+.anatomy__intro {
+  position: relative;
+  z-index: 3;
+}
+
+.anatomy__head {
+  padding-bottom: clamp(1.5rem, 3vw, 2.75rem);
+}
+
+.anatomy__note {
+  max-width: 26ch;
+  color: var(--fg-muted);
+}
+
+.anatomy__lede {
+  max-width: 62ch;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: left;
+}
+
+@media (min-width: 1101px) {
+  .anatomy__lede {
+    margin-left: calc((100% / 12) * 3 + var(--gutter));
+    margin-right: 0;
+  }
+}
+
+/* --------------------------------------------------------------- STAGE   */
+
+.anatomy__stage {
+  margin-top: clamp(2rem, 5vw, 4.5rem);
+}
+
+/* The pinned element must sit ABOVE the fixed WebGL canvas (z-index 2): a
+   pinned element becomes position:fixed and therefore opens its own stacking
+   context, so an explicit z-index is what keeps .above-gl content on top. */
+/* No auto margins here: ScrollTrigger switches this element to position:fixed
+   and copies its measured box, so the max-width lives on the rows instead. */
+.anatomy__pin {
+  position: relative;
+  z-index: 3;
+  display: grid;
+  grid-template-rows: auto auto auto;
+  gap: clamp(0.75rem, 1.6vw, 1.5rem);
+  padding-inline: var(--page-x);
+  padding-block: clamp(1rem, 3vw, 2rem);
+  width: 100%;
+}
+
+.anatomy__bar,
+.anatomy__body,
+.anatomy__foot {
+  width: 100%;
+  max-width: var(--maxw);
+  margin-inline: auto;
+}
+
+/* ------------------------------------------------------------- SHEET BAR */
+
+.anatomy__bar,
+.anatomy__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  border-top: 1px solid var(--line);
+  padding-top: 0.7rem;
+}
+
+.anatomy__sheet,
+.anatomy__legend {
+  color: var(--fg-muted);
+  margin: 0;
+}
+
+.anatomy__legend {
+  text-align: right;
+  flex: 1 1 auto;
+}
+
+/* The counter and the rail only mean something while the scrubbed sequence is
+   running, so they are opted in by the pin rather than shown by default. */
+.anatomy__counter,
+.anatomy__rail {
+  display: none;
+}
+
+.anatomy.is-scrub .anatomy__counter {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.4em;
+  color: var(--fg-soft);
+  margin: 0;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wider);
+}
+
+.anatomy__counter [data-anatomy-count] {
+  color: var(--accent);
+  font-size: var(--fs-sm);
+  transition: color var(--d-fast) var(--e-out-quart);
+}
+
+.anatomy__counter-slash {
+  color: var(--fg-muted);
+  opacity: 0.6;
+}
+
+/* ------------------------------------------------------------- BODY GRID */
+
+.anatomy__body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(1rem, 2vw, 2rem);
+  min-height: 0;
+}
+
+.anatomy__viewport {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  height: clamp(19rem, 56svh, 30rem);
+}
+
+.anatomy .anatomy__gl {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.anatomy__fallback {
+  display: grid;
+  place-items: stretch;
+  background: color-mix(in oklab, var(--bg-raised) 70%, transparent);
+  border: 1px solid var(--line);
+}
+
+.anatomy__fallback svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* --------------------------------------------------------------- LEADERS */
+
+.anatomy__leaders {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 260ms var(--e-out-quart);
+}
+
+.anatomy__leaders.is-on {
+  opacity: 1;
+}
+
+.anatomy__leader-line {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1;
+  stroke-linecap: butt;
+  stroke-linejoin: miter;
+}
+
+.anatomy__leader-dot {
+  fill: var(--accent);
+  stroke: none;
+}
+
+.anatomy__leader-ring {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1;
+  opacity: 0.45;
+}
+
+/* -------------------------------------------------------------- CALLOUTS */
+
+.anatomy__callouts {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* Outer box carries the projected position (written every frame from JS);
+   the inner box carries the entrance animation, so the two never fight over
+   the same transform. */
+.anatomy__callout {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: clamp(11.5rem, 18vw, 16.5rem);
+  will-change: transform;
+}
+
+.anatomy__callout-in {
+  position: relative;
+  display: block;
+  padding: 0.8rem 1rem 1rem;
+  background: var(--anatomy-card);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-1);
+  box-shadow: var(--sh-2);
+  opacity: 0;
+  visibility: hidden;
+  will-change: transform, opacity;
+}
+
+.anatomy__callout-in::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  right: -1px;
+  height: 2px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 640ms var(--e-out-expo) 90ms;
+}
+
+.anatomy__callout.is-on .anatomy__callout-in::before {
+  transform: scaleX(1);
+}
+
+.anatomy__callout-code {
+  display: block;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wider);
+  color: var(--accent);
+  margin-bottom: 0.3rem;
+}
+
+.anatomy__callout-label {
+  font-family: var(--ff-display);
+  font-size: var(--fs-md);
+  font-weight: 300;
+  line-height: 1.14;
+  letter-spacing: var(--tr-snug);
+  color: var(--fg);
+  margin-bottom: 0.4rem;
+}
+
+.anatomy__callout-info {
+  font-size: var(--fs-xs);
+  line-height: 1.5;
+  color: var(--fg-soft);
+  margin: 0;
+}
+
+/* ----------------------------------------------------------- LAYER INDEX */
+
+.anatomy__index {
+  display: none;
+  align-self: start;
+  min-width: 0;
+}
+
+.anatomy__index-head {
+  margin: 0 0 0.6rem;
+  color: var(--fg-muted);
+}
+
+.anatomy__index-list {
+  border-top: 1px solid var(--line);
+}
+
+.anatomy__index-item {
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.anatomy__index-btn {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.1rem;
+  width: 100%;
+  padding: 0.6rem 0.9rem 0.6rem 0.7rem;
+  text-align: left;
+  color: var(--fg-muted);
+  transition: color var(--d-fast) var(--e-out-quart),
+              background-color var(--d-fast) var(--e-out-quart),
+              padding-left var(--d-base) var(--e-out-expo);
+}
+
+.anatomy__index-btn:hover {
+  color: var(--fg);
+  background: color-mix(in oklab, var(--fg) 4%, transparent);
+}
+
+.anatomy__index-code {
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wide);
+  opacity: 0.75;
+}
+
+.anatomy__index-label {
+  font-size: var(--fs-sm);
+  line-height: 1.2;
+  color: inherit;
+}
+
+.anatomy__index-bar {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 2px;
+  background: var(--accent);
+  transform: scaleY(0);
+  transform-origin: center top;
+  transition: transform var(--d-base) var(--e-out-expo);
+}
+
+.anatomy__index-item.is-active .anatomy__index-btn {
+  color: var(--fg);
+  padding-left: 1.05rem;
+}
+
+.anatomy__index-item.is-active .anatomy__index-code {
+  color: var(--accent);
+  opacity: 1;
+}
+
+.anatomy__index-item.is-active .anatomy__index-bar {
+  transform: scaleY(1);
+}
+
+.anatomy__index-item.is-done .anatomy__index-code {
+  opacity: 1;
+}
+
+/* ----------------------------------------------------------- PROGRESS RAIL */
+
+.anatomy.is-scrub .anatomy__rail {
+  position: relative;
+  display: block;
+  flex: 1 1 auto;
+  max-width: 22rem;
+  height: 2px;
+  background: var(--line);
+  overflow: visible;
+}
+
+.anatomy__rail-fill {
+  display: block;
+  height: 100%;
+  width: 100%;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+.anatomy__tick {
+  position: absolute;
+  top: -3px;
+  width: 1px;
+  height: 8px;
+  background: var(--line-strong);
+  transform: translateX(-0.5px);
+}
+
+/* ------------------------------------------------------------- TEXT LIST */
+
+.anatomy__list-wrap {
+  margin-top: clamp(2rem, 5vw, 4rem);
+  position: relative;
+  z-index: 3;
+}
+
+.anatomy__list {
+  max-width: 62rem;
+}
+
+.anatomy__acc-q {
+  display: flex;
+  align-items: baseline;
+  gap: clamp(0.75rem, 2vw, 1.5rem);
+  min-width: 0;
+}
+
+.anatomy__acc-code {
+  flex: none;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wider);
+  color: var(--accent);
+}
+
+.anatomy__acc-info {
+  max-width: 60ch;
+  font-size: var(--fs-base);
+  line-height: var(--lh-relaxed);
+  color: var(--fg-soft);
+  margin: 0;
+}
+
+/* ==========================================================================
+   DESKTOP — pinned, scrubbed, index visible, text list retired
+   ========================================================================== */
+
+@media (min-width: 900px) {
+  .anatomy:not(.is-flat) .anatomy__pin {
+    height: 100svh;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    padding-block: clamp(1.25rem, 7svh, 4.5rem) clamp(1rem, 2.4vw, 2rem);
+  }
+
+  .anatomy:not(.is-flat) .anatomy__body {
+    grid-template-columns: minmax(0, 1fr) clamp(9.5rem, 14vw, 15rem);
+  }
+
+  .anatomy:not(.is-flat) .anatomy__viewport {
+    height: 100%;
+  }
+
+  .anatomy:not(.is-flat) .anatomy__index {
+    display: block;
+  }
+
+  .anatomy:not(.is-flat):not(.is-partial) .anatomy__list-wrap {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   DEGRADED — no WebGL or reduced motion: no pin, drawing + text list
+   ========================================================================== */
+
+.anatomy.is-flat .anatomy__viewport {
+  height: clamp(20rem, 62svh, 40rem);
+}
+
+.anatomy.is-flat .anatomy__leaders,
+.anatomy.is-flat .anatomy__callouts {
+  display: none;
+}
+
+.anatomy:not(.is-scrub) .anatomy__foot {
+  justify-content: flex-start;
+}
+
+.anatomy:not(.is-scrub) .anatomy__legend {
+  text-align: left;
+  flex: 0 1 auto;
+}
+
+/* ==========================================================================
+   NARROW
+   ========================================================================== */
+
+@media (max-width: 640px) {
+  .anatomy__pin {
+    padding-inline: var(--page-x);
+  }
+
+  .anatomy__bar,
+  .anatomy__foot {
+    flex-wrap: wrap;
+    row-gap: 0.4rem;
+  }
+
+  .anatomy__legend {
+    text-align: left;
+    flex-basis: 100%;
+  }
+
+  .anatomy__rail {
+    max-width: none;
+    flex-basis: 100%;
+  }
+
+  .anatomy__viewport,
+  .anatomy.is-flat .anatomy__viewport {
+    height: clamp(17rem, 48svh, 24rem);
+  }
+
+  .anatomy__acc-q {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.3rem;
+  }
+}
+
+/* ==========================================================================
+   MOTION PREFERENCES
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .anatomy__index-btn,
+  .anatomy__index-bar,
+  .anatomy__leaders,
+  .anatomy__callout-in::before,
+  .anatomy__counter [data-anatomy-count] {
+    transition-duration: 0.001ms;
+  }
+}

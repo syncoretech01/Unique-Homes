@@ -1,0 +1,162 @@
+<!-- ==========================================================================
+     PROJECTS INDEX — the full body of work, in two views, with an immersive
+     zoom into a full case study.
+
+     Everything list-shaped (chips, cards, the whole case study) is rendered
+     from src/data/projects.js by projects-index.js. What is written here is
+     the static frame: the section header, the control bar and the empty
+     shells the module fills.
+
+     The overlay at the bottom is relocated to <body> on boot so that it can
+     own the viewport (position: fixed) and so that `inert` can be applied to
+     every other top-level node while it is open. Its classes stay namespaced
+     under .projects-index__overlay for that reason.
+     ========================================================================== -->
+<section class="section projects-index" data-section="projects-index" id="projects-index" aria-labelledby="projects-index-title">
+
+  <div class="projects-index__inner shell" data-pi-inner>
+
+    <header class="projects-index__head">
+      <div class="projects-index__head-label">
+        <p class="eyebrow">Index</p>
+      </div>
+
+      <div class="projects-index__head-title">
+        <h2 class="t-h2 projects-index__title" id="projects-index-title" data-split="lines">
+          The whole index,<br /><em>drawing by drawing</em>.
+        </h2>
+      </div>
+
+      <div class="projects-index__head-aside">
+        <p class="t-body projects-index__intro" data-reveal="up" data-delay="0.12">
+          Filter by what we were asked to do. Open any project for the constraint that
+          shaped it, the move that resolved it, and the sheets it took to get there.
+        </p>
+      </div>
+    </header>
+
+    <div class="projects-index__bar">
+      <div class="projects-index__filters" role="group" aria-label="Filter projects by discipline" data-pi-filters>
+        <span class="projects-index__pill" data-pi-pill aria-hidden="true"></span>
+      </div>
+
+      <div class="projects-index__bar-end">
+        <p class="projects-index__count" aria-live="polite">
+          <span class="projects-index__count-num t-num" data-pi-count>08</span>
+          <span class="projects-index__count-word" data-pi-count-word>projects</span>
+        </p>
+
+        <div class="projects-index__views" role="group" aria-label="Layout" data-pi-views>
+          <span class="projects-index__pill projects-index__pill--view" data-pi-view-pill aria-hidden="true"></span>
+          <button class="projects-index__view-btn" type="button" data-pi-view="grid" aria-pressed="true">Grid</button>
+          <button class="projects-index__view-btn" type="button" data-pi-view="index" aria-pressed="false">Index</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="projects-index__stage" data-pi-stage data-view="grid">
+      <div class="projects-index__cols" aria-hidden="true">
+        <span>No.</span>
+        <span>Project</span>
+        <span>Location</span>
+        <span>Type</span>
+        <span>Year</span>
+      </div>
+
+      <ul class="projects-index__list" data-pi-list></ul>
+
+      <p class="projects-index__empty t-body" data-pi-empty hidden>
+        Nothing in this category yet — try another filter.
+      </p>
+    </div>
+
+  </div>
+
+  <!-- Cursor-following plate preview, used by the index view. Moved to <body>. -->
+  <div class="projects-index__preview" data-pi-preview aria-hidden="true">
+    <div class="projects-index__preview-frame" data-pi-preview-frame></div>
+    <p class="projects-index__preview-cap t-num" data-pi-preview-cap></p>
+  </div>
+
+  <!-- Case study overlay. Moved to <body>; filled from data on open. -->
+  <div class="projects-index__overlay" data-pi-overlay role="dialog" aria-modal="true"
+       aria-labelledby="pd-title" hidden>
+
+    <div class="pd__veil" data-pi-veil></div>
+
+    <div class="pd__panel" data-pi-panel>
+      <div class="pd__paper" data-pi-paper aria-hidden="true"></div>
+
+      <div class="pd__scroll" data-pi-scroll data-lenis-prevent tabindex="-1">
+
+        <div class="pd__sheet">
+
+          <div class="pd__hero" data-pi-hero>
+            <p class="pd__hero-cap" data-pi-d-herocap></p>
+          </div>
+
+          <div class="pd__body">
+
+            <header class="pd__head" data-pi-d-block>
+              <p class="eyebrow eyebrow--accent" data-pi-d-eyebrow></p>
+              <h2 class="pd__name" id="pd-title" data-pi-d-name></h2>
+              <p class="t-lead pd__summary" data-pi-d-summary></p>
+            </header>
+
+            <ul class="pd__meta" data-pi-d-meta data-pi-d-block></ul>
+
+            <div class="pd__prose" data-pi-d-block>
+              <p class="pd__desc" data-pi-d-desc></p>
+            </div>
+
+            <div class="pd__blocks" data-pi-d-block>
+              <section class="pd__block">
+                <h3 class="pd__block-label">Challenge</h3>
+                <p class="pd__block-copy" data-pi-d-challenge></p>
+              </section>
+              <section class="pd__block">
+                <h3 class="pd__block-label">Solution</h3>
+                <p class="pd__block-copy" data-pi-d-solution></p>
+              </section>
+            </div>
+
+            <ul class="pd__stats" data-pi-d-stats data-pi-d-block></ul>
+
+            <div class="pd__drawings" data-pi-d-drawings data-pi-d-block></div>
+
+            <div class="pd__services" data-pi-d-block>
+              <h3 class="pd__services-label">Services on this project</h3>
+              <ul class="pd__tags" data-pi-d-tags></ul>
+            </div>
+
+            <div class="pd__foot" data-pi-d-block>
+              <button class="btn btn--ghost pd__foot-btn" type="button" data-pi-close>
+                Back to the index
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="pd__bar">
+        <p class="pd__bar-id">
+          <span class="t-num" data-pi-d-index>01</span>
+          <span class="pd__bar-sep" aria-hidden="true">/</span>
+          <span class="t-num" data-pi-d-total>08</span>
+        </p>
+        <button class="pd__close" type="button" data-pi-close aria-label="Close case study">
+          <span class="pd__close-glyph" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" focusable="false" aria-hidden="true">
+              <path d="M6 6 18 18" stroke="currentColor" stroke-width="1.4" />
+              <path d="M18 6 6 18" stroke="currentColor" stroke-width="1.4" />
+            </svg>
+          </span>
+          <span class="pd__close-label">Close</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+</section>

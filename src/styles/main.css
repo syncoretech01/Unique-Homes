@@ -1,0 +1,17 @@
+/* ============================================================================
+   MAIN STYLESHEET — the only stylesheet a page loads directly.
+   Section styles are imported from their own JS modules.
+   ========================================================================== */
+
+/* Self-hosted variable fonts (no network at runtime) */
+@import '@fontsource-variable/fraunces/full.css';
+@import '@fontsource-variable/fraunces/full-italic.css';
+@import '@fontsource-variable/inter-tight/wght.css';
+@import '@fontsource-variable/jetbrains-mono/wght.css';
+
+@import './tokens.css';
+@import './base.css';
+@import './typography.css';
+@import './layout.css';
+@import './components.css';
+@import './core.css';

@@ -1,0 +1,530 @@
+/* ============================================================================
+   SHOWCASE — pinned horizontal gallery with real internal parallax.
+   Desktop: the stage pins, the track translates, plates counter-translate.
+   Under 900px (or reduced motion): a native scroll-snapping row, same cards.
+   ========================================================================== */
+
+.showcase {
+  --sc-gap: clamp(1.25rem, 2.6vw, 3.25rem);
+  --sc-card-w: clamp(15rem, 29vw, 34rem);
+  --sc-pad-y: clamp(1rem, 2.2vh, 2rem);
+  padding-block: 0;
+  background: var(--bg);
+}
+
+.showcase__stage {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  height: 100svh;
+  min-height: 34rem;
+  /* The site header is fixed and reappears on scroll-up — never sit under it. */
+  padding-block: max(var(--header-h), clamp(2.5rem, 7vh, 5rem)) clamp(1.5rem, 4vh, 3rem);
+  overflow: hidden;
+}
+
+/* ------------------------------------------------------------ GHOST NUMERAL */
+.showcase__ghost {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  pointer-events: none;
+  user-select: none;
+}
+.showcase__ghost-num {
+  display: block;
+  padding-left: var(--page-x);
+  font-family: var(--ff-display);
+  font-weight: 300;
+  font-size: clamp(12rem, 44vh, 34rem);
+  line-height: 0.68;
+  letter-spacing: -0.06em;
+  white-space: nowrap;
+  color: color-mix(in oklab, var(--fg) 5%, transparent);
+  font-variation-settings: "SOFT" 0, "WONK" 0, "opsz" 144;
+}
+
+/* -------------------------------------------------------------------- HEAD */
+.showcase__head-shell {
+  position: relative;
+  z-index: 3;
+}
+.showcase__head {
+  padding-bottom: clamp(1.25rem, 3vh, 2.5rem);
+}
+.showcase__title {
+  max-width: 22ch;
+}
+.showcase__aside {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sp-4);
+}
+.showcase__aside-copy {
+  max-width: 34ch;
+  text-wrap: pretty;
+}
+.showcase__all {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.6em;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wider);
+  text-transform: uppercase;
+  color: var(--fg);
+}
+.showcase__all-count {
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------------------------------------------------------------- VIEWPORT */
+.showcase__viewport {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: stretch;
+  min-height: 0;
+  overflow: hidden;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.showcase__track {
+  position: relative;
+  flex: none; /* never shrink to the viewport — it is meant to overflow */
+  display: flex;
+  align-items: stretch;
+  gap: var(--sc-gap);
+  padding-inline: var(--page-x);
+  padding-block: var(--sc-pad-y);
+}
+.showcase.is-live .showcase__track,
+.showcase.is-live .showcase__card,
+.showcase.is-live .showcase__caption,
+.showcase.is-live .showcase__ghost-num {
+  will-change: transform;
+}
+.showcase.is-live .showcase__plate {
+  will-change: transform, filter;
+}
+.showcase.is-dragging .showcase__track {
+  user-select: none;
+}
+.showcase.is-dragging .showcase__card {
+  pointer-events: none;
+}
+
+/* -------------------------------------------------------------------- CARD */
+.showcase__card {
+  position: relative;
+  z-index: 1;
+  flex: 0 0 auto;
+  width: var(--sc-card-w);
+  display: flex;
+  flex-direction: column;
+  color: var(--fg);
+  transform-origin: 50% 50%;
+}
+.showcase__card-frame {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--bg-sunken);
+  outline: 1px solid var(--line-soft);
+  outline-offset: -1px;
+}
+
+/* The parallax layer. Oversized so it can counter-translate inside the frame. */
+.showcase__plate {
+  position: absolute;
+  top: -5%;
+  left: -15%;
+  width: 130%;
+  height: 110%;
+}
+.showcase__plate-inner {
+  position: absolute;
+  inset: 0;
+  transform: scale(1.001);
+  transition: transform 900ms var(--e-out-expo);
+}
+.showcase__card:hover .showcase__plate-inner,
+.showcase__card:focus-visible .showcase__plate-inner {
+  transform: scale(1.055);
+}
+
+/* Hairline frame that draws itself around the plate on hover. */
+.showcase__edges {
+  position: absolute;
+  inset: clamp(0.55rem, 1vw, 1rem);
+  pointer-events: none;
+}
+.showcase__edge {
+  position: absolute;
+  background: var(--fg);
+  opacity: 0.7;
+  transition: transform 380ms var(--e-out-quart);
+  transition-delay: 0ms;
+}
+.showcase__edge--t,
+.showcase__edge--b {
+  left: 0;
+  width: 100%;
+  height: 1px;
+  transform: scale(0, 1);
+}
+.showcase__edge--l,
+.showcase__edge--r {
+  top: 0;
+  width: 1px;
+  height: 100%;
+  transform: scale(1, 0);
+}
+.showcase__edge--t { top: 0; transform-origin: left center; }
+.showcase__edge--r { right: 0; transform-origin: center top; }
+.showcase__edge--b { bottom: 0; transform-origin: right center; }
+.showcase__edge--l { left: 0; transform-origin: center bottom; }
+
+.showcase__card:hover .showcase__edge,
+.showcase__card:focus-visible .showcase__edge {
+  transform: scale(1, 1);
+  transition-duration: 420ms;
+}
+.showcase__card:hover .showcase__edge--r,
+.showcase__card:focus-visible .showcase__edge--r { transition-delay: 130ms; }
+.showcase__card:hover .showcase__edge--b,
+.showcase__card:focus-visible .showcase__edge--b { transition-delay: 260ms; }
+.showcase__card:hover .showcase__edge--l,
+.showcase__card:focus-visible .showcase__edge--l { transition-delay: 390ms; }
+
+/* Drawing index, top-left of the plate */
+.showcase__idx {
+  position: absolute;
+  top: clamp(0.9rem, 1.6vw, 1.5rem);
+  left: clamp(0.9rem, 1.6vw, 1.5rem);
+  padding: 0.35em 0.6em;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wider);
+  line-height: 1;
+  color: var(--fg);
+  background: color-mix(in oklab, var(--bg-raised) 84%, transparent);
+  border: 1px solid var(--line-soft);
+  font-variant-numeric: tabular-nums;
+  transition: background-color var(--d-base) var(--e-out-quart),
+              color var(--d-base) var(--e-out-quart);
+}
+.showcase__card.is-active .showcase__idx {
+  background: var(--fg);
+  color: var(--bg);
+  border-color: var(--fg);
+}
+
+/* "View project" bar wiping up from the bottom edge */
+.showcase__view {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9em clamp(0.9rem, 1.6vw, 1.5rem);
+  overflow: hidden;
+  background: var(--accent);
+  color: var(--accent-fg);
+  transform: translate3d(0, 101%, 0);
+  transition: transform 560ms var(--e-out-expo);
+}
+.showcase__view-label,
+.showcase__view-arrow {
+  display: block;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wider);
+  text-transform: uppercase;
+  line-height: 1;
+  transform: translate3d(0, 120%, 0);
+  transition: transform 620ms 60ms var(--e-out-expo);
+}
+.showcase__view-arrow { transition-delay: 110ms; }
+.showcase__card:hover .showcase__view,
+.showcase__card:focus-visible .showcase__view {
+  transform: translate3d(0, 0, 0);
+}
+.showcase__card:hover .showcase__view-label,
+.showcase__card:hover .showcase__view-arrow,
+.showcase__card:focus-visible .showcase__view-label,
+.showcase__card:focus-visible .showcase__view-arrow {
+  transform: translate3d(0, 0, 0);
+}
+
+/* ----------------------------------------------------------------- CAPTION */
+.showcase__caption {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding-top: clamp(0.85rem, 1.7vh, 1.35rem);
+}
+.showcase__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55em;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wide);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+.showcase__meta span + span::before {
+  content: "·";
+  margin-right: 0.55em;
+  opacity: 0.6;
+}
+.showcase__name {
+  display: block;
+  font-family: var(--ff-display);
+  font-weight: 300;
+  font-size: var(--fs-lg);
+  line-height: 1.06;
+  letter-spacing: var(--tr-snug);
+  font-variation-settings: "SOFT" 0, "WONK" 0, "opsz" 96;
+  transition: color var(--d-base) var(--e-out-quart);
+}
+.showcase__card:hover .showcase__name,
+.showcase__card:focus-visible .showcase__name {
+  color: var(--accent);
+}
+.showcase__place {
+  display: block;
+  font-size: var(--fs-sm);
+  color: var(--fg-soft);
+}
+.showcase__summary {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  max-width: 40ch;
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+  color: var(--fg-soft);
+}
+.showcase__services {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.5rem;
+  margin-top: 0.25rem;
+}
+.showcase__service {
+  padding: 0.35em 0.7em;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wide);
+  text-transform: uppercase;
+  line-height: 1;
+  color: var(--fg-muted);
+  white-space: nowrap;
+}
+
+/* -------------------------------------------------------------------- FOOT */
+.showcase__foot {
+  position: relative;
+  z-index: 3;
+  padding-top: clamp(1rem, 2.4vh, 1.9rem);
+}
+.showcase__progress {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: clamp(1rem, 2.6vw, 2.5rem);
+}
+.showcase__count {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.45em;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wider);
+  font-variant-numeric: tabular-nums;
+  color: var(--fg-muted);
+}
+.showcase__count-now { color: var(--fg); }
+.showcase__count-sep { opacity: 0.5; }
+.showcase__rail {
+  position: relative;
+  height: 1px;
+  background: var(--line);
+}
+.showcase__rail-fill {
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+.showcase__ticks {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+.showcase__tick {
+  position: absolute;
+  top: -3px;
+  width: 1px;
+  height: 7px;
+  background: var(--line-strong);
+  transform: translateX(-0.5px);
+  transition: background-color var(--d-base) var(--e-out-quart),
+              height var(--d-base) var(--e-out-quart),
+              top var(--d-base) var(--e-out-quart);
+}
+.showcase__tick.is-on {
+  top: -5px;
+  height: 11px;
+  background: var(--accent);
+}
+.showcase__hint {
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wider);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  white-space: nowrap;
+}
+
+/* ============================================================================
+   PINNED-MODE FITTING
+   The stage is one viewport tall, so the caption has to give ground before the
+   drawing does. Trim it as the cards get narrower.
+   ========================================================================== */
+@media (min-width: 901px) and (max-width: 1400px) {
+  .showcase__services {
+    display: none;
+  }
+}
+
+@media (min-width: 901px) and (max-width: 1100px) {
+  .showcase__head {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: var(--gutter);
+  }
+  .showcase__head .sec-head__label { grid-column: 1 / -1; }
+  .showcase__head .sec-head__title { grid-column: 1 / span 7; }
+  .showcase__head .sec-head__aside { grid-column: 9 / span 4; }
+  .showcase__aside {
+    align-items: flex-end;
+  }
+  .showcase__aside-copy {
+    display: none;
+  }
+  .showcase__summary {
+    display: none;
+  }
+}
+
+/* ============================================================================
+   NATIVE ROW — under 900px, and whenever reduced motion is requested.
+   No pin, no scroll-driven transform: a real scroll-snapping row.
+   ========================================================================== */
+@media (max-width: 900px), (prefers-reduced-motion: reduce) {
+  .showcase__stage {
+    display: block;
+    height: auto;
+    min-height: 0;
+    padding-block: var(--section-y);
+    overflow: visible;
+  }
+  .showcase__ghost {
+    display: none;
+  }
+  .showcase__head {
+    padding-bottom: clamp(1.75rem, 5vw, 3rem);
+  }
+  /* The row is free-scrolling here — the captions can have it all back. */
+  .showcase__aside-copy {
+    display: block;
+  }
+  .showcase__summary {
+    display: -webkit-box;
+  }
+  .showcase__services {
+    display: flex;
+  }
+  .showcase__viewport {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--page-x);
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
+  }
+  .showcase__viewport::-webkit-scrollbar {
+    display: none;
+  }
+  .showcase__track {
+    align-items: flex-start;
+    padding-block: clamp(1.25rem, 4vw, 2rem);
+  }
+  .showcase__card {
+    width: min(78vw, 26rem);
+    scroll-snap-align: center;
+  }
+  .showcase__card-frame {
+    flex: none;
+    aspect-ratio: 4 / 3;
+  }
+  .showcase__foot {
+    padding-top: clamp(1.5rem, 4vw, 2.25rem);
+  }
+}
+
+@media (max-width: 560px) {
+  .showcase__card {
+    width: min(84vw, 22rem);
+  }
+  .showcase__progress {
+    grid-template-columns: auto minmax(0, 1fr);
+    row-gap: 0.9rem;
+  }
+  .showcase__hint {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Touch devices never get :hover — surface the label on the centred card. */
+@media (hover: none) {
+  .showcase__card.is-active .showcase__view {
+    transform: translate3d(0, 0, 0);
+  }
+  .showcase__card.is-active .showcase__view-label,
+  .showcase__card.is-active .showcase__view-arrow {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* The custom cursor rig never boots under reduced motion — keep a real cursor. */
+@media (prefers-reduced-motion: reduce) {
+  .showcase [data-cursor] {
+    cursor: pointer;
+  }
+  .showcase__plate-inner,
+  .showcase__edge,
+  .showcase__view,
+  .showcase__view-label,
+  .showcase__view-arrow {
+    transition: none;
+  }
+}

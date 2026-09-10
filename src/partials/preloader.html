@@ -1,0 +1,304 @@
+<!-- ============================================================================
+     PRELOADER — the first thing the browser paints.
+     Its CSS is inline on purpose: this panel has to be correct before
+     tokens.css, the self-hosted fonts or any script have arrived, so every
+     custom property below carries a hard-coded fallback. The style block
+     lives inside the root element and is therefore removed along with it.
+     Resting states are hidden; src/core/preloader.js primes and animates them
+     the instant the module evaluates, and a pure-CSS failsafe uncovers the
+     page after 9s should the bundle never run at all.
+     =========================================================================== -->
+<div class="preloader" data-preloader role="status" aria-live="polite">
+  <style>
+    .preloader {
+      position: fixed;
+      inset: 0;
+      z-index: var(--z-loader, 100);
+      overflow: hidden;
+      background: #F3EFE8;
+      background: var(--c-bone, #F3EFE8);
+      color: #1A1714;
+      color: var(--c-ink, #1A1714);
+      contain: layout paint;
+      animation: preloader-failsafe 600ms cubic-bezier(0.25, 1, 0.5, 1) 9s forwards;
+    }
+    @keyframes preloader-failsafe {
+      to { opacity: 0; visibility: hidden; pointer-events: none; }
+    }
+
+    .preloader__sr {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      margin: -1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+
+    /* ---- the sheet itself: six columns that scale away on exit ------------ */
+    .preloader__panels {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+    }
+    .preloader__panel {
+      background: #F3EFE8;
+      background: var(--c-bone, #F3EFE8);
+      outline: 1px solid #F3EFE8;
+      outline: 1px solid var(--c-bone, #F3EFE8);
+      transform-origin: top center;
+      backface-visibility: hidden;
+    }
+
+    /* ---- faint setting-out grid ------------------------------------------- */
+    .preloader__grid {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        repeating-linear-gradient(to right, rgba(26, 23, 20, 0.05) 0 1px, transparent 1px 88px),
+        repeating-linear-gradient(to bottom, rgba(26, 23, 20, 0.05) 0 1px, transparent 1px 88px);
+      background-image:
+        repeating-linear-gradient(to right, color-mix(in oklab, var(--c-ink, #1A1714) 6%, transparent) 0 1px, transparent 1px 88px),
+        repeating-linear-gradient(to bottom, color-mix(in oklab, var(--c-ink, #1A1714) 6%, transparent) 0 1px, transparent 1px 88px);
+      background-position: center center;
+      -webkit-mask-image: radial-gradient(125% 95% at 50% 44%, #000 26%, transparent 76%);
+      mask-image: radial-gradient(125% 95% at 50% 44%, #000 26%, transparent 76%);
+    }
+
+    /* ---- layout ------------------------------------------------------------ */
+    .preloader__inner {
+      position: relative;
+      height: 100%;
+      display: grid;
+      grid-template-rows: auto 1fr auto auto;
+      gap: clamp(0.9rem, 2.2vh, 1.75rem);
+      padding: clamp(1.1rem, 3vw, 2.4rem) clamp(1.125rem, 4.2vw, 4.5rem) clamp(1.1rem, 2.6vw, 2rem);
+      padding-left: var(--page-x, clamp(1.125rem, 4.2vw, 4.5rem));
+      padding-right: var(--page-x, clamp(1.125rem, 4.2vw, 4.5rem));
+    }
+    .preloader__head,
+    .preloader__foot {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .preloader__stage {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(1rem, 3.2vh, 2.4rem);
+      min-height: 0;
+    }
+
+    /* ---- corner metadata ---------------------------------------------------- */
+    .preloader__meta {
+      display: block;
+      font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+      font-family: var(--ff-mono, ui-monospace, 'SF Mono', Menlo, Consolas, monospace);
+      font-size: clamp(0.5625rem, 1.1vw, 0.6875rem);
+      font-weight: 400;
+      line-height: 1;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      color: #918A7C;
+      color: var(--c-ash, #918A7C);
+      opacity: 0;
+    }
+
+    /* ---- house section drawing ----------------------------------------------- */
+    .preloader__house {
+      display: block;
+      width: clamp(190px, 33vw, 420px);
+      height: auto;
+      max-height: 34vh;
+      overflow: visible;
+      color: #4A443C;
+      color: color-mix(in oklab, var(--c-ink, #1A1714) 80%, transparent);
+      opacity: 0;
+    }
+    .preloader__path { stroke: currentColor; fill: none; }
+    .preloader__path--soft { opacity: 0.4; }
+    .preloader__path--accent {
+      color: #AE4E2A;
+      color: var(--c-terra, #AE4E2A);
+    }
+
+    /* ---- wordmark -------------------------------------------------------------- */
+    .preloader__mark {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: baseline;
+      gap: 0 0.3em;
+      max-width: 18ch;
+      font-family: 'Fraunces Variable', 'Fraunces', 'Times New Roman', serif;
+      font-family: var(--ff-display, 'Fraunces Variable', 'Fraunces', 'Times New Roman', serif);
+      font-weight: 300;
+      font-variation-settings: 'SOFT' 0, 'WONK' 0, 'opsz' 96;
+      font-size: clamp(1.625rem, 6vw, 4rem);
+      line-height: 0.98;
+      letter-spacing: -0.028em;
+      text-align: center;
+      color: #1A1714;
+      color: var(--c-ink, #1A1714);
+    }
+    .preloader__word {
+      display: flex;
+      overflow: hidden;
+      padding: 0.08em 0 0.2em;
+      margin: -0.08em 0 -0.2em;
+    }
+    .preloader__l {
+      display: block;
+      transform: translate3d(0, 115%, 0);
+      backface-visibility: hidden;
+    }
+
+    /* ---- rotating status --------------------------------------------------------- */
+    .preloader__status {
+      display: block;
+      height: 1.3em;
+      overflow: hidden;
+      font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+      font-family: var(--ff-mono, ui-monospace, 'SF Mono', Menlo, Consolas, monospace);
+      font-size: clamp(0.5625rem, 1.1vw, 0.6875rem);
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #918A7C;
+      color: var(--c-ash, #918A7C);
+      opacity: 0;
+    }
+    .preloader__status-track { display: block; }
+    .preloader__status-line {
+      display: block;
+      height: 1.3em;
+      line-height: 1.3em;
+      white-space: nowrap;
+      text-align: center;
+    }
+
+    /* ---- progress rule ------------------------------------------------------------ */
+    .preloader__rule {
+      position: relative;
+      height: 1px;
+      background: rgba(26, 23, 20, 0.12);
+      background: color-mix(in oklab, var(--c-ink, #1A1714) 12%, transparent);
+    }
+    .preloader__rule-bar {
+      position: absolute;
+      inset: 0;
+      background: #AE4E2A;
+      background: var(--c-terra, #AE4E2A);
+      transform: scaleX(0);
+      transform-origin: left center;
+      backface-visibility: hidden;
+    }
+
+    /* ---- counter -------------------------------------------------------------------- */
+    .preloader__count {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.12em;
+      font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+      font-family: var(--ff-mono, ui-monospace, 'SF Mono', Menlo, Consolas, monospace);
+      font-weight: 300;
+      font-size: clamp(1.75rem, 6vw, 3.25rem);
+      line-height: 0.9;
+      letter-spacing: -0.03em;
+      font-variant-numeric: tabular-nums;
+      color: #1A1714;
+      color: var(--c-ink, #1A1714);
+      opacity: 0;
+    }
+    .preloader__pct {
+      font-size: 0.3em;
+      line-height: 1;
+      letter-spacing: 0.2em;
+      color: #918A7C;
+      color: var(--c-ash, #918A7C);
+    }
+
+    @media (max-width: 480px) {
+      .preloader__head .preloader__meta + .preloader__meta { display: none; }
+    }
+    @media (max-height: 560px) {
+      .preloader__house { max-height: 26vh; }
+    }
+  </style>
+
+  <p class="preloader__sr">Loading Unique Homes and Design</p>
+
+  <div class="preloader__panels" aria-hidden="true">
+    <span class="preloader__panel"></span>
+    <span class="preloader__panel"></span>
+    <span class="preloader__panel"></span>
+    <span class="preloader__panel"></span>
+    <span class="preloader__panel"></span>
+    <span class="preloader__panel"></span>
+  </div>
+
+  <div class="preloader__grid" aria-hidden="true"></div>
+
+  <div class="preloader__inner" aria-hidden="true">
+    <div class="preloader__head">
+      <span class="preloader__meta">AUSTIN, TX</span>
+      <span class="preloader__meta">SHEET A-000</span>
+    </div>
+
+    <div class="preloader__stage">
+      <svg class="preloader__house" viewBox="0 0 360 232" fill="none" xmlns="http://www.w3.org/2000/svg" focusable="false">
+        <g stroke="currentColor" stroke-width="1.15" stroke-linecap="square" stroke-linejoin="miter" vector-effect="non-scaling-stroke">
+          <path class="preloader__path" d="M6 196H354"/>
+          <path class="preloader__path preloader__path--soft" d="M22 196l-10 12M52 196l-10 12M82 196l-10 12M112 196l-10 12M142 196l-10 12M172 196l-10 12M202 196l-10 12M232 196l-10 12M262 196l-10 12M292 196l-10 12M322 196l-10 12M352 196l-10 12"/>
+          <path class="preloader__path" d="M66 190H294"/>
+          <path class="preloader__path" d="M74 190V96"/>
+          <path class="preloader__path preloader__path--soft" d="M84 190V100"/>
+          <path class="preloader__path" d="M286 190V96"/>
+          <path class="preloader__path preloader__path--soft" d="M276 190V100"/>
+          <path class="preloader__path" d="M62 102L180 40l118 62"/>
+          <path class="preloader__path preloader__path--soft" d="M84 100L180 50l96 50"/>
+          <path class="preloader__path" d="M62 102H74M286 102H298"/>
+          <path class="preloader__path" d="M84 138H276"/>
+          <path class="preloader__path preloader__path--soft" d="M84 143H276"/>
+          <path class="preloader__path" d="M96 190h12v-9h12v-9h12v-9h12v-9h12v-9h12"/>
+          <path class="preloader__path" d="M200 190v-38h32v38"/>
+          <path class="preloader__path" d="M236 176h32v-26h-32z"/>
+          <path class="preloader__path" d="M104 130h36v-24h-36z"/>
+          <path class="preloader__path" d="M232 130h36v-24h-36z"/>
+          <path class="preloader__path" d="M240 72V46h16v34"/>
+          <path class="preloader__path preloader__path--soft" d="M180 26V208"/>
+          <path class="preloader__path preloader__path--soft" d="M74 214H286M74 209v10M286 209v10"/>
+          <path class="preloader__path preloader__path--accent" d="M44 190H64M48 186l6 4-6 4M44 138H64M48 134l6 4-6 4"/>
+        </g>
+      </svg>
+
+      <p class="preloader__mark"><span class="preloader__word"><span class="preloader__l">U</span><span class="preloader__l">n</span><span class="preloader__l">i</span><span class="preloader__l">q</span><span class="preloader__l">u</span><span class="preloader__l">e</span></span><span class="preloader__word"><span class="preloader__l">H</span><span class="preloader__l">o</span><span class="preloader__l">m</span><span class="preloader__l">e</span><span class="preloader__l">s</span></span><span class="preloader__word"><span class="preloader__l">a</span><span class="preloader__l">n</span><span class="preloader__l">d</span></span><span class="preloader__word"><span class="preloader__l">D</span><span class="preloader__l">e</span><span class="preloader__l">s</span><span class="preloader__l">i</span><span class="preloader__l">g</span><span class="preloader__l">n</span></span></p>
+
+      <span class="preloader__status">
+        <span class="preloader__status-track" data-preloader-status>
+          <span class="preloader__status-line">Setting out</span>
+          <span class="preloader__status-line">Drawing structure</span>
+          <span class="preloader__status-line">Grading site</span>
+          <span class="preloader__status-line">Rendering</span>
+        </span>
+      </span>
+    </div>
+
+    <div class="preloader__rule">
+      <span class="preloader__rule-bar" data-preloader-bar></span>
+    </div>
+
+    <div class="preloader__foot">
+      <span class="preloader__meta">EST. 2009</span>
+      <span class="preloader__count">
+        <span class="preloader__num" data-preloader-num>000</span><span class="preloader__pct">%</span>
+      </span>
+    </div>
+  </div>
+</div>

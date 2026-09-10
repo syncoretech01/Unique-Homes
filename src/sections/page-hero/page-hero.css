@@ -1,0 +1,303 @@
+/* ============================================================================
+   PAGE HERO — shared hero for services / projects / studio / journal / contact
+   One partial, five identities. Every selector is scoped to .page-hero.
+   The drama is in the type and the drawing: no boxes, no fills, hairlines only.
+   ========================================================================== */
+
+.page-hero {
+  --ph-gap: clamp(1.5rem, 3.4vh, 3rem);
+  --ph-art-opacity: 0.155;
+  --ph-title-size: clamp(2.35rem, 1.05rem + 5.85vw, 6.75rem);
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  isolation: isolate;
+  min-height: calc(76vh + var(--header-h));
+  min-height: calc(76svh + var(--header-h));
+  padding-block: calc(var(--header-h) + clamp(2rem, 5vh, 4.25rem)) clamp(1.5rem, 3.5vh, 2.75rem);
+  background: var(--bg);
+}
+
+/* ------------------------------------------------------------ THE DRAWING */
+/* A large procedural drawing held at low contrast and masked away from the
+   headline, so the type always wins. Two nested layers: the outer one is
+   scrubbed by the declarative parallax engine, the inner one is nudged by the
+   pointer. Plain inline SVG — no canvas, no WebGL, nothing to fall back from. */
+.page-hero__art {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.page-hero__art-scroll {
+  position: absolute;
+  inset: -21% -5%;
+  will-change: transform;
+}
+.page-hero__art-point {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+/* The mask gradients below are alpha stencils, not design colour: black is
+   simply "keep", transparent is "drop". Every visible colour is a token. */
+.page-hero__art-draw {
+  position: absolute;
+  inset: 0;
+  opacity: var(--ph-art-opacity);
+  -webkit-mask-image: linear-gradient(102deg, transparent 4%, rgb(0 0 0 / 0.28) 34%, rgb(0 0 0) 74%);
+  mask-image: linear-gradient(102deg, transparent 4%, rgb(0 0 0 / 0.28) 34%, rgb(0 0 0) 74%);
+}
+.page-hero__art-draw > svg { width: 100%; height: 100%; }
+
+/* ------------------------------------------------------------------ SHELL */
+.page-hero__inner {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--ph-gap);
+  width: 100%;
+}
+
+/* --------------------------------------------------------------- TOP ROW */
+.page-hero__top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-4);
+}
+.page-hero__crumb-list {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6em;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  font-weight: 500;
+  letter-spacing: var(--tr-wider);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+.page-hero__crumb-link {
+  color: var(--fg-muted);
+  transition: color var(--d-fast) var(--e-out-quart);
+}
+.page-hero__crumb-link:hover,
+.page-hero__crumb-link:focus-visible { color: var(--fg); }
+.page-hero__crumb-sep { opacity: 0.5; }
+.page-hero__crumb-current { color: var(--accent); }
+.page-hero__crumbs:has(.page-hero__crumb-current:empty) .page-hero__crumb-sep { display: none; }
+
+.page-hero__coords {
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wide);
+  color: var(--fg-muted);
+  white-space: nowrap;
+}
+
+/* ------------------------------------------------------------------ BODY */
+.page-hero__body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(11rem, 19vw, 19rem);
+  align-items: end;
+  gap: clamp(1.75rem, 4vw, 4.5rem);
+  flex: 1;
+}
+
+/* The grid column is the only constraint the headline needs — a ch-based cap
+   here would be measured in the body font and would strangle the display type. */
+.page-hero__lead { min-width: 0; }
+
+.page-hero__eyebrow {
+  gap: 0.9em;
+  flex-wrap: wrap;
+}
+.page-hero__eyebrow-index {
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wide);
+  color: var(--fg-soft);
+}
+.page-hero__eyebrow-index:empty { display: none; }
+
+.page-hero__title {
+  margin-top: clamp(1rem, 2.2vh, 1.75rem);
+  font-family: var(--ff-display);
+  font-size: var(--ph-title-size);
+  font-weight: 300;
+  line-height: 0.99;
+  letter-spacing: var(--tr-mega);
+  font-variation-settings: "SOFT" 0, "WONK" 0, "opsz" 144;
+  text-wrap: initial;
+  color: var(--fg);
+}
+/* Masked line reveals clip descenders at this line-height — give them air. */
+.page-hero__title .split-line { padding-bottom: 0.09em; }
+
+.page-hero__lede {
+  margin-top: clamp(1.1rem, 2.4vh, 1.9rem);
+  max-width: 46ch;
+}
+
+/* ----------------------------------------------------------------- PLATE */
+.page-hero__plate {
+  position: relative;
+  justify-self: end;
+  width: 100%;
+  will-change: transform;
+}
+.page-hero__plate-frame {
+  aspect-ratio: 4 / 5;
+  background: var(--bg-sunken);
+  border: 1px solid var(--line);
+}
+.page-hero__plate-frame .plate { will-change: transform; }
+
+/* Registration ticks — the plate reads as a drawing pinned to a sheet. */
+.page-hero__plate::before,
+.page-hero__plate::after {
+  content: "";
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  border: 1px solid var(--line-strong);
+  pointer-events: none;
+}
+.page-hero__plate::before { top: -5px; left: -5px; border-right: 0; border-bottom: 0; }
+.page-hero__plate::after { right: -5px; bottom: 2.15rem; border-left: 0; border-top: 0; }
+
+.page-hero__cap {
+  display: flex;
+  align-items: center;
+  gap: 0.55em;
+  margin-top: 0.85rem;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  font-weight: 500;
+  letter-spacing: var(--tr-wide);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+.page-hero__cap::before {
+  content: "";
+  flex: none;
+  width: 6px;
+  height: 6px;
+  background: var(--accent);
+}
+.page-hero__cap:empty { display: none; }
+
+/* ------------------------------------------------------------------ FOOT */
+.page-hero__foot {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--sp-5);
+  padding-top: clamp(0.5rem, 2vh, 1.5rem);
+}
+
+.page-hero__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 1.6rem;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  font-weight: 500;
+  letter-spacing: var(--tr-wider);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+.page-hero__meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7em;
+}
+.page-hero__meta-item::before {
+  content: "";
+  width: clamp(0.9rem, 2vw, 1.6rem);
+  height: 1px;
+  background: currentColor;
+  opacity: 0.55;
+}
+.page-hero__meta-item:first-child { color: var(--fg-soft); }
+
+.page-hero__cue-wrap { flex: none; }
+.page-hero__cue {
+  padding: 0.25rem 0.4rem 0;
+  color: var(--fg-muted);
+  transition: color var(--d-fast) var(--e-out-quart);
+}
+.page-hero__cue:hover,
+.page-hero__cue:focus-visible { color: var(--fg); }
+.page-hero__cue-label { line-height: 1; }
+.page-hero__cue .scroll-cue__rail { height: clamp(2.5rem, 6vh, 4.5rem); }
+
+/* ------------------------------------------------------------------ RULE */
+.page-hero__rule {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  height: 1px;
+  overflow: hidden;
+  pointer-events: none;
+}
+.page-hero__rule-line {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--line-strong);
+  transform-origin: left center;
+}
+
+/* ----------------------------------------------------------- RESPONSIVE  */
+@media (max-width: 1100px) {
+  .page-hero__body { gap: clamp(1.5rem, 3.2vw, 2.75rem); }
+}
+
+@media (max-width: 900px) {
+  .page-hero {
+    --ph-art-opacity: 0.12;
+    min-height: calc(68vh + var(--header-h));
+    min-height: calc(68svh + var(--header-h));
+  }
+  .page-hero__body {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+    gap: clamp(1.75rem, 4vh, 2.75rem);
+  }
+  .page-hero__plate {
+    justify-self: start;
+    width: min(46%, 15rem);
+  }
+  .page-hero__plate::after { bottom: 2.4rem; }
+}
+
+@media (max-width: 768px) {
+  .page-hero {
+    --ph-title-size: clamp(2.2rem, 1.1rem + 6.1vw, 3.4rem);
+    min-height: calc(62vh + var(--header-h));
+    min-height: calc(62svh + var(--header-h));
+    padding-block: calc(var(--header-h) + clamp(1.5rem, 4vh, 2.75rem)) clamp(1.25rem, 3vh, 2rem);
+  }
+  .page-hero__art-draw {
+    -webkit-mask-image: linear-gradient(170deg, transparent 6%, rgb(0 0 0 / 0.3) 44%, rgb(0 0 0) 88%);
+    mask-image: linear-gradient(170deg, transparent 6%, rgb(0 0 0 / 0.3) 44%, rgb(0 0 0) 88%);
+  }
+  .page-hero__meta { gap: 0.45rem 1.1rem; }
+}
+
+@media (max-width: 620px) {
+  .page-hero__coords { display: none; }
+  .page-hero__plate { width: min(58%, 13rem); }
+  .page-hero__lede { max-width: 40ch; }
+}
+
+/* --------------------------------------------------------- REDUCED MOTION */
+@media (prefers-reduced-motion: reduce) {
+  .page-hero__cue .scroll-cue__rail::after { animation: none; opacity: 0.6; }
+}

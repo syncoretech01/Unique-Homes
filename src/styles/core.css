@@ -1,0 +1,98 @@
+/* ============================================================================
+   CORE CHROME — WebGL canvas, page transition veil, skip link, scroll rail
+   ========================================================================== */
+
+.gl-stage {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100svh;
+  z-index: 2;
+  pointer-events: none;
+  contain: strict;
+}
+
+/* Sections that host a 3D slot sit above the canvas and punch a hole for it. */
+.gl-slot {
+  position: relative;
+  z-index: 1;
+}
+.gl-slot > .gl-slot__fallback {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity var(--d-slow) var(--e-out-quart);
+}
+html.no-webgl .gl-slot > .gl-slot__fallback { opacity: 1; }
+
+/* Content that must paint above the WebGL canvas */
+.above-gl { position: relative; z-index: 6; }
+
+/* --------------------------------------------------------- PAGE TRANSITION */
+.veil {
+  position: fixed;
+  inset: 0;
+  z-index: 95;
+  pointer-events: none;
+  display: grid;
+  grid-template-rows: repeat(var(--veil-rows, 5), 1fr);
+}
+.veil__panel {
+  background: var(--c-ink);
+  transform: scaleY(0);
+  transform-origin: bottom center;
+  will-change: transform;
+}
+.veil.is-active { pointer-events: all; }
+
+.veil__mark {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--c-paper);
+  font-family: var(--ff-display);
+  font-size: var(--fs-xl);
+  font-weight: 300;
+  letter-spacing: var(--tr-tight);
+  opacity: 0;
+}
+
+/* ------------------------------------------------------------- SKIP LINK */
+.skip {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 200;
+  padding: 0.75rem 1.25rem;
+  background: var(--c-ink);
+  color: var(--c-paper);
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-sm);
+  transform: translateY(-160%);
+  transition: transform var(--d-base) var(--e-out-expo);
+}
+.skip:focus-visible { transform: translateY(0); }
+
+/* ------------------------------------------------------- SCROLL PROGRESS */
+.scroll-rail {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  z-index: 65;
+  pointer-events: none;
+  background: transparent;
+}
+.scroll-rail__bar {
+  height: 100%;
+  width: 100%;
+  background: var(--c-terra);
+  transform: scaleX(var(--scroll-progress, 0));
+  transform-origin: left center;
+}
+
+/* ------------------------------------------------------------ GL DISABLED */
+html.no-webgl .gl-stage { display: none; }

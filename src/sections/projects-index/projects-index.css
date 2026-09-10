@@ -1,0 +1,829 @@
+/* ============================================================================
+   PROJECTS INDEX
+   ----------------------------------------------------------------------------
+   Two views of the same eight cards — an asymmetric editorial grid and a
+   hairline-ruled index table — plus a full-screen case study that the clicked
+   card zooms into.
+
+   Scoping note: the case-study overlay is relocated to <body> at boot so it
+   can own the viewport and so `inert` can be applied to every other top-level
+   node while it is open. It therefore keeps its own namespace, and every rule
+   below is still anchored on `.projects-index__overlay` (or `.projects-index`)
+   so nothing in this file can leak.
+
+   Motion note: hover states use the independent `translate` / `scale`
+   properties rather than `transform`, because GSAP Flip owns `transform` on
+   these same elements. The two compose instead of fighting.
+   ========================================================================== */
+
+.projects-index {
+  background: var(--bg);
+  /* Clip sideways only, so a focus ring on an edge card is never cut off. */
+  overflow-x: clip;
+}
+
+/* --------------------------------------------------------------- HEADER */
+.projects-index__head {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--gutter);
+  align-items: end;
+  padding-bottom: clamp(2.25rem, 4.5vw, 4rem);
+}
+.projects-index__head-label { grid-column: 1 / span 3; }
+.projects-index__head-title { grid-column: 4 / span 5; }
+.projects-index__head-aside { grid-column: 9 / span 4; }
+
+.projects-index__title { max-width: 16ch; }
+.projects-index__intro {
+  max-width: 40ch;
+  text-wrap: pretty;
+}
+
+@media (max-width: 1100px) {
+  .projects-index__head { gap: var(--sp-5); }
+  .projects-index__head-label,
+  .projects-index__head-title,
+  .projects-index__head-aside { grid-column: 1 / -1; }
+  .projects-index__title { max-width: 20ch; }
+}
+
+/* ------------------------------------------------------------ CONTROL BAR */
+.projects-index__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4) var(--sp-6);
+  padding-block: clamp(0.9rem, 1.8vw, 1.5rem);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  margin-bottom: clamp(2rem, 4vw, 3.5rem);
+}
+
+.projects-index__filters {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+/* Sliding indicator behind the active chip — driven by Flip.fit(). */
+.projects-index__pill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  z-index: 0;
+  border-radius: var(--radius-pill);
+  background: var(--fg);
+  pointer-events: none;
+}
+
+.projects-index__chip {
+  position: relative;
+  z-index: 1;
+  font-family: var(--ff-sans);
+  font-size: var(--fs-sm);
+  white-space: nowrap;
+}
+.projects-index__filters .projects-index__chip.is-active {
+  background: transparent;
+  border-color: transparent;
+  color: var(--bg);
+}
+
+.projects-index__bar-end {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-5);
+}
+
+.projects-index__count {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.55em;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wider);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  white-space: nowrap;
+}
+.projects-index__count-num {
+  font-size: var(--fs-sm);
+  color: var(--accent);
+}
+
+.projects-index__views {
+  position: relative;
+  display: flex;
+  gap: 0.2rem;
+  padding: 0.25rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+}
+.projects-index__view-btn {
+  position: relative;
+  z-index: 1;
+  padding: 0.55em 1.05em;
+  border-radius: var(--radius-pill);
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wider);
+  text-transform: uppercase;
+  color: var(--fg-soft);
+  transition: color var(--d-fast) var(--e-out-quart);
+}
+.projects-index__view-btn:hover { color: var(--fg); }
+.projects-index__view-btn[aria-pressed="true"] { color: var(--bg); }
+
+@media (max-width: 560px) {
+  .projects-index__bar-end {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+/* ------------------------------------------------------------------ STAGE */
+.projects-index__stage { position: relative; }
+
+.projects-index__cols {
+  display: none;
+  grid-template-columns: var(--pi-row);
+  column-gap: var(--gutter);
+  padding-inline: clamp(0.5rem, 1vw, 1rem);
+  padding-bottom: 0.7rem;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wider);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+.projects-index__cols span:last-child { text-align: right; }
+
+.projects-index__list {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--gutter);
+  row-gap: clamp(2rem, 3.6vw, 4rem);
+}
+
+.projects-index__empty {
+  padding-block: clamp(3rem, 8vw, 6rem);
+  text-align: center;
+  color: var(--fg-muted);
+}
+
+/* ------------------------------------------------------------------- CARD */
+.projects-index__card {
+  position: relative;
+  grid-column: span var(--pi-span, 6);
+}
+.projects-index__card.is-out { display: none; }
+/* While a Flip is running each card's box is mid-interpolation but its
+   contents already sit in the destination layout — clip the overshoot. */
+.projects-index__list.is-flipping .projects-index__card { overflow: hidden; }
+
+.projects-index__frame {
+  position: relative;
+  aspect-ratio: var(--pi-ar, 4 / 3);
+  overflow: hidden;
+  border-radius: var(--radius-2);
+  background: var(--bg-sunken);
+  translate: 0 0;
+  transition: translate 680ms var(--e-out-expo);
+}
+
+.projects-index__plate {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: var(--radius-2);
+  background: var(--bg-sunken);
+}
+.projects-index__plate > .plate {
+  scale: 1;
+  transition: scale 1100ms var(--e-out-expo);
+}
+
+/* Index numeral, dropped onto the sheet like a drawing reference. */
+.projects-index__idx {
+  position: absolute;
+  z-index: 3;
+  top: clamp(8px, 1.2vw, 15px);
+  left: clamp(8px, 1.2vw, 15px);
+  padding: 0.4em 0.6em;
+  line-height: 1;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wider);
+  color: var(--fg);
+  background: color-mix(in oklab, var(--c-paper) 84%, transparent);
+}
+
+/* Hairline frame that draws itself on hover. The wrapper carries the inset so
+   the SVG can be a plain 100% × 100% box — an absolutely positioned <svg> with
+   only a viewBox has no reliable intrinsic size to resolve `inset` against. */
+.projects-index__hair {
+  position: absolute;
+  display: block;
+  inset: clamp(8px, 1.2vw, 15px);
+  z-index: 2;
+  pointer-events: none;
+}
+.projects-index__hair svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.projects-index__hair-rect {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1;
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  transition: stroke-dashoffset 980ms var(--e-out-expo);
+}
+
+/* "View" label wipes in from the left. */
+.projects-index__view {
+  position: absolute;
+  z-index: 3;
+  left: clamp(8px, 1.2vw, 15px);
+  bottom: clamp(8px, 1.2vw, 15px);
+  overflow: hidden;
+  padding: 0.55em 1em;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+  color: var(--accent-fg);
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wider);
+  text-transform: uppercase;
+  line-height: 1;
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 620ms var(--e-out-expo);
+}
+.projects-index__view-in {
+  display: block;
+  translate: -0.5em 0;
+  transition: translate 620ms var(--e-out-expo);
+}
+
+.projects-index__meta {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: var(--sp-4);
+  row-gap: 0.18rem;
+  align-items: baseline;
+  padding-top: clamp(0.9rem, 1.4vw, 1.35rem);
+  translate: 0 0;
+  transition: translate 680ms var(--e-out-expo);
+}
+.projects-index__name {
+  grid-column: 1;
+  grid-row: 1;
+  font-family: var(--ff-display);
+  font-weight: 300;
+  font-size: var(--fs-lg);
+  line-height: 1.08;
+  letter-spacing: var(--tr-snug);
+  font-variation-settings: "SOFT" 0, "WONK" 0, "opsz" 48;
+  color: var(--fg);
+  transition: color var(--d-base) var(--e-out-quart);
+}
+.projects-index__year {
+  grid-column: 2;
+  grid-row: 1;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-xs);
+  color: var(--fg-muted);
+}
+.projects-index__loc {
+  grid-column: 1;
+  grid-row: 2;
+  font-size: var(--fs-sm);
+  color: var(--fg-soft);
+}
+.projects-index__type {
+  grid-column: 2;
+  grid-row: 2;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wide);
+  text-transform: uppercase;
+  text-align: right;
+  color: var(--fg-muted);
+}
+
+.projects-index__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  padding-top: clamp(0.7rem, 1.1vw, 1rem);
+}
+.projects-index__tag {
+  padding: 0.35em 0.75em;
+  font-size: var(--fs-2xs);
+}
+
+/* The whole card is one hit target, but the accessible name lives here. */
+.projects-index__hit {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-2);
+}
+
+/* ------------------------------------------------------------- CARD HOVER */
+@media (hover: hover) and (pointer: fine) {
+  .projects-index__stage[data-view="grid"] .projects-index__card:hover .projects-index__frame,
+  .projects-index__stage[data-view="grid"] .projects-index__card:focus-within .projects-index__frame {
+    translate: 0 -8px;
+  }
+  .projects-index__stage[data-view="grid"] .projects-index__card:hover .projects-index__meta,
+  .projects-index__stage[data-view="grid"] .projects-index__card:focus-within .projects-index__meta {
+    translate: 0 -4px;
+  }
+}
+.projects-index__card:hover .projects-index__plate > .plate,
+.projects-index__card:focus-within .projects-index__plate > .plate { scale: 1.055; }
+
+.projects-index__card:hover .projects-index__hair-rect,
+.projects-index__card:focus-within .projects-index__hair-rect { stroke-dashoffset: 0; }
+
+.projects-index__card:hover .projects-index__view,
+.projects-index__card:focus-within .projects-index__view { clip-path: inset(0 0% 0 0); }
+.projects-index__card:hover .projects-index__view-in,
+.projects-index__card:focus-within .projects-index__view-in { translate: 0 0; }
+
+.projects-index__card:hover .projects-index__name,
+.projects-index__card:focus-within .projects-index__name { color: var(--accent); }
+
+/* ------------------------------------------------- RESPONSIVE GRID TRACKS */
+@media (max-width: 1100px) {
+  .projects-index__list { grid-template-columns: repeat(8, minmax(0, 1fr)); }
+  .projects-index__card { grid-column: span var(--pi-span-md, 4); }
+  .projects-index__frame { aspect-ratio: var(--pi-ar-md, 4 / 3); }
+}
+@media (max-width: 900px) {
+  .projects-index__list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .projects-index__card { grid-column: span var(--pi-span-sm, 1); }
+  .projects-index__frame { aspect-ratio: var(--pi-ar-sm, 4 / 3); }
+  .projects-index__name { font-size: var(--fs-md); }
+}
+@media (max-width: 520px) {
+  .projects-index__list { grid-template-columns: minmax(0, 1fr); }
+  .projects-index__card { grid-column: 1 / -1; }
+  .projects-index__frame { aspect-ratio: 4 / 3; }
+}
+
+/* ------------------------------------------------------------- INDEX VIEW */
+.projects-index__stage[data-view="index"] {
+  --pi-row: 4.5rem minmax(0, 2.4fr) minmax(0, 1.9fr) minmax(0, 1.3fr) 5rem;
+}
+.projects-index__stage[data-view="index"] .projects-index__cols { display: grid; }
+
+.projects-index__stage[data-view="index"] .projects-index__list {
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: 0;
+  border-top: 1px solid var(--line-strong);
+}
+.projects-index__stage[data-view="index"] .projects-index__card {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: var(--pi-row);
+  column-gap: var(--gutter);
+  align-items: center;
+  padding: clamp(0.85rem, 1.6vw, 1.35rem) clamp(0.5rem, 1vw, 1rem);
+  border-bottom: 1px solid var(--line);
+  transition: background-color var(--d-base) var(--e-out-quart);
+}
+.projects-index__stage[data-view="index"] .projects-index__frame,
+.projects-index__stage[data-view="index"] .projects-index__tags { display: none; }
+
+.projects-index__stage[data-view="index"] .projects-index__meta {
+  display: contents;
+}
+.projects-index__stage[data-view="index"] .projects-index__idx {
+  position: static;
+  padding: 0;
+  background: none;
+  color: var(--fg-muted);
+}
+.projects-index__stage[data-view="index"] .projects-index__name {
+  grid-column: auto;
+  grid-row: auto;
+  font-size: var(--fs-md);
+  line-height: 1.15;
+}
+.projects-index__stage[data-view="index"] .projects-index__loc {
+  grid-column: auto;
+  grid-row: auto;
+  font-size: var(--fs-sm);
+}
+.projects-index__stage[data-view="index"] .projects-index__type {
+  grid-column: auto;
+  grid-row: auto;
+  text-align: left;
+}
+.projects-index__stage[data-view="index"] .projects-index__year {
+  grid-column: auto;
+  grid-row: auto;
+  text-align: right;
+}
+@media (hover: hover) and (pointer: fine) {
+  .projects-index__stage[data-view="index"] .projects-index__card:hover,
+  .projects-index__stage[data-view="index"] .projects-index__card:focus-within {
+    background: var(--bg-raised);
+  }
+}
+
+@media (max-width: 760px) {
+  .projects-index__stage[data-view="index"] { --pi-row: 2.75rem minmax(0, 1fr) 4rem; }
+  .projects-index__stage[data-view="index"] .projects-index__cols { display: none; }
+  .projects-index__stage[data-view="index"] .projects-index__type { display: none; }
+  .projects-index__stage[data-view="index"] .projects-index__idx {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    align-self: center;
+  }
+  .projects-index__stage[data-view="index"] .projects-index__name { grid-column: 2; grid-row: 1; }
+  .projects-index__stage[data-view="index"] .projects-index__loc { grid-column: 2; grid-row: 2; }
+  .projects-index__stage[data-view="index"] .projects-index__year {
+    grid-column: 3;
+    grid-row: 1 / span 2;
+    align-self: center;
+  }
+}
+
+/* ------------------------------------------------------- CURSOR  PREVIEW  */
+.projects-index__preview {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 55;
+  width: clamp(11rem, 16vw, 17rem);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.projects-index__preview-frame {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: var(--bg-sunken);
+  box-shadow: var(--sh-3);
+}
+.projects-index__preview-cap {
+  margin-top: 0.55rem;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wider);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+@media (hover: none), (pointer: coarse) {
+  .projects-index__preview { display: none; }
+}
+
+/* ==========================================================================
+   CASE STUDY OVERLAY
+   ========================================================================== */
+.projects-index__overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  isolation: isolate;
+  color: var(--fg);
+}
+
+.projects-index__overlay .pd__veil {
+  position: absolute;
+  inset: 0;
+  background: color-mix(in oklab, var(--c-ink) 58%, transparent);
+  opacity: 0;
+}
+
+/* The sheet rises from the bottom and stops just short of the top edge. That
+   strip of dimmed page is the real, clickable backdrop at every width. */
+.projects-index__overlay .pd__panel {
+  position: absolute;
+  top: clamp(1rem, 3vh, 2.5rem);
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow: hidden;
+  border-radius: var(--radius-3) var(--radius-3) 0 0;
+}
+.projects-index__overlay .pd__paper {
+  position: absolute;
+  inset: 0;
+  background: var(--bg);
+  transform-origin: 50% 100%;
+}
+
+.projects-index__overlay .pd__scroll {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+}
+.projects-index__overlay .pd__scroll:focus { outline: none; }
+.projects-index__overlay.is-animating .pd__scroll { overflow: hidden; }
+
+/* --------------------------------------------------------------- TOP BAR */
+.projects-index__overlay .pd__bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  padding: clamp(0.8rem, 1.7vw, 1.3rem) var(--page-x);
+  pointer-events: none;
+}
+.projects-index__overlay .pd__bar > * { pointer-events: auto; }
+
+.projects-index__overlay .pd__bar-id {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55em;
+  padding: 0.6em 0.95em;
+  border-radius: var(--radius-pill);
+  background: color-mix(in oklab, var(--c-paper) 86%, transparent);
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wider);
+  text-transform: uppercase;
+  line-height: 1;
+  color: var(--fg-soft);
+}
+.projects-index__overlay .pd__bar-sep { color: var(--fg-muted); }
+
+.projects-index__overlay .pd__close {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.55em 1em 0.55em 0.7em;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-pill);
+  background: color-mix(in oklab, var(--c-paper) 88%, transparent);
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wider);
+  text-transform: uppercase;
+  line-height: 1;
+  color: var(--fg);
+  transition: background-color var(--d-fast) var(--e-out-quart),
+              border-color var(--d-fast) var(--e-out-quart),
+              color var(--d-fast) var(--e-out-quart);
+}
+.projects-index__overlay .pd__close:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-fg);
+}
+.projects-index__overlay .pd__close-glyph {
+  display: grid;
+  place-items: center;
+  width: 1.05em;
+  height: 1.05em;
+}
+.projects-index__overlay .pd__close-glyph svg { width: 100%; height: 100%; fill: none; }
+
+/* ------------------------------------------------------------------ HERO */
+.projects-index__overlay .pd__sheet {
+  position: relative;
+  z-index: 1;
+  min-height: 100%;
+}
+
+.projects-index__overlay .pd__hero {
+  position: relative;
+  height: clamp(17rem, 58svh, 40rem);
+  overflow: hidden;
+  background: var(--bg-sunken);
+}
+.projects-index__overlay.is-animating .pd__hero {
+  overflow: visible;
+  z-index: 5;
+}
+.projects-index__overlay .pd__hero .projects-index__plate { border-radius: 0; }
+
+.projects-index__overlay .pd__hero-cap {
+  position: absolute;
+  z-index: 3;
+  left: var(--page-x);
+  bottom: clamp(0.9rem, 2vw, 1.6rem);
+  padding: 0.55em 0.95em;
+  border-radius: var(--radius-pill);
+  background: color-mix(in oklab, var(--c-paper) 86%, transparent);
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wider);
+  text-transform: uppercase;
+  line-height: 1;
+  color: var(--fg-soft);
+}
+
+/* ------------------------------------------------------------------ BODY */
+.projects-index__overlay .pd__body {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: clamp(2rem, 4vw, 3.5rem) var(--gutter);
+  width: 100%;
+  max-width: var(--maxw);
+  margin-inline: auto;
+  padding: clamp(2.5rem, 5.5vw, 5.5rem) var(--page-x) clamp(3.5rem, 8vw, 7rem);
+}
+
+.projects-index__overlay .pd__head { grid-column: 1 / span 7; }
+.projects-index__overlay .pd__name {
+  font-family: var(--ff-display);
+  font-weight: 300;
+  font-size: var(--fs-3xl);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--tr-tight);
+  font-variation-settings: "SOFT" 0, "WONK" 0, "opsz" 120;
+  margin-block: clamp(0.7rem, 1.4vw, 1.2rem) clamp(0.9rem, 1.7vw, 1.5rem);
+}
+.projects-index__overlay .pd__summary { max-width: 34ch; }
+
+.projects-index__overlay .pd__meta {
+  grid-column: 9 / span 4;
+  align-self: end;
+  border-top: 1px solid var(--line-strong);
+}
+.projects-index__overlay .pd__meta-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  padding-block: 0.7rem;
+  border-bottom: 1px solid var(--line);
+}
+.projects-index__overlay .pd__meta-k {
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wider);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  white-space: nowrap;
+}
+.projects-index__overlay .pd__meta-v {
+  font-size: var(--fs-sm);
+  text-align: right;
+  color: var(--fg);
+}
+
+.projects-index__overlay .pd__prose { grid-column: 1 / span 5; }
+.projects-index__overlay .pd__desc {
+  font-size: var(--fs-md);
+  line-height: var(--lh-relaxed);
+  color: var(--fg-soft);
+  text-wrap: pretty;
+}
+
+.projects-index__overlay .pd__blocks {
+  grid-column: 7 / span 6;
+  display: grid;
+  gap: clamp(1.4rem, 2.4vw, 2.4rem);
+  align-content: start;
+}
+.projects-index__overlay .pd__block {
+  border-top: 1px solid var(--line-strong);
+  padding-top: clamp(0.8rem, 1.3vw, 1.15rem);
+}
+.projects-index__overlay .pd__block-label {
+  margin-bottom: 0.6rem;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  font-weight: 500;
+  letter-spacing: var(--tr-wider);
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.projects-index__overlay .pd__block-copy {
+  max-width: 48ch;
+  font-size: var(--fs-base);
+  line-height: var(--lh-relaxed);
+  color: var(--fg-soft);
+  text-wrap: pretty;
+}
+
+.projects-index__overlay .pd__stats {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--sp-5) var(--gutter);
+  padding-block: clamp(1.4rem, 2.8vw, 2.4rem);
+  border-top: 1px solid var(--line-strong);
+  border-bottom: 1px solid var(--line-strong);
+}
+.projects-index__overlay .pd__stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+.projects-index__overlay .pd__stat-num {
+  font-family: var(--ff-display);
+  font-weight: 300;
+  font-size: var(--fs-2xl);
+  line-height: 0.95;
+  letter-spacing: var(--tr-tight);
+  font-variant-numeric: tabular-nums;
+  font-variation-settings: "SOFT" 0, "WONK" 0, "opsz" 144;
+}
+.projects-index__overlay .pd__stat-label {
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wider);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.projects-index__overlay .pd__drawings {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(1.5rem, 3vw, 3rem) var(--gutter);
+}
+.projects-index__overlay .pd__dwg-frame {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-2);
+  background: var(--bg-sunken);
+}
+.projects-index__overlay .pd__dwg-cap {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  margin-top: 0.7rem;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wider);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.projects-index__overlay .pd__services { grid-column: 1 / span 6; }
+.projects-index__overlay .pd__services-label {
+  margin-bottom: 0.9rem;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  font-weight: 500;
+  letter-spacing: var(--tr-wider);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+.projects-index__overlay .pd__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.projects-index__overlay .pd__foot {
+  grid-column: 8 / -1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+}
+
+/* --------------------------------------------------- OVERLAY RESPONSIVE  */
+@media (max-width: 1100px) {
+  .projects-index__overlay .pd__head,
+  .projects-index__overlay .pd__meta,
+  .projects-index__overlay .pd__prose,
+  .projects-index__overlay .pd__blocks,
+  .projects-index__overlay .pd__services { grid-column: 1 / -1; }
+  .projects-index__overlay .pd__foot {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+  }
+  .projects-index__overlay .pd__summary { max-width: 46ch; }
+}
+@media (max-width: 900px) {
+  .projects-index__overlay .pd__panel { top: clamp(2rem, 7vh, 4rem); }
+  .projects-index__overlay .pd__hero { height: clamp(14rem, 42svh, 24rem); }
+  .projects-index__overlay .pd__stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .projects-index__overlay .pd__drawings { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 560px) {
+  .projects-index__overlay .pd__close-label { display: none; }
+  .projects-index__overlay .pd__close { padding: 0.6em; }
+  .projects-index__overlay .pd__close-glyph { width: 1.2em; height: 1.2em; }
+  .projects-index__overlay .pd__stats { grid-template-columns: minmax(0, 1fr); }
+}

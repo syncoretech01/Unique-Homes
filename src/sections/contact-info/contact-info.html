@@ -1,0 +1,142 @@
+<!-- ==========================================================================
+     CONTACT INFO — the studio, and the end of the page.
+
+     The contact page carries no closing CTA, so this section has to land the
+     page on its own: a studio card with a live Austin clock, a locality plan
+     drawn in SVG at runtime (there is no embedded map anywhere on this site —
+     no network at runtime), three questions lifted from the FAQ data, and a
+     closing register of direct routes.
+
+     Everything list-shaped — the address, the hours, the questions, the
+     social links, the map — is written by contact-info.js from the data
+     layer. The markup below is the structure it fills.
+     ========================================================================== -->
+<section class="section contact-info" data-section="contact-info" id="contact-info" aria-labelledby="contact-info-title">
+
+  <div class="contact-info__inner shell">
+
+    <!-- ---------------------------------------------------------- HEAD -->
+    <div class="contact-info__head">
+      <p class="eyebrow contact-info__eyebrow" data-reveal="fade">The studio</p>
+      <h2 class="t-h2 contact-info__title" id="contact-info-title" data-split="lines">
+        Find us on<br>East Sixth.
+      </h2>
+      <p class="t-lead contact-info__lede" data-reveal="up" data-delay="0.08">
+        One floor, one team, and a plotter that runs most afternoons. Drop in by appointment —
+        it is the fastest way to see a full set on paper rather than on a screen.
+      </p>
+    </div>
+
+    <!-- ------------------------------------------------- CARD + MAP -->
+    <div class="contact-info__grid">
+
+      <div class="contact-info__card card" data-reveal="up">
+        <div class="card__body contact-info__card-body">
+
+          <div class="contact-info__status" data-ci-status>
+            <span class="contact-info__status-dot" aria-hidden="true"></span>
+            <span class="contact-info__status-text" data-ci-status-text>Studio hours</span>
+          </div>
+
+          <dl class="contact-info__rows">
+            <div class="contact-info__row">
+              <dt class="t-mono contact-info__row-label">Address</dt>
+              <dd class="contact-info__row-value">
+                <address class="contact-info__address" data-ci-address>
+                  1204 East Sixth Street, Suite 300<br>Austin, TX 78702<br>United States
+                </address>
+              </dd>
+            </div>
+
+            <div class="contact-info__row">
+              <dt class="t-mono contact-info__row-label">Hours</dt>
+              <dd class="contact-info__row-value" data-ci-hours>Monday – Friday, 8:30 – 18:00 CT</dd>
+            </div>
+
+            <div class="contact-info__row">
+              <dt class="t-mono contact-info__row-label">Local time</dt>
+              <dd class="contact-info__row-value">
+                <span class="contact-info__clock t-num" data-clock-ui="hm" data-ci-clock></span>
+                <span class="contact-info__clock-note">Central Time, same as the drawings</span>
+              </dd>
+            </div>
+
+            <div class="contact-info__row">
+              <dt class="t-mono contact-info__row-label">Telephone</dt>
+              <dd class="contact-info__row-value">
+                <a class="contact-info__link link-u" href="tel:+15125550142" data-ci-phone>+1 (512) 555-0142</a>
+              </dd>
+            </div>
+
+            <div class="contact-info__row">
+              <dt class="t-mono contact-info__row-label">Email</dt>
+              <dd class="contact-info__row-value">
+                <a class="contact-info__link link-u" href="mailto:studio@uniquehomesanddesign.com" data-ci-email>studio@uniquehomesanddesign.com</a>
+              </dd>
+            </div>
+          </dl>
+
+          <a
+            class="btn btn--ghost btn--sm contact-info__directions"
+            href="https://maps.google.com/?q=1204%20East%20Sixth%20Street%2C%20Suite%20300%2C%20Austin%2C%20TX%2078702"
+            target="_blank"
+            rel="noopener noreferrer"
+            data-arrow
+            data-ci-directions
+          >Get directions<span class="u-sr"> — opens Google Maps in a new tab</span></a>
+
+        </div>
+      </div>
+
+      <figure class="contact-info__map" data-reveal="fade" data-delay="0.06">
+        <div class="contact-info__map-frame" data-ci-map></div>
+        <figcaption class="contact-info__map-cap">
+          <span class="t-mono contact-info__map-cap-label">Locality plan</span>
+          <span class="contact-info__map-cap-note">Drawn to convey the corner, not the coordinates. Indicative only.</span>
+        </figcaption>
+      </figure>
+
+    </div>
+
+    <!-- ------------------------------------------------------- QUESTIONS -->
+    <div class="contact-info__ask">
+      <div class="contact-info__ask-aside">
+        <p class="t-mono contact-info__ask-label">Before you write</p>
+        <p class="contact-info__ask-note">
+          The three things people ask first. There are five more where these came from.
+        </p>
+        <a class="contact-info__ask-link link-u" href="/services/#faq">All eight questions</a>
+      </div>
+      <div class="contact-info__ask-main" data-ci-faq></div>
+    </div>
+
+    <!-- ----------------------------------------------------------- CLOSE -->
+    <div class="contact-info__close">
+
+      <div class="contact-info__close-lead">
+        <p class="t-mono contact-info__close-label">Or skip all of it</p>
+        <p class="contact-info__close-copy">
+          A one-line email is a perfectly good start. Write to us directly and the same two
+          people will answer.
+        </p>
+        <a class="contact-info__close-mail" href="mailto:studio@uniquehomesanddesign.com" data-ci-close-mail>studio@uniquehomesanddesign.com</a>
+      </div>
+
+      <div class="contact-info__social-wrap">
+        <p class="t-mono contact-info__social-label">Elsewhere</p>
+        <ul class="contact-info__social" data-ci-social role="list"></ul>
+      </div>
+
+    </div>
+
+    <div class="contact-info__colophon">
+      <span class="t-mono contact-info__colophon-item" data-ci-colophon-brand>Unique Homes and Design</span>
+      <span class="contact-info__colophon-rule" aria-hidden="true"></span>
+      <span class="t-mono contact-info__colophon-item" data-ci-colophon-since>Est. 2009</span>
+      <span class="contact-info__colophon-rule" aria-hidden="true"></span>
+      <span class="t-mono contact-info__colophon-item">Austin, Texas</span>
+    </div>
+
+  </div>
+
+</section>

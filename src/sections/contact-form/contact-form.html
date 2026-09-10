@@ -1,0 +1,421 @@
+<!-- ==========================================================================
+     CONTACT FORM — the enquiry itself.
+
+     A sticky editorial column on the left (what to send, where to send it if
+     you would rather not use a form, and a site drawing) against the form on
+     the right.
+
+     The heading deliberately does NOT repeat the page hero's <h1> — that one
+     already reads "Tell us about the site." — so this one picks up the
+     paragraph beneath it instead.
+
+     The form is wrapped in [data-form] inside a [data-form-shell], so the UI
+     kit owns validation, the error messages and the swap to the success
+     state. contact-form.js adds only what the kit does not: the services
+     chips (rendered from src/data/services.js), the completeness meter, the
+     submit button's loading state and the pre-filled mailto on success.
+
+     Every text field uses the .field contract from components.css — input,
+     then label, then line — because the floating label and the drawn hairline
+     are sibling selectors on `placeholder=" "` and `:focus`. The one addition
+     is .contact-form__control, a block that wraps exactly those three so the
+     hairline anchors to the input's own baseline rather than to the bottom of
+     a field that has grown to hold an error message. The section's CSS moves
+     .field's padding onto it, so the geometry is identical to the component.
+     ========================================================================== -->
+<section class="section contact-form" data-section="contact-form" id="contact-form" aria-labelledby="contact-form-title">
+
+  <div class="contact-form__inner shell">
+    <div class="contact-form__layout">
+
+      <!-- ------------------------------------------------------- ASIDE -->
+      <aside class="contact-form__aside">
+        <div class="contact-form__aside-inner sticky">
+
+          <p class="eyebrow contact-form__eyebrow" data-reveal="fade">Enquiry</p>
+
+          <h2 class="t-h3 contact-form__title" id="contact-form-title" data-split="lines">
+            Send what<br>you have.
+          </h2>
+
+          <p class="t-lead contact-form__lede" data-reveal="up" data-delay="0.08">
+            An address, a sketch on the back of something, a folder of references — or none of
+            those. Tell us roughly what you want to build and we will tell you what the drawing
+            set needs to contain, what it will cost, and how long it takes.
+          </p>
+
+          <dl class="contact-form__direct" data-reveal-group=":scope > .contact-form__direct-row" data-stagger="0.07" data-delay="0.14">
+            <div class="contact-form__direct-row">
+              <dt class="t-mono contact-form__direct-label">Email</dt>
+              <dd class="contact-form__direct-value">
+                <a class="contact-form__direct-link link-u" href="mailto:studio@uniquehomesanddesign.com" data-cf-email>studio@uniquehomesanddesign.com</a>
+                <button
+                  class="contact-form__copy"
+                  type="button"
+                  data-copy="studio@uniquehomesanddesign.com"
+                  data-copy-done="Copied"
+                  data-cf-copy
+                >
+                  <span class="contact-form__copy-label" data-copy-label>Copy</span>
+                </button>
+              </dd>
+            </div>
+            <div class="contact-form__direct-row">
+              <dt class="t-mono contact-form__direct-label">Telephone</dt>
+              <dd class="contact-form__direct-value">
+                <a class="contact-form__direct-link link-u" href="tel:+15125550142" data-cf-phone>+1 (512) 555-0142</a>
+              </dd>
+            </div>
+          </dl>
+
+          <p class="contact-form__promise" data-reveal="up" data-delay="0.2">
+            <span class="contact-form__promise-dot" aria-hidden="true"></span>
+            Every enquiry is read by the people who would draw it. A reply usually lands within
+            two working days.
+          </p>
+
+          <figure class="contact-form__plate" data-reveal="fade" data-delay="0.1">
+            <div class="frame contact-form__plate-frame" data-media-reveal="up" data-cf-plate></div>
+            <figcaption class="contact-form__plate-cap t-mono">
+              Site plan — the first sheet of every set
+            </figcaption>
+          </figure>
+
+        </div>
+      </aside>
+
+      <!-- -------------------------------------------------------- FORM -->
+      <div class="contact-form__main" data-form-shell>
+
+        <form class="contact-form__form" data-form novalidate data-cf-form>
+
+          <div class="contact-form__head" data-reveal="up" data-duration="0.9">
+            <p class="t-mono contact-form__head-label">Project enquiry</p>
+
+            <div
+              class="contact-form__progress"
+              role="progressbar"
+              aria-label="Enquiry completeness"
+              aria-valuemin="0"
+              aria-valuemax="9"
+              aria-valuenow="0"
+              aria-valuetext="0 of 9 details complete"
+              data-cf-progress
+            >
+              <span class="contact-form__progress-read">
+                <span class="t-num contact-form__progress-count" data-cf-progress-count>0 / 9</span>
+                <span class="contact-form__progress-word">complete</span>
+              </span>
+              <span class="contact-form__progress-track" aria-hidden="true">
+                <span class="contact-form__progress-fill" data-cf-progress-fill></span>
+              </span>
+            </div>
+          </div>
+
+          <p class="contact-form__note" data-reveal="fade" data-delay="0.08">
+            <span class="contact-form__req" aria-hidden="true">*</span>
+            Required. Everything else helps, but none of it is compulsory.
+          </p>
+
+          <div class="contact-form__rows" data-reveal-group=":scope > .contact-form__row" data-stagger="0.05" data-start="top 88%">
+
+            <!-- name + email -->
+            <div class="contact-form__row contact-form__row--split">
+              <div class="field contact-form__field">
+                <span class="contact-form__control">
+                  <input
+                    class="field__input"
+                    type="text"
+                    id="cf-name"
+                    name="name"
+                    placeholder=" "
+                    autocomplete="name"
+                    required
+                    aria-describedby="cf-name-error"
+                    data-error-required="Tell us who we are writing back to"
+                  />
+                  <label class="field__label" for="cf-name">Name <span class="contact-form__req" aria-hidden="true">*</span></label>
+                  <span class="field__line" aria-hidden="true"></span>
+                </span>
+                <span class="field__error" id="cf-name-error"></span>
+              </div>
+
+              <div class="field contact-form__field">
+                <span class="contact-form__control">
+                  <input
+                    class="field__input"
+                    type="email"
+                    id="cf-email"
+                    name="email"
+                    placeholder=" "
+                    autocomplete="email"
+                    inputmode="email"
+                    required
+                    aria-describedby="cf-email-error"
+                    data-error-required="We need an address to reply to"
+                    data-error-email="That address is missing something"
+                  />
+                  <label class="field__label" for="cf-email">Email <span class="contact-form__req" aria-hidden="true">*</span></label>
+                  <span class="field__line" aria-hidden="true"></span>
+                </span>
+                <span class="field__error" id="cf-email-error"></span>
+              </div>
+            </div>
+
+            <!-- phone + site address -->
+            <div class="contact-form__row contact-form__row--split">
+              <div class="field contact-form__field">
+                <span class="contact-form__control">
+                  <input
+                    class="field__input"
+                    type="tel"
+                    id="cf-phone"
+                    name="phone"
+                    placeholder=" "
+                    autocomplete="tel"
+                    inputmode="tel"
+                    aria-describedby="cf-phone-error"
+                  />
+                  <label class="field__label" for="cf-phone">Phone <span class="contact-form__opt">optional</span></label>
+                  <span class="field__line" aria-hidden="true"></span>
+                </span>
+                <span class="field__error" id="cf-phone-error"></span>
+              </div>
+
+              <div class="field contact-form__field">
+                <span class="contact-form__control">
+                  <input
+                    class="field__input"
+                    type="text"
+                    id="cf-address"
+                    name="address"
+                    placeholder=" "
+                    autocomplete="street-address"
+                    aria-describedby="cf-address-error"
+                  />
+                  <label class="field__label" for="cf-address">Project address / suburb <span class="contact-form__opt">optional</span></label>
+                  <span class="field__line" aria-hidden="true"></span>
+                </span>
+                <span class="field__error" id="cf-address-error"></span>
+              </div>
+            </div>
+
+            <!-- what are you building — single select -->
+            <div class="contact-form__row">
+              <fieldset class="contact-form__group">
+                <legend class="t-mono contact-form__legend">What are you building?</legend>
+                <div class="contact-form__chips">
+                  <label class="chip contact-form__chip">
+                    <input class="contact-form__chip-input" type="radio" name="build" value="New build" />
+                    <span class="contact-form__chip-fill" aria-hidden="true"></span>
+                    <svg class="contact-form__chip-tick" viewBox="0 0 12 12" aria-hidden="true" focusable="false"><circle cx="6" cy="6" r="4.7" /><path d="M3.2 6.3 5.4 8.5 8.9 3.9" /></svg>
+                    <span class="contact-form__chip-text">New build</span>
+                  </label>
+                  <label class="chip contact-form__chip">
+                    <input class="contact-form__chip-input" type="radio" name="build" value="Addition" />
+                    <span class="contact-form__chip-fill" aria-hidden="true"></span>
+                    <svg class="contact-form__chip-tick" viewBox="0 0 12 12" aria-hidden="true" focusable="false"><circle cx="6" cy="6" r="4.7" /><path d="M3.2 6.3 5.4 8.5 8.9 3.9" /></svg>
+                    <span class="contact-form__chip-text">Addition</span>
+                  </label>
+                  <label class="chip contact-form__chip">
+                    <input class="contact-form__chip-input" type="radio" name="build" value="Adaptive reuse" />
+                    <span class="contact-form__chip-fill" aria-hidden="true"></span>
+                    <svg class="contact-form__chip-tick" viewBox="0 0 12 12" aria-hidden="true" focusable="false"><circle cx="6" cy="6" r="4.7" /><path d="M3.2 6.3 5.4 8.5 8.9 3.9" /></svg>
+                    <span class="contact-form__chip-text">Adaptive reuse</span>
+                  </label>
+                  <label class="chip contact-form__chip">
+                    <input class="contact-form__chip-input" type="radio" name="build" value="Visualisation only" />
+                    <span class="contact-form__chip-fill" aria-hidden="true"></span>
+                    <svg class="contact-form__chip-tick" viewBox="0 0 12 12" aria-hidden="true" focusable="false"><circle cx="6" cy="6" r="4.7" /><path d="M3.2 6.3 5.4 8.5 8.9 3.9" /></svg>
+                    <span class="contact-form__chip-text">Visualisation only</span>
+                  </label>
+                  <label class="chip contact-form__chip">
+                    <input class="contact-form__chip-input" type="radio" name="build" value="Not sure yet" />
+                    <span class="contact-form__chip-fill" aria-hidden="true"></span>
+                    <svg class="contact-form__chip-tick" viewBox="0 0 12 12" aria-hidden="true" focusable="false"><circle cx="6" cy="6" r="4.7" /><path d="M3.2 6.3 5.4 8.5 8.9 3.9" /></svg>
+                    <span class="contact-form__chip-text">Not sure yet</span>
+                  </label>
+                </div>
+              </fieldset>
+            </div>
+
+            <!-- services — multi select, rendered from src/data/services.js -->
+            <div class="contact-form__row">
+              <fieldset class="contact-form__group">
+                <legend class="t-mono contact-form__legend">
+                  Which services do you need?
+                  <span class="contact-form__legend-note">Choose as many as apply</span>
+                </legend>
+                <div class="contact-form__chips" data-cf-services></div>
+              </fieldset>
+            </div>
+
+            <!-- budget — segmented control -->
+            <div class="contact-form__row">
+              <fieldset class="contact-form__group">
+                <legend class="t-mono contact-form__legend">
+                  Budget range
+                  <span class="contact-form__legend-note">Construction cost, best guess</span>
+                </legend>
+                <div class="contact-form__seg">
+                  <label class="contact-form__seg-item">
+                    <input class="contact-form__seg-input" type="radio" name="budget" value="Under $250k" />
+                    <span class="contact-form__seg-fill" aria-hidden="true"></span>
+                    <span class="contact-form__seg-text">Under $250k</span>
+                  </label>
+                  <label class="contact-form__seg-item">
+                    <input class="contact-form__seg-input" type="radio" name="budget" value="$250k – $500k" />
+                    <span class="contact-form__seg-fill" aria-hidden="true"></span>
+                    <span class="contact-form__seg-text">$250k – $500k</span>
+                  </label>
+                  <label class="contact-form__seg-item">
+                    <input class="contact-form__seg-input" type="radio" name="budget" value="$500k – $1M" />
+                    <span class="contact-form__seg-fill" aria-hidden="true"></span>
+                    <span class="contact-form__seg-text">$500k – $1M</span>
+                  </label>
+                  <label class="contact-form__seg-item">
+                    <input class="contact-form__seg-input" type="radio" name="budget" value="$1M – $2.5M" />
+                    <span class="contact-form__seg-fill" aria-hidden="true"></span>
+                    <span class="contact-form__seg-text">$1M – $2.5M</span>
+                  </label>
+                  <label class="contact-form__seg-item">
+                    <input class="contact-form__seg-input" type="radio" name="budget" value="Over $2.5M" />
+                    <span class="contact-form__seg-fill" aria-hidden="true"></span>
+                    <span class="contact-form__seg-text">Over $2.5M</span>
+                  </label>
+                  <label class="contact-form__seg-item">
+                    <input class="contact-form__seg-input" type="radio" name="budget" value="Not established yet" />
+                    <span class="contact-form__seg-fill" aria-hidden="true"></span>
+                    <span class="contact-form__seg-text">Not established</span>
+                  </label>
+                </div>
+                <p class="contact-form__seg-note">
+                  We quote a fixed fee per package, so a range is enough. It changes what we
+                  recommend, never what we charge for the same scope.
+                </p>
+              </fieldset>
+            </div>
+
+            <!-- timeline -->
+            <div class="contact-form__row contact-form__row--split">
+              <div class="field contact-form__field contact-form__field--select">
+                <span class="contact-form__control">
+                  <select class="field__input contact-form__select" id="cf-timeline" name="timeline" aria-describedby="cf-timeline-error">
+                    <option value="">Select one</option>
+                    <option value="Exploring">Exploring</option>
+                    <option value="1–3 months">1–3 months</option>
+                    <option value="3–6 months">3–6 months</option>
+                    <option value="Ready now">Ready now</option>
+                  </select>
+                  <label class="field__label" for="cf-timeline">Timeline</label>
+                  <span class="field__line" aria-hidden="true"></span>
+                  <svg class="contact-form__select-arrow" viewBox="0 0 12 8" aria-hidden="true" focusable="false"><path d="M1 1.6 6 6.4 11 1.6" /></svg>
+                </span>
+                <span class="field__error" id="cf-timeline-error"></span>
+              </div>
+
+              <p class="contact-form__timeline-note t-small">
+                Nothing here is a commitment. It only tells us whether to send a schedule or a
+                conversation.
+              </p>
+            </div>
+
+            <!-- message -->
+            <div class="contact-form__row">
+              <div class="field contact-form__field contact-form__field--message">
+                <span class="contact-form__control">
+                  <textarea
+                    class="field__input contact-form__textarea"
+                    id="cf-message"
+                    name="message"
+                    rows="5"
+                    placeholder=" "
+                    required
+                    data-min-length="20"
+                    aria-describedby="cf-message-hint cf-message-error"
+                    data-error-required="A sentence or two is plenty"
+                    data-error-min="A sentence or two — at least 20 characters"
+                  ></textarea>
+                  <label class="field__label" for="cf-message">What are you hoping to build? <span class="contact-form__req" aria-hidden="true">*</span></label>
+                  <span class="field__line" aria-hidden="true"></span>
+                </span>
+                <p class="contact-form__hint" id="cf-message-hint" data-cf-hint>
+                  Twenty characters minimum. Site constraints, deadlines and awkward neighbours
+                  all welcome.
+                </p>
+                <span class="field__error" id="cf-message-error"></span>
+              </div>
+            </div>
+
+            <!-- consent -->
+            <div class="contact-form__row">
+              <div class="field contact-form__field contact-form__field--consent">
+                <label class="contact-form__consent" for="cf-consent">
+                  <input
+                    class="contact-form__consent-input"
+                    type="checkbox"
+                    id="cf-consent"
+                    name="consent"
+                    required
+                    aria-describedby="cf-consent-error"
+                    data-error-required="We need your agreement before we can reply"
+                  />
+                  <span class="contact-form__consent-box" aria-hidden="true">
+                    <svg viewBox="0 0 12 12" focusable="false"><path d="M2 6.4 4.7 9 10 3" /></svg>
+                  </span>
+                  <span class="contact-form__consent-text" data-cf-consent-text>
+                    I agree that Unique Homes and Design may store these details and contact me
+                    about this enquiry. Nothing is passed to anyone else.
+                    <span class="contact-form__req" aria-hidden="true">*</span>
+                  </span>
+                </label>
+                <span class="field__error" id="cf-consent-error"></span>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="contact-form__actions" data-reveal="up" data-start="top 92%">
+            <button class="btn btn--accent contact-form__submit" type="submit" data-cf-submit>
+              <span class="btn__label"><span data-text="Send enquiry">Send enquiry</span></span>
+              <span class="contact-form__spin" aria-hidden="true"></span>
+            </button>
+            <p class="contact-form__actions-note t-mono">Demo build — nothing is transmitted</p>
+          </div>
+
+        </form>
+
+        <!-- Honest success state. The kit unhides this and moves focus to it;
+             contact-form.js writes the mailto href before the form resets. -->
+        <div
+          class="ui-form-success contact-form__success"
+          data-form-success
+          role="status"
+          aria-live="polite"
+          tabindex="-1"
+          hidden
+        >
+          <p class="ui-form-success__eyebrow">Nothing was sent</p>
+          <p class="ui-form-success__title">This demo form has no backend attached.</p>
+          <p class="ui-form-success__body">
+            Your enquiry did not leave the browser and nothing was stored. The direct route is
+            <a href="mailto:studio@uniquehomesanddesign.com" data-form-success-email>studio@uniquehomesanddesign.com</a>
+            — the button below opens your own mail app with everything you just wrote already in
+            it. We read every enquiry ourselves and usually reply within two working days.
+          </p>
+          <div class="ui-form-success__actions contact-form__success-actions">
+            <a class="btn btn--accent btn--sm contact-form__success-mail" href="mailto:studio@uniquehomesanddesign.com" data-cf-success-mail>
+              <span class="btn__label"><span data-text="Open in your mail app">Open in your mail app</span></span>
+            </a>
+            <button class="btn btn--ghost btn--sm" type="button" data-form-reset>
+              <span class="btn__label"><span data-text="Write another">Write another</span></span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+</section>

@@ -1,0 +1,443 @@
+/* ============================================================================
+   CONTACT INFO
+   The studio card, the drawn locality plan, three questions and the closing
+   register. This is the last light block on the page — the dark footer lands
+   directly underneath it — so the closing rows carry more weight than they
+   would mid-page.
+
+   The map is inline SVG built in contact-info.js. Everything in it is a class
+   coloured from the token layer here; nothing in the generated markup carries
+   a literal colour.
+   ========================================================================== */
+
+.section.contact-info {
+  background: var(--bg);
+  border-top: 1px solid var(--line-soft);
+}
+
+/* ------------------------------------------------------------------ HEAD */
+
+.contact-info .contact-info__head {
+  display: grid;
+  grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+  gap: var(--sp-4) clamp(2rem, 5vw, 5rem);
+  align-items: end;
+  padding-bottom: clamp(2.5rem, 5vw, 4.5rem);
+}
+.contact-info .contact-info__eyebrow { grid-column: 1 / -1; }
+.contact-info .contact-info__lede { max-width: 42ch; }
+
+/* --------------------------------------------------------- CARD  +  MAP */
+
+.contact-info .contact-info__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+  align-items: start;
+}
+
+.contact-info .contact-info__card {
+  background: var(--bg-raised);
+  border-color: var(--line);
+}
+.contact-info .contact-info__card-body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  height: 100%;
+}
+
+/* Open / closed reads from the real Austin clock, not from a hardcoded flag. */
+.contact-info .contact-info__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.35em 0.85em 0.35em 0.7em;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wide);
+  text-transform: uppercase;
+  color: var(--fg-soft);
+}
+.contact-info .contact-info__status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--fg-muted);
+  transition: background-color var(--d-base) var(--e-out-quart);
+}
+.contact-info .contact-info__status.is-open { color: var(--fg); }
+.contact-info .contact-info__status.is-open .contact-info__status-dot {
+  background: var(--c-moss);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--c-moss) 22%, transparent);
+}
+
+.contact-info .contact-info__rows {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-top: var(--sp-5);
+}
+.contact-info .contact-info__row {
+  display: grid;
+  grid-template-columns: minmax(5.5rem, 7rem) minmax(0, 1fr);
+  gap: var(--sp-3);
+  padding: var(--sp-4) 0;
+  border-top: 1px solid var(--line-soft);
+}
+.contact-info .contact-info__row:first-child { border-top: 0; padding-top: 0; }
+.contact-info .contact-info__row-label { color: var(--fg-muted); padding-top: 0.15em; }
+.contact-info .contact-info__row-value {
+  min-width: 0;
+  font-size: var(--fs-sm);
+  line-height: 1.55;
+  color: var(--fg);
+  overflow-wrap: anywhere;
+}
+.contact-info .contact-info__address { font-style: normal; }
+
+.contact-info .contact-info__link {
+  color: var(--fg);
+  transition: color var(--d-fast) var(--e-out-quart);
+}
+.contact-info .contact-info__link:hover,
+.contact-info .contact-info__link:focus-visible { color: var(--accent); }
+
+.contact-info .contact-info__clock {
+  display: block;
+  font-size: var(--fs-md);
+  letter-spacing: var(--tr-snug);
+  color: var(--fg);
+  min-height: 1.4em;
+}
+.contact-info .contact-info__clock-note {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: var(--fs-2xs);
+  color: var(--fg-muted);
+}
+
+.contact-info .contact-info__directions { margin-top: var(--sp-5); }
+
+/* ------------------------------------------------------------------- MAP */
+
+.contact-info .contact-info__map {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.contact-info .contact-info__map-frame {
+  position: relative;
+  /* Matches the drawing's viewBox, so nothing is ever cropped. */
+  aspect-ratio: 900 / 620;
+  border: 1px solid var(--line);
+  background: var(--bg-raised);
+  overflow: hidden;
+}
+.contact-info .contact-info__map-frame svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.contact-info .contact-info__map-cap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem 1rem;
+  margin-top: 0.75rem;
+}
+.contact-info .contact-info__map-cap-label { color: var(--fg-muted); }
+.contact-info .contact-info__map-cap-note {
+  font-size: var(--fs-xs);
+  color: var(--fg-muted);
+}
+
+/* ------------------------------------------------------- MAP INTERNALS  */
+
+.contact-info .contact-info__m-block { fill: color-mix(in oklab, var(--fg) 5%, transparent); }
+.contact-info .contact-info__m-block--strong { fill: color-mix(in oklab, var(--fg) 11%, transparent); }
+.contact-info .contact-info__m-park { fill: color-mix(in oklab, var(--c-moss) 18%, transparent); }
+.contact-info .contact-info__m-water { fill: color-mix(in oklab, var(--c-blueprint) 13%, transparent); }
+.contact-info .contact-info__m-shore {
+  fill: none;
+  stroke: color-mix(in oklab, var(--c-blueprint) 38%, transparent);
+  stroke-width: 1.2;
+}
+.contact-info .contact-info__m-street {
+  fill: none;
+  stroke: var(--line-strong);
+  stroke-width: 1;
+}
+.contact-info .contact-info__m-alley {
+  stroke: var(--line);
+  stroke-dasharray: 5 5;
+}
+.contact-info .contact-info__m-needle { fill: var(--accent); stroke: none; }
+.contact-info .contact-info__m-compass-ring {
+  fill: none;
+  stroke: var(--line-strong);
+  stroke-width: 1;
+}
+.contact-info .contact-info__m-scalebar {
+  fill: none;
+  stroke: var(--fg-muted);
+  stroke-width: 1.1;
+}
+.contact-info .contact-info__m-plaque {
+  fill: var(--bg-raised);
+  opacity: 0.78;
+}
+.contact-info .contact-info__m-major {
+  fill: none;
+  stroke: color-mix(in oklab, var(--fg) 44%, transparent);
+  stroke-width: 2.4;
+}
+.contact-info .contact-info__m-hwy {
+  fill: none;
+  stroke: color-mix(in oklab, var(--fg) 36%, transparent);
+  stroke-width: 1.6;
+}
+.contact-info .contact-info__m-rail {
+  fill: none;
+  stroke: color-mix(in oklab, var(--fg) 34%, transparent);
+  stroke-width: 1.1;
+}
+.contact-info .contact-info__m-bridge {
+  fill: none;
+  stroke: color-mix(in oklab, var(--fg) 40%, transparent);
+  stroke-width: 2.2;
+}
+/* A background-coloured halo behind the glyphs keeps every label legible
+   over blocks and water without a plaque that would have to be sized by
+   hand — and it scales with the type instead of against it. */
+.contact-info .contact-info__m-label,
+.contact-info .contact-info__m-pin-label {
+  paint-order: stroke;
+  stroke: var(--bg-raised);
+  stroke-width: 3.5px;
+  stroke-linejoin: round;
+}
+.contact-info .contact-info__m-label {
+  fill: var(--fg-muted);
+  font-family: var(--ff-mono);
+  font-size: 15px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.contact-info .contact-info__m-label--water { fill: color-mix(in oklab, var(--c-blueprint) 62%, transparent); }
+
+.contact-info .contact-info__m-leader {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.1;
+}
+.contact-info .contact-info__m-pin-label {
+  fill: var(--fg);
+  font-family: var(--ff-mono);
+  font-size: 17px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+/* Halo sits under the pin and is driven by Motion One (data-pulse="glow"). */
+.contact-info .contact-info__m-pin-halo {
+  fill: var(--accent);
+  opacity: 0.45;
+  pointer-events: none;
+}
+.contact-info .contact-info__m-pin-core { fill: var(--accent); }
+.contact-info .contact-info__m-pin-eye { fill: var(--bg-raised); }
+.contact-info .contact-info__m-ring {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.4;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: ci-pulse 3.4s var(--e-out-quart) infinite;
+}
+.contact-info .contact-info__m-ring--late { animation-delay: 1.7s; }
+@keyframes ci-pulse {
+  0%   { transform: scale(0.5); opacity: 0; }
+  15%  { opacity: 0.5; }
+  100% { transform: scale(2.7); opacity: 0; }
+}
+
+/* ------------------------------------------------------------- QUESTIONS */
+
+.contact-info .contact-info__ask {
+  display: grid;
+  grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+  gap: clamp(1.75rem, 4vw, 4.5rem);
+  margin-top: clamp(3.5rem, 7vw, 7rem);
+}
+.contact-info .contact-info__ask-label { color: var(--fg-muted); }
+.contact-info .contact-info__ask-note {
+  margin-top: var(--sp-3);
+  max-width: 30ch;
+  font-size: var(--fs-sm);
+  line-height: 1.6;
+  color: var(--fg-soft);
+}
+.contact-info .contact-info__ask-link {
+  display: inline-block;
+  margin-top: var(--sp-4);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: var(--fg);
+  transition: color var(--d-fast) var(--e-out-quart);
+}
+.contact-info .contact-info__ask-link:hover,
+.contact-info .contact-info__ask-link:focus-visible { color: var(--accent); }
+
+.contact-info .contact-info__acc { border-top-color: var(--line-strong); }
+.contact-info .contact-info__q-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: clamp(0.9rem, 2vw, 2rem);
+  min-width: 0;
+}
+.contact-info .contact-info__q-idx {
+  flex: none;
+  font-size: var(--fs-2xs);
+  color: var(--fg-muted);
+}
+.contact-info .contact-info__q { font-size: var(--fs-md); }
+.contact-info .contact-info__acc .acc__icon { width: 2.2rem; height: 2.2rem; }
+.contact-info .contact-info__a {
+  max-width: 62ch;
+  padding-left: calc(clamp(0.9rem, 2vw, 2rem) + 2ch);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-relaxed);
+  color: var(--fg-soft);
+}
+
+/* ----------------------------------------------------------------- CLOSE */
+
+.contact-info .contact-info__close {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: clamp(2rem, 5vw, 4.5rem);
+  margin-top: clamp(3.5rem, 8vw, 8rem);
+  padding-top: clamp(2rem, 4vw, 3.5rem);
+  border-top: 1px solid var(--line);
+}
+.contact-info .contact-info__close-label { color: var(--fg-muted); }
+.contact-info .contact-info__close-copy {
+  margin-top: var(--sp-3);
+  max-width: 44ch;
+  font-size: var(--fs-base);
+  line-height: var(--lh-relaxed);
+  color: var(--fg-soft);
+}
+.contact-info .contact-info__close-mail {
+  display: inline-block;
+  margin-top: var(--sp-5);
+  font-family: var(--ff-display);
+  font-weight: 300;
+  font-size: clamp(1.1rem, 3.4vw, 2.35rem);
+  line-height: 1.1;
+  letter-spacing: var(--tr-snug);
+  color: var(--fg);
+  overflow-wrap: anywhere;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1px;
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  transition: background-size 620ms var(--e-out-expo), color var(--d-base) var(--e-out-quart);
+}
+.contact-info .contact-info__close-mail:hover,
+.contact-info .contact-info__close-mail:focus-visible {
+  color: var(--accent);
+  background-size: 100% 1px;
+}
+
+.contact-info .contact-info__social-label { color: var(--fg-muted); }
+.contact-info .contact-info__social {
+  margin-top: var(--sp-3);
+  border-top: 1px solid var(--line-soft);
+}
+.contact-info .contact-info__social-item { border-bottom: 1px solid var(--line-soft); }
+.contact-info .contact-info__social-link {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  padding: 0.85rem 0;
+  color: var(--fg);
+  transition: color var(--d-fast) var(--e-out-quart);
+}
+.contact-info .contact-info__social-name {
+  display: inline-block;
+  transition: transform var(--d-base) var(--e-out-expo);
+}
+.contact-info .contact-info__social-link:hover,
+.contact-info .contact-info__social-link:focus-visible { color: var(--accent); }
+.contact-info .contact-info__social-link:hover .contact-info__social-name,
+.contact-info .contact-info__social-link:focus-visible .contact-info__social-name {
+  transform: translate3d(0.5rem, 0, 0);
+}
+.contact-info .contact-info__social-name { font-size: var(--fs-sm); font-weight: 500; }
+.contact-info .contact-info__social-handle {
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wide);
+  color: var(--fg-muted);
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+/* -------------------------------------------------------------- COLOPHON */
+
+.contact-info .contact-info__colophon {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem 1rem;
+  margin-top: clamp(2.5rem, 5vw, 4.5rem);
+  padding-top: var(--sp-5);
+  border-top: 1px solid var(--line-soft);
+}
+.contact-info .contact-info__colophon-item { color: var(--fg-muted); }
+.contact-info .contact-info__colophon-rule {
+  flex: 1 1 1.5rem;
+  height: 1px;
+  min-width: 1.5rem;
+  background: var(--line);
+}
+
+/* ------------------------------------------------------------ RESPONSIVE */
+
+@media (max-width: 1000px) {
+  .contact-info .contact-info__head { grid-template-columns: minmax(0, 1fr); }
+  .contact-info .contact-info__grid { grid-template-columns: minmax(0, 1fr); }
+  .contact-info .contact-info__ask { grid-template-columns: minmax(0, 1fr); }
+  .contact-info .contact-info__close { grid-template-columns: minmax(0, 1fr); }
+  .contact-info .contact-info__map-frame { min-height: clamp(14rem, 46vw, 22rem); }
+}
+
+@media (max-width: 620px) {
+  .contact-info .contact-info__m-label { font-size: 26px; letter-spacing: 0.1em; }
+  .contact-info .contact-info__m-label--minor { display: none; }
+  .contact-info .contact-info__m-pin-label { font-size: 28px; }
+  .contact-info .contact-info__row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.35rem;
+  }
+  .contact-info .contact-info__a { padding-left: 0; }
+  .contact-info .contact-info__social-link { flex-wrap: wrap; gap: 0.15rem 1rem; }
+  .contact-info .contact-info__social-handle { text-align: left; }
+}
+
+/* -------------------------------------------------------- REDUCED MOTION */
+
+@media (prefers-reduced-motion: reduce) {
+  .contact-info .contact-info__m-ring {
+    animation: none;
+    opacity: 0.32;
+  }
+  .contact-info .contact-info__m-ring--late { opacity: 0.16; transform: scale(1.9); }
+  .contact-info .contact-info__social-link { transition-duration: 1ms; }
+}

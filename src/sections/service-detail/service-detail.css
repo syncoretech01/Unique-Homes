@@ -1,0 +1,878 @@
+/* ============================================================================
+   SERVICE DETAIL
+   Three service chapters, each one a full surface of its own: a light paper
+   chapter, a blueprint chapter and a dark ink chapter. Every chapter runs the
+   same anatomy —
+
+     opener        giant index numeral parallaxing against a two-line title
+     body          sticky COLUMNS SLIDER on the left, copy scrolling on the right
+     deliverables  hairline-ruled list, 01–08 in mono, drawn rule + accent tick
+     process       four steps on a datum line that draws across
+     facts         small table set in tabular numerals
+     foot          "Discuss <service>" → /contact/
+
+   Below 1000px the sticky apparatus is dropped entirely: the plates become a
+   horizontally snapping row and the chapter reads as one linear sequence.
+
+   Every selector is scoped to .service-detail / [data-section="service-detail"].
+   ========================================================================== */
+
+.service-detail {
+  position: relative;
+  isolation: isolate;
+}
+
+/* ========================================================================== */
+/*  CHAPTER SHELL                                                             */
+/* ========================================================================== */
+
+[data-section="service-detail"] .sd-chapter {
+  position: relative;
+  isolation: isolate;
+  background: var(--bg);
+  color: var(--fg);
+  padding-block: clamp(3.5rem, 8vh + 1.5rem, 9rem) clamp(4rem, 9vh + 2rem, 10rem);
+  scroll-margin-top: calc(var(--header-h) + 0.5rem);
+}
+
+/* Texture field — background-image assigned in JS (grain or setting-out grid)
+   so the values stay generated rather than hard-coded here. */
+[data-section="service-detail"] .sd-chapter__field {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-repeat: repeat;
+  background-size: 96px 96px;
+  opacity: 0.5;
+  mix-blend-mode: multiply;
+}
+[data-section="service-detail"] [data-sd-theme="blueprint"] .sd-chapter__field {
+  background-size: auto;
+  opacity: 0.7;
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 10%, #000 84%, transparent);
+  mask-image: linear-gradient(180deg, transparent, #000 10%, #000 84%, transparent);
+}
+[data-section="service-detail"] [data-sd-theme="ink"] .sd-chapter__field {
+  opacity: 0.5;
+  mix-blend-mode: screen;
+}
+
+/* A single wash of the chapter accent, kept off the blend context above. */
+[data-section="service-detail"] .sd-chapter__glow {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+}
+[data-section="service-detail"] [data-sd-theme="blueprint"] .sd-chapter__glow {
+  opacity: 1;
+  background: radial-gradient(
+    72% 44% at 84% 0%,
+    color-mix(in oklab, var(--c-blueprint) 12%, transparent),
+    transparent 68%
+  );
+}
+[data-section="service-detail"] [data-sd-theme="ink"] .sd-chapter__glow {
+  opacity: 1;
+  background: radial-gradient(
+    78% 46% at 18% 4%,
+    color-mix(in oklab, var(--sd-accent) 15%, transparent),
+    transparent 66%
+  );
+}
+
+[data-section="service-detail"] .sd-chapter__inner {
+  position: relative;
+  z-index: 1;
+}
+
+[data-section="service-detail"] .sd-chapter__hair {
+  display: block;
+  width: 100%;
+  height: 1px;
+  background: var(--line-strong);
+  margin-bottom: clamp(2rem, 4vw, 3.5rem);
+}
+
+/* ========================================================================== */
+/*  OPENER                                                                    */
+/* ========================================================================== */
+
+[data-section="service-detail"] .sd-open {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 0 var(--gutter);
+}
+
+[data-section="service-detail"] .sd-open__numeral {
+  grid-column: 1 / span 3;
+  grid-row: 1;
+  align-self: start;
+  z-index: 0;
+  font-family: var(--ff-display);
+  font-weight: 300;
+  font-variation-settings: "SOFT" 0, "WONK" 0, "opsz" 144;
+  font-size: clamp(5rem, 15vw, 14rem);
+  line-height: 0.74;
+  letter-spacing: var(--tr-mega);
+  font-variant-numeric: lining-nums;
+  color: color-mix(in oklab, var(--fg) 10%, transparent);
+  user-select: none;
+  pointer-events: none;
+}
+@supports (-webkit-text-stroke: 1px red) {
+  [data-section="service-detail"] .sd-open__numeral {
+    color: transparent;
+    -webkit-text-stroke: 1px color-mix(in oklab, var(--fg) 30%, transparent);
+  }
+}
+
+[data-section="service-detail"] .sd-open__head {
+  grid-column: 3 / span 10;
+  grid-row: 1;
+  align-self: end;
+  z-index: 1;
+}
+
+[data-section="service-detail"] .sd-open__title {
+  font-family: var(--ff-display);
+  font-weight: 300;
+  font-variation-settings: "SOFT" 0, "WONK" 0, "opsz" 144;
+  font-size: clamp(2.6rem, 7.4vw, 7rem);
+  line-height: 0.94;
+  letter-spacing: var(--tr-mega);
+}
+[data-section="service-detail"] .sd-open__line {
+  display: block;
+}
+/* The second line carries the house italic — Fraunces at WONK, in the
+   chapter's own accent. */
+[data-section="service-detail"] .sd-open__line--b {
+  padding-left: 0.16em;
+  font-style: italic;
+  font-variation-settings: "SOFT" 6, "WONK" 1, "opsz" 144;
+  color: var(--sd-accent);
+}
+
+[data-section="service-detail"] .sd-open__aside {
+  grid-column: 3 / span 10;
+  grid-row: 2;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.72fr);
+  gap: var(--gutter);
+  align-items: start;
+  margin-top: clamp(1.75rem, 4vw, 3.25rem);
+  padding-top: clamp(1.25rem, 2.5vw, 2rem);
+  border-top: 1px solid var(--line);
+}
+[data-section="service-detail"] .sd-open__lede {
+  max-width: 46ch;
+}
+[data-section="service-detail"] .sd-open__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  justify-self: end;
+  text-align: right;
+}
+[data-section="service-detail"] .sd-open__meta span {
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wider);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+/* ========================================================================== */
+/*  BODY — sticky visual + scrolling copy                                     */
+/* ========================================================================== */
+
+[data-section="service-detail"] .sd-body {
+  --sd-sticky-h: min(calc(100vh - var(--header-h) - 3rem), 760px);
+  --sd-sticky-h: min(calc(100svh - var(--header-h) - 3rem), 760px);
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: clamp(2rem, 4vw, 5rem);
+  align-items: start;
+  margin-top: clamp(3rem, 7vw, 6.5rem);
+  min-height: calc(var(--sd-sticky-h) * 2.05);
+}
+
+[data-section="service-detail"] .sd-visual {
+  grid-column: 1 / span 5;
+  position: sticky;
+  top: calc(var(--header-h) + 1.5rem);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  height: var(--sd-sticky-h);
+}
+
+/* -------------------------------------------------------- COLUMNS SLIDER */
+[data-section="service-detail"] .sd-slider {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--bg-sunken);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-1);
+}
+[data-section="service-detail"] [data-sd-theme="ink"] .sd-slider {
+  background: var(--bg-sunken);
+  border-color: var(--line-strong);
+}
+
+/* Corner registration marks — the frame reads as a drawing sheet. */
+[data-section="service-detail"] .sd-slider::before,
+[data-section="service-detail"] .sd-slider::after {
+  content: "";
+  position: absolute;
+  z-index: 8;
+  width: 14px;
+  height: 14px;
+  pointer-events: none;
+  border: 1px solid color-mix(in oklab, var(--sd-accent) 55%, transparent);
+}
+[data-section="service-detail"] .sd-slider::before {
+  top: 10px;
+  left: 10px;
+  border-right: 0;
+  border-bottom: 0;
+}
+[data-section="service-detail"] .sd-slider::after {
+  right: 10px;
+  bottom: 10px;
+  border-left: 0;
+  border-top: 0;
+}
+
+[data-section="service-detail"] .sd-plate {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  overflow: hidden;
+}
+/* Deliberately taller than the plate: the ±6% art parallax inside a
+   transition never exposes an edge. */
+[data-section="service-detail"] .sd-plate__art {
+  position: absolute;
+  inset: -8% 0;
+}
+[data-section="service-detail"] .sd-plate__art .plate {
+  height: 100%;
+}
+[data-section="service-detail"] [data-sd-theme="ink"] .sd-plate__art .plate__glow {
+  opacity: 0.3;
+}
+[data-section="service-detail"] [data-sd-theme="ink"] .sd-plate__art .plate__noise {
+  opacity: 0.1;
+}
+
+/* The accent rule that rides the clip edge of the incoming plate. The line
+   sits on the element's bottom edge so that both parked positions — just
+   below the frame and just above it — put it out of sight. */
+[data-section="service-detail"] .sd-wipe {
+  position: absolute;
+  inset: 0;
+  z-index: 7;
+  pointer-events: none;
+  transform: translate3d(0, 2%, 0);
+  background: linear-gradient(
+    to bottom,
+    transparent 0 calc(100% - 1px),
+    var(--sd-accent) calc(100% - 1px) 100%
+  );
+}
+/* A short heavier leader at the left end, the way a drafting rule is anchored. */
+[data-section="service-detail"] .sd-wipe::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: clamp(1.5rem, 12%, 3rem);
+  height: 3px;
+  background: var(--sd-accent);
+}
+
+/* will-change is granted only while a chapter's slider is actually scrubbing. */
+@media (min-width: 1000px) {
+  [data-section="service-detail"] .sd-chapter.is-live .sd-plate,
+  [data-section="service-detail"] .sd-chapter.is-live .sd-plate__art,
+  [data-section="service-detail"] .sd-chapter.is-live .sd-wipe {
+    will-change: transform;
+  }
+}
+
+/* ------------------------------------------------------------------- HUD */
+[data-section="service-detail"] .sd-hud {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  padding-top: var(--sp-3);
+  border-top: 1px solid var(--line);
+}
+[data-section="service-detail"] .sd-hud__top {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+}
+[data-section="service-detail"] .sd-hud__count {
+  flex: none;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.28em;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: var(--tr-wide);
+  color: var(--fg);
+  font-variant-numeric: tabular-nums;
+}
+[data-section="service-detail"] .sd-hud__now {
+  color: var(--sd-accent);
+}
+[data-section="service-detail"] .sd-hud__slash {
+  color: var(--fg-muted);
+}
+[data-section="service-detail"] .sd-hud__total {
+  color: var(--fg-muted);
+}
+
+[data-section="service-detail"] .sd-hud__rail {
+  flex: 1 1 auto;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  gap: 6px;
+  min-width: 0;
+}
+[data-section="service-detail"] .sd-hud__seg {
+  position: relative;
+  height: 2px;
+  overflow: hidden;
+  background: var(--line-strong);
+}
+[data-section="service-detail"] .sd-hud__seg-fill {
+  position: absolute;
+  inset: 0;
+  background: var(--sd-accent);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+[data-section="service-detail"] .sd-hud__bottom {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-4);
+}
+[data-section="service-detail"] .sd-hud__cap {
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wider);
+  text-transform: uppercase;
+  color: var(--fg-soft);
+}
+[data-section="service-detail"] .sd-hud__hint {
+  flex: none;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-widest);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+[data-section="service-detail"] .sd-hud__hint--swipe {
+  display: none;
+}
+
+/* ========================================================================== */
+/*  COPY COLUMN                                                               */
+/* ========================================================================== */
+
+[data-section="service-detail"] .sd-copy {
+  grid-column: 7 / span 6;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2.5rem, 5.5vw, 4.5rem);
+  padding-block: clamp(0.25rem, 1.5vh, 1.5rem) clamp(3rem, 12vh, 8rem);
+}
+
+[data-section="service-detail"] .sd-copy__body {
+  font-size: var(--fs-md);
+  line-height: var(--lh-relaxed);
+  color: var(--fg-soft);
+  max-width: 56ch;
+}
+[data-section="service-detail"] .sd-copy__body::first-line {
+  color: var(--fg);
+}
+
+[data-section="service-detail"] .sd-copy__keys {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+[data-section="service-detail"] .sd-key {
+  border-color: color-mix(in oklab, var(--sd-accent) 34%, var(--line));
+  color: var(--fg-soft);
+}
+[data-section="service-detail"] .sd-key .tag__dot {
+  background: var(--sd-accent);
+}
+
+[data-section="service-detail"] .sd-block__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  padding-bottom: clamp(0.9rem, 2vw, 1.4rem);
+}
+[data-section="service-detail"] .sd-block__count {
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wider);
+  color: var(--fg-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ------------------------------------------------------------ DELIVERABLES */
+[data-section="service-detail"] .sd-deliv__list {
+  border-top: 1px solid var(--line);
+}
+[data-section="service-detail"] .sd-deliv__row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 2.9rem minmax(0, 1fr) 1.1rem;
+  align-items: baseline;
+  gap: 0 var(--sp-3);
+  padding-block: clamp(0.85rem, 2vh, 1.35rem);
+}
+[data-section="service-detail"] .sd-deliv__rule {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: var(--line);
+  transform: scaleX(1);
+  transform-origin: left center;
+}
+[data-section="service-detail"] .sd-deliv__no {
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wide);
+  color: var(--fg-muted);
+  font-variant-numeric: tabular-nums;
+  transition: color var(--d-base) var(--e-out-quart);
+}
+[data-section="service-detail"] .sd-deliv__text {
+  display: block;
+  font-size: var(--fs-base);
+  line-height: 1.42;
+  color: var(--fg);
+  /* Slack on three sides so the JS wipe never shaves a descender. */
+  clip-path: inset(-12% -3% -12% 0%);
+  transition: transform var(--d-base) var(--e-out-expo);
+}
+[data-section="service-detail"] .sd-deliv__tick {
+  align-self: center;
+  width: 10px;
+  height: 10px;
+  color: var(--sd-accent);
+  opacity: 0.55;
+  transition: transform var(--d-base) var(--e-out-expo),
+              opacity var(--d-base) var(--e-out-quart);
+}
+@media (hover: hover) and (pointer: fine) {
+  [data-section="service-detail"] .sd-deliv__row:hover .sd-deliv__text {
+    transform: translate3d(6px, 0, 0);
+  }
+  [data-section="service-detail"] .sd-deliv__row:hover .sd-deliv__tick {
+    transform: rotate(45deg) scale(1.25);
+    opacity: 1;
+  }
+  [data-section="service-detail"] .sd-deliv__row:hover .sd-deliv__no {
+    color: var(--sd-accent);
+  }
+}
+
+/* ------------------------------------------------------------------ FACTS */
+[data-section="service-detail"] .sd-facts__table {
+  width: 100%;
+  border-collapse: collapse;
+  border-top: 1px solid var(--line);
+  text-align: left;
+}
+[data-section="service-detail"] .sd-facts__table tr {
+  border-bottom: 1px solid var(--line-soft);
+}
+[data-section="service-detail"] .sd-facts__table th,
+[data-section="service-detail"] .sd-facts__table td {
+  padding-block: clamp(0.7rem, 1.6vh, 1.05rem);
+  vertical-align: baseline;
+  font-weight: 400;
+}
+[data-section="service-detail"] .sd-facts__table th {
+  width: 42%;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wider);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+[data-section="service-detail"] .sd-facts__table td {
+  font-size: var(--fs-sm);
+  color: var(--fg);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1, "zero" 1;
+}
+
+/* ========================================================================== */
+/*  PROCESS BAND                                                              */
+/* ========================================================================== */
+
+[data-section="service-detail"] .sd-process {
+  margin-top: clamp(2.5rem, 6vw, 5.5rem);
+}
+[data-section="service-detail"] .sd-process__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  padding-bottom: clamp(1.5rem, 3vw, 2.5rem);
+}
+[data-section="service-detail"] .sd-process__note {
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wider);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+[data-section="service-detail"] .sd-process__band {
+  position: relative;
+}
+[data-section="service-detail"] .sd-process__steps {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(1.75rem, 3.5vw, 3rem) var(--gutter);
+}
+
+/* The datum line that draws across on entry (desktop only — below 1000px each
+   step keeps its own hairline instead). */
+[data-section="service-detail"] .sd-process__wire {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  z-index: 1;
+  color: var(--sd-accent);
+  pointer-events: none;
+}
+
+[data-section="service-detail"] .sd-step {
+  position: relative;
+  padding-top: clamp(1.75rem, 3vw, 2.5rem);
+  border-top: 1px solid var(--line-strong);
+}
+[data-section="service-detail"] .sd-step__mark {
+  position: absolute;
+  top: -4px;
+  left: 0;
+  z-index: 2;
+  display: block;
+  width: 9px;
+  height: 9px;
+}
+[data-section="service-detail"] .sd-step__diamond {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--sd-accent);
+  transform: rotate(45deg);
+}
+[data-section="service-detail"] .sd-step__no {
+  display: block;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wider);
+  color: var(--fg-muted);
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 0.75rem;
+}
+[data-section="service-detail"] .sd-step__name {
+  font-family: var(--ff-display);
+  font-weight: 300;
+  font-variation-settings: "SOFT" 0, "WONK" 0, "opsz" 40;
+  font-size: var(--fs-lg);
+  line-height: var(--lh-snug);
+  letter-spacing: var(--tr-snug);
+  color: var(--fg);
+  margin-bottom: 0.5rem;
+}
+[data-section="service-detail"] .sd-step__note {
+  font-size: var(--fs-sm);
+  line-height: 1.55;
+  color: var(--fg-soft);
+  max-width: 30ch;
+}
+
+/* ========================================================================== */
+/*  CHAPTER FOOT                                                              */
+/* ========================================================================== */
+
+[data-section="service-detail"] .sd-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--sp-5);
+  margin-top: clamp(3rem, 7vw, 6rem);
+  padding-top: clamp(1.5rem, 3vw, 2.25rem);
+  border-top: 1px solid var(--line);
+}
+[data-section="service-detail"] .sd-foot__lead {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+[data-section="service-detail"] .sd-foot__label {
+  color: var(--sd-accent);
+}
+[data-section="service-detail"] .sd-foot__ref {
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-widest);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  font-variant-numeric: tabular-nums;
+}
+[data-section="service-detail"] .sd-foot__cta {
+  --btn-fg: var(--fg);
+}
+[data-section="service-detail"] .sd-foot__cta .btn__fill {
+  background: var(--sd-accent);
+}
+[data-section="service-detail"] .sd-foot__cta:hover {
+  color: var(--c-paper);
+}
+[data-section="service-detail"] [data-sd-theme="ink"] .sd-foot__cta:hover {
+  color: var(--c-ink);
+}
+
+/* ========================================================================== */
+/*  BELOW 1000px — no sticky, plates become a snapping row                    */
+/* ========================================================================== */
+
+@media (max-width: 999px) {
+  [data-section="service-detail"] .sd-open {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+  [data-section="service-detail"] .sd-open__numeral,
+  [data-section="service-detail"] .sd-open__head,
+  [data-section="service-detail"] .sd-open__aside {
+    grid-column: 1 / -1;
+    grid-row: auto;
+  }
+  [data-section="service-detail"] .sd-open__numeral {
+    font-size: clamp(4rem, 20vw, 8rem);
+    margin-bottom: clamp(0.5rem, 2vw, 1rem);
+  }
+  [data-section="service-detail"] .sd-open__title {
+    font-size: clamp(2.4rem, 10.5vw, 4.5rem);
+  }
+  [data-section="service-detail"] .sd-open__aside {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  [data-section="service-detail"] .sd-open__meta {
+    justify-self: start;
+    text-align: left;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.25rem;
+  }
+
+  [data-section="service-detail"] .sd-body {
+    display: block;
+    min-height: 0;
+    margin-top: clamp(2.25rem, 6vw, 3.5rem);
+  }
+  [data-section="service-detail"] .sd-visual {
+    position: static;
+    height: auto;
+    gap: var(--sp-3);
+  }
+
+  /* Full-bleed horizontally snapping row. The scroller owns the overflow, so
+     the page itself never scrolls sideways. */
+  [data-section="service-detail"] .sd-slider {
+    display: flex;
+    gap: var(--gutter);
+    flex: none;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    background: none;
+    border: 0;
+    border-radius: 0;
+    margin-inline: calc(var(--page-x) * -1);
+    padding-inline: var(--page-x);
+    scrollbar-width: none;
+  }
+  [data-section="service-detail"] .sd-slider::-webkit-scrollbar {
+    display: none;
+  }
+  [data-section="service-detail"] .sd-slider::before,
+  [data-section="service-detail"] .sd-slider::after {
+    content: none;
+  }
+  [data-section="service-detail"] .sd-plate {
+    position: relative;
+    inset: auto;
+    flex: 0 0 min(74vw, 26rem);
+    aspect-ratio: 4 / 5;
+    scroll-snap-align: center;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-1);
+  }
+  [data-section="service-detail"] .sd-plate__art {
+    inset: 0;
+  }
+  [data-section="service-detail"] .sd-wipe {
+    display: none;
+  }
+  [data-section="service-detail"] .sd-hud__hint--scroll {
+    display: none;
+  }
+  [data-section="service-detail"] .sd-hud__hint--swipe {
+    display: inline;
+  }
+
+  [data-section="service-detail"] .sd-copy {
+    padding-block: clamp(2rem, 6vw, 3rem) 0;
+    gap: clamp(2.25rem, 6vw, 3.5rem);
+  }
+
+  [data-section="service-detail"] .sd-process__steps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  [data-section="service-detail"] .sd-process__wire {
+    display: none;
+  }
+  [data-section="service-detail"] .sd-step__note {
+    max-width: none;
+  }
+}
+
+@media (max-width: 640px) {
+  [data-section="service-detail"] .sd-process__steps {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  [data-section="service-detail"] .sd-deliv__row {
+    grid-template-columns: 2.4rem minmax(0, 1fr) 1rem;
+  }
+  [data-section="service-detail"] .sd-facts__table th {
+    width: 46%;
+  }
+  [data-section="service-detail"] .sd-foot {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 400px) {
+  [data-section="service-detail"] .sd-foot__cta {
+    padding-inline: 1.35em;
+    font-size: var(--fs-xs);
+  }
+}
+
+/* ========================================================================== */
+/*  REDUCED MOTION — the whole chapter is legible without a single tween      */
+/* ========================================================================== */
+
+.service-detail.is-static .sd-body {
+  display: block;
+  min-height: 0;
+}
+.service-detail.is-static .sd-visual {
+  position: static;
+  height: auto;
+}
+.service-detail.is-static .sd-slider {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--gutter);
+  overflow: visible;
+  background: none;
+  border: 0;
+  margin-inline: 0;
+  padding-inline: 0;
+}
+.service-detail.is-static .sd-slider::before,
+.service-detail.is-static .sd-slider::after {
+  content: none;
+}
+.service-detail.is-static .sd-plate {
+  position: relative;
+  inset: auto;
+  aspect-ratio: 4 / 5;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-1);
+}
+.service-detail.is-static .sd-plate__art {
+  inset: 0;
+}
+.service-detail.is-static .sd-wipe,
+.service-detail.is-static .sd-hud {
+  display: none;
+}
+/* Plate captions carry their own label once the HUD readout is gone. */
+.service-detail.is-static .sd-plate__cap {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 3;
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: 0.55rem 0.75rem;
+  overflow: visible;
+  clip-path: none;
+  white-space: normal;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wider);
+  text-transform: uppercase;
+  color: var(--fg);
+  background: color-mix(in oklab, var(--bg) 78%, transparent);
+  border-top: 1px solid var(--line);
+}
+.service-detail.is-static .sd-copy {
+  padding-block: clamp(2rem, 6vw, 3rem) 0;
+}
+
+@media (max-width: 640px) {
+  .service-detail.is-static .sd-slider {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* The declarative reveal engine parks [data-reveal] nodes at opacity 0 in a
+   stylesheet. Under reduced motion nothing ever animates them back, so this
+   section states its own resting values rather than relying on a tween. */
+@media (prefers-reduced-motion: reduce) {
+  [data-section="service-detail"] [data-reveal] {
+    opacity: 1;
+    transform: none;
+    clip-path: none;
+    will-change: auto;
+  }
+}

@@ -1,0 +1,246 @@
+/* ============================================================================
+   SHARED UI BEHAVIOURS — styles owned by src/ui/index.js
+   Every selector is prefixed with the feature's attribute or class so this
+   sheet can never leak into a section's own styling.
+   ========================================================================== */
+
+/* ------------------------------------------------------------------ LIVE */
+/* Polite announcer for clipboard + form feedback. */
+.ui-live {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------- BUTTONS */
+/* components.css ships the diagonal (north-east) arrow travel. These two
+   variants re-aim the twin glyphs for horizontal / vertical intent. */
+.btn[data-arrow='right']:hover .btn__arrow svg,
+.btn[data-arrow='right']:focus-visible .btn__arrow svg {
+  transform: translate3d(150%, 0, 0);
+}
+.btn[data-arrow='right'] .btn__arrow svg:last-child {
+  transform: translate3d(-150%, 0, 0);
+}
+.btn[data-arrow='right']:hover .btn__arrow svg:last-child,
+.btn[data-arrow='right']:focus-visible .btn__arrow svg:last-child {
+  transform: translate3d(0, 0, 0);
+}
+
+.btn[data-arrow='down']:hover .btn__arrow svg,
+.btn[data-arrow='down']:focus-visible .btn__arrow svg {
+  transform: translate3d(0, 150%, 0);
+}
+.btn[data-arrow='down'] .btn__arrow svg:last-child {
+  transform: translate3d(0, -150%, 0);
+}
+.btn[data-arrow='down']:hover .btn__arrow svg:last-child,
+.btn[data-arrow='down']:focus-visible .btn__arrow svg:last-child {
+  transform: translate3d(0, 0, 0);
+}
+
+/* Keyboard parity: components.css already wipes the fill on :focus-visible,
+   so the label, the arrow and the caption colour follow it here. */
+.btn:focus-visible { color: var(--accent-fg); }
+.btn--accent:focus-visible { color: var(--bg); }
+.btn:focus-visible .btn__label span { transform: translateY(-100%); }
+.btn:focus-visible .btn__arrow svg { transform: translate3d(130%, -130%, 0); }
+.btn:focus-visible .btn__arrow svg:last-child { transform: translate3d(0, 0, 0); }
+
+/* The injected label wrapper must never inherit a stray text alignment. */
+.btn .btn__label { text-align: left; }
+
+/* -------------------------------------------------------------- MAGNETIC */
+[data-magnetic].is-magnetic { will-change: transform; }
+[data-magnetic].is-magnetic [data-magnetic-inner] { will-change: transform; }
+
+/* ------------------------------------------------------------------ TILT */
+[data-tilt] {
+  position: relative;
+  transform-style: preserve-3d;
+}
+[data-tilt].is-tilting { will-change: transform; }
+[data-tilt] [data-tilt-depth] { transform-style: preserve-3d; }
+
+[data-tilt] .tilt__glare {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  border-radius: inherit;
+  opacity: 0;
+  mix-blend-mode: soft-light;
+  transition: opacity 520ms var(--e-out-expo);
+  background: radial-gradient(
+    closest-side circle at var(--tilt-gx, 50%) var(--tilt-gy, 50%),
+    color-mix(in oklab, var(--c-white) 74%, transparent),
+    color-mix(in oklab, var(--c-white) 12%, transparent) 58%,
+    transparent 76%
+  );
+}
+[data-tilt].is-tilting .tilt__glare { opacity: var(--tilt-glare, 1); }
+
+/* ------------------------------------------------------------- ACCORDION */
+[data-acc] .acc__trigger { cursor: pointer; }
+[data-acc] .acc__panel.is-animating { will-change: height; }
+
+/* --------------------------------------------------------------- MARQUEE */
+/* Velocity reactivity: the ticker writes --marquee-skew on the .marquee root
+   and the items shear a couple of degrees on fast scroll. */
+.marquee { --marquee-skew: 0deg; }
+.marquee .marquee__item {
+  transform: skewX(var(--marquee-skew, 0deg));
+  transform-origin: center center;
+}
+.marquee[data-marquee-pause] { --marquee-hover: paused; }
+.marquee[data-marquee-pause] .marquee__track { cursor: default; }
+.marquee.is-paused .marquee__track,
+.marquee.is-paused:hover .marquee__track { animation-play-state: paused; }
+.marquee .marquee__track[data-marquee-clone] { pointer-events: none; }
+
+/* ------------------------------------------------------------------ TABS */
+/* Only the containing block is forced — the list keeps the section's layout. */
+[data-tabs] .tabs__list { position: relative; }
+[data-tabs] .tabs__indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  transform-origin: left top;
+  pointer-events: none;
+  background: var(--accent);
+  will-change: transform;
+}
+[data-tabs] .tabs__indicator--pill {
+  background: var(--fg);
+  border-radius: var(--radius-pill);
+  z-index: 0;
+}
+/* Triggers stack above a pill indicator; their own colour stays with the
+   section (.chip.is-active and friends must keep winning). */
+[data-tabs] [data-tab] { position: relative; z-index: 1; }
+[data-tabs] [data-tab-panel] { outline-offset: 6px; }
+[data-tabs] [data-tab-panel][hidden] { display: none !important; }
+
+/* ---------------------------------------------------------------- CLOCK  */
+[data-clock-ui] {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+}
+
+/* ------------------------------------------------------------- CLIPBOARD */
+[data-copy] { cursor: pointer; }
+[data-copy] .ui-copy-flash { animation: ui-copy-pop 420ms var(--e-out-expo) both; }
+[data-copy].is-copied:not(.btn) { color: var(--accent); }
+[data-copy].ui-copy-flash { animation: ui-copy-pop 420ms var(--e-out-expo) both; }
+@keyframes ui-copy-pop {
+  0%   { opacity: 0; transform: translate3d(0, 42%, 0); }
+  100% { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+/* ------------------------------------------------------------------ FORM */
+[data-form] .field__error:empty { display: none; }
+[data-form] .field.is-invalid .field__input { border-color: var(--c-terra); }
+[data-form][hidden] { display: none !important; }
+
+.ui-form-success {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  max-width: 52ch;
+  outline: none;
+}
+.ui-form-success__eyebrow {
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wider);
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.ui-form-success__title {
+  font-family: var(--ff-display);
+  font-size: var(--fs-xl);
+  font-weight: 300;
+  line-height: var(--lh-snug);
+  letter-spacing: var(--tr-snug);
+}
+.ui-form-success__body {
+  font-size: var(--fs-base);
+  line-height: var(--lh-relaxed);
+  color: var(--fg-soft);
+}
+.ui-form-success__body a {
+  color: var(--fg);
+  text-decoration: underline;
+  text-underline-offset: 0.24em;
+  text-decoration-thickness: 1px;
+  text-decoration-color: var(--line-strong);
+  transition: text-decoration-color var(--d-fast) var(--e-out-quart), color var(--d-fast) var(--e-out-quart);
+}
+.ui-form-success__body a:hover { color: var(--accent); text-decoration-color: var(--accent); }
+.ui-form-success__actions { margin-top: var(--sp-2); }
+.ui-form-success[hidden] { display: none !important; }
+
+/* ----------------------------------------------------- SPLIT-HOVER TEXT  */
+[data-split-hover] {
+  display: inline-block;
+  position: relative;
+  --sh-lh: 1.16;
+  --sh-step: 16ms;
+  --sh-dur: 560ms;
+}
+[data-split-hover] .sh__vis { display: inline; }
+[data-split-hover] .sh__word {
+  display: inline-block;
+  white-space: nowrap;
+}
+[data-split-hover] .sh__char {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+}
+[data-split-hover] .sh__char > span {
+  display: block;
+  line-height: var(--sh-lh);
+  transition: transform var(--sh-dur) var(--e-out-expo);
+  transition-delay: calc(var(--i, 0) * var(--sh-step));
+}
+[data-split-hover] .sh__b {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  color: var(--sh-color, inherit);
+}
+[data-split-hover]:hover .sh__char > span,
+[data-split-hover]:focus-visible .sh__char > span,
+[data-split-hover].is-rolled .sh__char > span,
+[data-split-hover-host]:hover [data-split-hover] .sh__char > span,
+[data-split-hover-host]:focus-visible [data-split-hover] .sh__char > span {
+  transform: translate3d(0, -100%, 0);
+}
+[data-split-hover='down'] .sh__b { top: auto; bottom: 100%; }
+[data-split-hover='down']:hover .sh__char > span,
+[data-split-hover='down'].is-rolled .sh__char > span,
+[data-split-hover-host]:hover [data-split-hover='down'] .sh__char > span {
+  transform: translate3d(0, 100%, 0);
+}
+
+/* --------------------------------------------------------- SMOOTH ANCHOR */
+[data-scroll-to] { cursor: pointer; }
+
+/* ------------------------------------------------------- REDUCED MOTION  */
+@media (prefers-reduced-motion: reduce) {
+  [data-tilt] .tilt__glare { display: none; }
+  .marquee .marquee__item { transform: none; }
+  [data-split-hover] .sh__char > span { transition: none; }
+  [data-copy] .ui-copy-flash,
+  [data-copy].ui-copy-flash { animation: none; }
+}

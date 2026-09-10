@@ -1,0 +1,347 @@
+/* ============================================================================
+   GALLERY3D — a true 3D carousel of visualisation work.
+   Cards live on a cylinder inside a shared-renderer WebGL slot; everything in
+   this file is either the surrounding chrome or the no-WebGL / reduced-motion
+   fallback, which is a flat row of the same procedural plates.
+   ========================================================================== */
+
+.gallery3d {
+  overflow: clip;
+  background: var(--bg);
+}
+
+.gallery3d .sec-head { padding-bottom: clamp(1.75rem, 3.5vw, 3.25rem); }
+
+.gallery3d__aside {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sp-4);
+}
+.gallery3d__service-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6em;
+  color: var(--accent);
+}
+.gallery3d__service-link svg { flex: none; }
+
+/* ------------------------------------------------------------- 3D STAGE  */
+
+.gallery3d__viewport {
+  position: relative;
+  width: 100%;
+  margin-block: clamp(0.5rem, 1.5vw, 1.5rem);
+}
+
+/* Setting-out grid + warm wash behind the stage. Sits at z-index 0, under the
+   shared WebGL canvas (z-index 2) and under anything marked .above-gl. */
+.gallery3d__grid {
+  position: absolute;
+  z-index: 0;
+  inset: -6% 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(78% 62% at 50% 44%, color-mix(in oklab, var(--accent) 7%, transparent), transparent 70%),
+    repeating-linear-gradient(90deg, color-mix(in oklab, var(--fg) 6%, transparent) 0 1px, transparent 1px 88px),
+    repeating-linear-gradient(0deg, color-mix(in oklab, var(--fg) 6%, transparent) 0 1px, transparent 1px 88px);
+  mask-image: radial-gradient(120% 82% at 50% 48%, #000 10%, transparent 74%);
+  -webkit-mask-image: radial-gradient(120% 82% at 50% 48%, #000 10%, transparent 74%);
+}
+
+.gallery3d__stage {
+  position: relative;
+  width: 100%;
+  height: clamp(25rem, 74svh, 50rem);
+  touch-action: pan-y;
+}
+.gallery3d__stage:focus-visible {
+  outline: 1px solid var(--accent);
+  outline-offset: -10px;
+}
+
+/* Corner registration marks around the stage — technical-drawing furniture */
+.gallery3d__viewport::before,
+.gallery3d__viewport::after {
+  content: "";
+  position: absolute;
+  z-index: 6;
+  width: clamp(1.5rem, 3vw, 2.75rem);
+  height: clamp(1.5rem, 3vw, 2.75rem);
+  border: 1px solid var(--line-strong);
+  pointer-events: none;
+}
+.gallery3d__viewport::before {
+  top: 0;
+  left: var(--page-x);
+  border-width: 1px 0 0 1px;
+}
+.gallery3d__viewport::after {
+  bottom: 0;
+  right: var(--page-x);
+  border-width: 0 1px 1px 0;
+}
+
+.gallery3d__hint {
+  position: absolute;
+  z-index: 6;
+  left: 0;
+  right: 0;
+  bottom: clamp(0.5rem, 2vw, 1.5rem);
+  width: max-content;
+  max-width: calc(100% - 2 * var(--page-x));
+  margin-inline: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.85em;
+  padding: 0.55em 1.05em;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: color-mix(in oklab, var(--bg) 72%, transparent);
+  backdrop-filter: blur(6px);
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wider);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  white-space: nowrap;
+  pointer-events: none;
+}
+.gallery3d__hint svg { flex: none; opacity: 0.7; }
+
+/* ----------------------------------------------------------- PANEL BELOW */
+
+.gallery3d__panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: var(--sp-6) var(--gutter);
+  margin-top: clamp(1.75rem, 3.5vw, 3rem);
+  padding-top: clamp(1.5rem, 3vw, 2.5rem);
+  border-top: 1px solid var(--line);
+}
+
+.gallery3d__caption {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  min-width: 0;
+}
+.gallery3d__cap-service { color: var(--accent); }
+.gallery3d__cap-name {
+  display: block;
+  font-family: var(--ff-display);
+  font-size: var(--fs-2xl);
+  font-weight: 300;
+  line-height: var(--lh-tight);
+  letter-spacing: var(--tr-tight);
+  font-variation-settings: "SOFT" 0, "WONK" 0, "opsz" 96;
+  color: var(--fg);
+  min-height: 1em;
+}
+.gallery3d__cap-inner { display: block; }
+.gallery3d__cap-name .split-char { display: inline-block; }
+.gallery3d__cap-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.55em;
+  color: var(--fg-soft);
+}
+.gallery3d__slash { color: var(--fg-muted); opacity: 0.6; }
+
+.gallery3d__controls {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--sp-4);
+}
+
+.gallery3d__nav {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.75rem, 1.6vw, 1.25rem);
+}
+.gallery3d__btn {
+  display: grid;
+  place-items: center;
+  width: clamp(2.75rem, 4.4vw, 3.5rem);
+  height: clamp(2.75rem, 4.4vw, 3.5rem);
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  color: var(--fg);
+  transition:
+    background-color var(--d-base) var(--e-out-expo),
+    border-color var(--d-base) var(--e-out-expo),
+    color var(--d-base) var(--e-out-expo),
+    transform var(--d-base) var(--e-out-expo);
+}
+.gallery3d__btn svg { width: 55%; height: auto; }
+.gallery3d__btn:hover {
+  background: var(--fg);
+  border-color: var(--fg);
+  color: var(--bg);
+}
+.gallery3d__btn:active { transform: scale(0.94); }
+
+.gallery3d__readout {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35em;
+  font-size: var(--fs-sm);
+  letter-spacing: var(--tr-wide);
+  color: var(--fg);
+  min-width: 5.5ch;
+  justify-content: center;
+}
+.gallery3d__readout-sep,
+.gallery3d__readout-total { color: var(--fg-muted); }
+
+.gallery3d__dots {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+.gallery3d__dot {
+  position: relative;
+  width: 1.5rem;
+  height: 1.5rem;
+  display: grid;
+  place-items: center;
+}
+.gallery3d__dot::after {
+  content: "";
+  width: 100%;
+  height: 1px;
+  background: var(--line-strong);
+  transform: scaleX(0.55);
+  transform-origin: center;
+  transition:
+    transform var(--d-base) var(--e-out-expo),
+    background-color var(--d-base) var(--e-out-expo),
+    height var(--d-base) var(--e-out-expo);
+}
+.gallery3d__dot:hover::after { transform: scaleX(0.85); background: var(--fg-soft); }
+.gallery3d__dot.is-active::after {
+  transform: scaleX(1);
+  height: 2px;
+  background: var(--accent);
+}
+
+/* -------------------------------------------------------- FLAT FALLBACK  */
+/* Hidden while the 3D slot is live; switched on for html.no-webgl and for
+   prefers-reduced-motion (where it becomes a static grid instead of a row). */
+
+.gallery3d__fallback { display: none; }
+
+.gallery3d__fcard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  background: var(--bg-raised);
+  border: 1px solid var(--line-soft);
+}
+.gallery3d__fplate {
+  background: var(--c-shell);
+  border-bottom: 1px solid var(--line-soft);
+}
+.gallery3d__fmeta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: clamp(1.15rem, 2vw, 1.75rem);
+}
+.gallery3d__fidx { color: var(--accent); }
+.gallery3d__fname {
+  font-family: var(--ff-display);
+  font-size: var(--fs-xl);
+  font-weight: 300;
+  line-height: var(--lh-snug);
+  letter-spacing: var(--tr-snug);
+}
+.gallery3d__fdata { color: var(--fg-soft); }
+.gallery3d__flink {
+  align-self: flex-start;
+  margin-top: 0.35rem;
+  color: var(--accent);
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wider);
+  text-transform: uppercase;
+}
+
+/* --- no WebGL: horizontally scroll-snapping row ------------------------- */
+html.no-webgl .gallery3d .gallery3d__stage {
+  height: auto;
+  touch-action: auto;
+}
+html.no-webgl .gallery3d .gallery3d__fallback {
+  position: static;
+  inset: auto;
+  opacity: 1;
+  pointer-events: auto;
+  display: flex;
+  gap: var(--gutter);
+  align-items: stretch;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--page-x);
+  padding-inline: var(--page-x);
+  padding-block: 0.25rem;
+  overscroll-behavior-x: contain;
+}
+html.no-webgl .gallery3d .gallery3d__fcard {
+  flex: 0 0 min(80vw, 34rem);
+  scroll-snap-align: center;
+}
+html.no-webgl .gallery3d__hint,
+html.no-webgl .gallery3d__panel,
+html.no-webgl .gallery3d__grid { display: none; }
+html.no-webgl .gallery3d__viewport::before,
+html.no-webgl .gallery3d__viewport::after { display: none; }
+
+/* --- reduced motion: static grid, no stage height ----------------------- */
+.gallery3d.gallery3d--static .gallery3d__stage {
+  height: auto;
+  touch-action: auto;
+}
+.gallery3d.gallery3d--static .gallery3d__fallback {
+  position: static;
+  inset: auto;
+  opacity: 1;
+  pointer-events: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr));
+  gap: clamp(1.25rem, 2.6vw, 2.5rem);
+  padding-inline: var(--page-x);
+}
+.gallery3d--static .gallery3d__hint,
+.gallery3d--static .gallery3d__grid,
+.gallery3d--static .gallery3d__panel { display: none; }
+.gallery3d--static .gallery3d__viewport::before,
+.gallery3d--static .gallery3d__viewport::after { display: none; }
+
+/* ------------------------------------------------------------ RESPONSIVE */
+
+@media (max-width: 900px) {
+  .gallery3d__stage { height: clamp(19rem, 62svh, 32rem); }
+  .gallery3d__panel {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--sp-5);
+  }
+  .gallery3d__controls {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+  .gallery3d__viewport::before { left: 0; }
+  .gallery3d__viewport::after { right: 0; }
+}
+
+@media (max-width: 560px) {
+  .gallery3d__dots { display: none; }
+  .gallery3d__nav { gap: 0.85rem; }
+  .gallery3d__cap-name { font-size: var(--fs-xl); }
+}

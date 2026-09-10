@@ -1,0 +1,124 @@
+<!-- ==========================================================================
+     JOURNAL INDEX — the whole of the writing, on one page.
+
+     Three movements: a featured entry across the full measure, a filterable
+     editorial index, and the list sign-up. Everything list-shaped (the
+     featured record, the chips, the cards and every reading panel) is built
+     in journal-index.js from src/data/content.js plus the four further
+     entries defined alongside it, so the markup below is the skeleton and
+     the static copy that is true whatever the data does.
+     ========================================================================== -->
+<section class="section journal-index" data-section="journal-index" id="journal-index" aria-labelledby="journal-index-title">
+  <div class="shell">
+
+    <!-- ============================================================ FEATURED -->
+    <article class="journal-index__featured" data-ji-entry data-ji-featured>
+
+      <header class="journal-index__f-top">
+        <p class="eyebrow eyebrow--accent journal-index__f-eyebrow">Latest entry</p>
+        <p class="journal-index__f-meta">
+          <span data-ji-f-cat></span>
+          <span class="journal-index__dot" aria-hidden="true"></span>
+          <span data-ji-f-date></span>
+        </p>
+      </header>
+
+      <div class="journal-index__f-headline">
+        <h2 class="journal-index__f-title" data-ji-f-title data-split="lines"></h2>
+        <p class="journal-index__f-time" data-ji-f-time></p>
+      </div>
+
+      <figure class="journal-index__f-art">
+        <div class="frame journal-index__f-frame" data-reveal="clip" data-duration="1.35" data-start="top 88%">
+          <div class="journal-index__f-shift" data-ji-f-plate></div>
+        </div>
+        <figcaption class="journal-index__f-cap" data-ji-f-cap></figcaption>
+      </figure>
+
+      <div class="journal-index__f-foot">
+        <p class="t-lead journal-index__f-excerpt" data-ji-f-excerpt data-reveal="up"></p>
+        <div class="journal-index__f-actions" data-reveal="up" data-delay="0.08">
+          <a class="btn btn--ghost journal-index__f-cta" href="#" data-ji-read data-arrow aria-expanded="false">Read the entry</a>
+        </div>
+      </div>
+
+      <div class="journal-index__panel" data-ji-panel hidden></div>
+    </article>
+
+    <!-- ============================================================== HEADER -->
+    <div class="journal-index__head" data-ji-head>
+      <div class="journal-index__head-lead">
+        <p class="eyebrow">Writing</p>
+        <h2 class="journal-index__heading" id="journal-index-title" data-split="lines">The rest of the index.</h2>
+      </div>
+
+      <div class="journal-index__controls">
+        <div class="journal-index__chips" role="group" aria-label="Filter entries by category" data-ji-chips></div>
+        <p class="journal-index__count" aria-live="polite">
+          <span class="t-num journal-index__count-now" data-ji-count>00</span>
+          <span class="journal-index__count-sep" aria-hidden="true">/</span>
+          <span class="t-num journal-index__count-all" data-ji-total>00</span>
+          <span class="journal-index__count-label">entries shown</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- =============================================================== INDEX -->
+    <div class="journal-index__grid" data-ji-grid></div>
+
+    <p class="journal-index__empty" data-ji-empty hidden>
+      Nothing filed under that heading yet — the studio writes about it, we just have not published it.
+    </p>
+
+    <!-- ========================================================== NEWSLETTER -->
+    <div class="journal-index__news" data-theme="blueprint">
+      <span class="journal-index__news-grid" aria-hidden="true" data-ji-news-grid></span>
+
+      <div class="journal-index__news-inner">
+        <div class="journal-index__news-copy">
+          <p class="eyebrow">The list</p>
+          <h2 class="journal-index__news-title">One note a month, when something is worth writing down.</h2>
+          <p class="t-body journal-index__news-body">
+            No campaign, no drip sequence, no webinar. When an entry goes up here it goes out once —
+            usually about something that went wrong on a drawing set and what we changed because of it.
+          </p>
+        </div>
+
+        <div class="journal-index__news-form" data-form-shell>
+          <form class="journal-index__form" data-form novalidate>
+            <div class="field journal-index__field">
+              <input
+                class="field__input"
+                id="journal-index-email"
+                name="email"
+                type="email"
+                placeholder="you@example.com"
+                autocomplete="email"
+                required
+                data-error-required="Enter an email address"
+                data-error-email="That does not look like an email address"
+              />
+              <label class="field__label" for="journal-index-email">Email address</label>
+              <span class="field__line" aria-hidden="true"></span>
+            </div>
+            <button class="btn btn--accent journal-index__submit" type="submit" data-arrow>Add me</button>
+          </form>
+
+          <div class="ui-form-success journal-index__success" data-form-success role="status" tabindex="-1" hidden>
+            <p class="ui-form-success__eyebrow">Nothing was sent</p>
+            <p class="ui-form-success__title">There is no mailing list behind this field yet.</p>
+            <p class="ui-form-success__body">
+              This is a demonstration build with no server attached, so your address went nowhere and we
+              cannot write to you. Email <a href="#" data-form-success-email></a> with the word
+              <em>journal</em> in the subject line and we will add you by hand the day the list exists.
+            </p>
+            <div class="ui-form-success__actions">
+              <button class="btn btn--ghost btn--sm" type="button" data-form-reset>Back to the form</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>

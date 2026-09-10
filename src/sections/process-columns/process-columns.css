@@ -1,0 +1,525 @@
+/* ============================================================================
+   PROCESS COLUMNS
+   Six process steps as a counter-scrolling field of vertical columns with a
+   fixed, centred panel showing the active step.
+
+   The base styles below are the *static* layout — an ordered list of the six
+   steps. That is what phones get, what reduced-motion visitors get, and what
+   the section falls back to if the sticky mechanic is never armed.
+   `.is-live` (added by JS) plus a viewport of 900px or more upgrades it to the
+   sticky column field.
+   ========================================================================== */
+
+.section.process-columns {
+  /* scroll distance the sticky stage travels — roughly 70vh per step */
+  --pc-run: clamp(2000px, 400vh, 4400px);
+  --pc-gap: clamp(0.85rem, 1.3vw, 1.4rem);
+  --pc-card-w: clamp(15rem, 26vw, 21rem);
+  --pc-fade: linear-gradient(
+    to bottom,
+    rgb(0 0 0 / 0) 0%,
+    rgb(0 0 0 / 0.22) 5%,
+    rgb(0 0 0 / 1) 17%,
+    rgb(0 0 0 / 1) 83%,
+    rgb(0 0 0 / 0.22) 95%,
+    rgb(0 0 0 / 0) 100%
+  );
+  background: var(--bg-sunken);
+  overflow-x: clip;
+}
+
+.process-columns .process-columns__lede {
+  max-width: 36ch;
+}
+
+/* ------------------------------------------------------------- STRUCTURE  */
+
+.process-columns .process-columns__scroller {
+  position: relative;
+}
+
+.process-columns .process-columns__stage {
+  position: relative;
+}
+
+.process-columns .process-columns__inner {
+  width: 100%;
+  max-width: var(--maxw);
+  margin-inline: auto;
+  padding-inline: var(--page-x);
+}
+
+/* The column field, its scrim and the progress rail only exist in the live,
+   wide-viewport layout. */
+.process-columns .process-columns__rail,
+.process-columns .process-columns__field,
+.process-columns .process-columns__scrim {
+  display: none;
+}
+
+/* ------------------------------------------------------ STEP PANEL / LIST */
+
+.process-columns .process-columns__steps {
+  list-style: none;
+  display: grid;
+  gap: clamp(2.6rem, 6vw, 3.6rem);
+}
+
+.process-columns .process-columns__step {
+  position: relative;
+  padding-top: clamp(1.3rem, 3vw, 2rem);
+  border-top: 1px solid var(--line);
+}
+
+.process-columns .process-columns__mask {
+  display: block;
+  overflow: hidden;
+}
+
+.process-columns .process-columns__mask-in {
+  display: block;
+}
+
+/* Spacing lives on the mask, never on the element being slid out of it —
+   a margin inside the mask would leave a sliver of the outgoing line behind. */
+.process-columns .process-columns__mask--title {
+  margin-top: 0.15rem;
+}
+.process-columns .process-columns__mask--detail {
+  margin-top: var(--sp-4);
+}
+.process-columns .process-columns__mask--label {
+  margin-bottom: 0.7rem;
+}
+
+.process-columns .process-columns__top-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-4);
+}
+
+.process-columns .process-columns__num {
+  font-family: var(--ff-display);
+  font-weight: 300;
+  font-size: var(--fs-3xl);
+  line-height: 1.02;
+  letter-spacing: var(--tr-tight);
+  font-variation-settings: "SOFT" 0, "WONK" 0, "opsz" 144;
+  font-variant-numeric: lining-nums tabular-nums;
+  color: var(--fg);
+}
+
+.process-columns .process-columns__dur {
+  white-space: nowrap;
+  color: var(--fg-muted);
+}
+
+.process-columns .process-columns__title {
+  color: var(--fg);
+}
+
+.process-columns .process-columns__step-rule {
+  height: 1px;
+  background: var(--line-strong);
+  transform-origin: left center;
+  margin-block: clamp(1rem, 2vw, 1.7rem);
+}
+
+.process-columns .process-columns__summary {
+  color: var(--fg);
+  max-width: 40ch;
+}
+
+.process-columns .process-columns__detail {
+  max-width: 60ch;
+}
+
+.process-columns .process-columns__out {
+  margin-top: clamp(1.2rem, 2.4vw, 1.9rem);
+}
+
+.process-columns .process-columns__out-label {
+  color: var(--fg-muted);
+}
+
+.process-columns .process-columns__outputs {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.process-columns .process-columns__outputs > li {
+  display: block;
+  overflow: hidden;
+}
+
+/* Collapse the line box around the pill so the mask is exactly its height —
+   otherwise a descender's worth of the chip stays behind on the way out. */
+.process-columns .process-columns__outputs .process-columns__mask-in {
+  line-height: 0;
+}
+
+/* --------------------------------------------------------------- THE RAIL */
+
+.process-columns .process-columns__rail-line,
+.process-columns .process-columns__rail-fill {
+  position: absolute;
+  right: 0;
+  top: 0.85rem;
+  bottom: 0.85rem;
+  width: 1px;
+}
+
+.process-columns .process-columns__rail-line {
+  background: var(--line);
+}
+
+.process-columns .process-columns__rail-fill {
+  background: var(--accent);
+  transform: scaleY(0);
+  transform-origin: top center;
+}
+
+.process-columns .process-columns__tick {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  height: 1.3rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--tr-wider);
+  color: var(--fg-muted);
+  transition: color var(--d-fast) var(--e-out-quart);
+}
+
+.process-columns .process-columns__tick-bar {
+  display: block;
+  width: 0.7rem;
+  height: 1px;
+  background: var(--line-strong);
+  transition: width var(--d-base) var(--e-out-expo),
+              background-color var(--d-base) var(--e-out-quart);
+}
+
+.process-columns .process-columns__tick:hover {
+  color: var(--fg);
+}
+
+.process-columns .process-columns__tick:hover .process-columns__tick-bar {
+  width: 1.3rem;
+  background: var(--fg-soft);
+}
+
+.process-columns .process-columns__tick.is-done {
+  color: var(--fg-soft);
+}
+
+.process-columns .process-columns__tick.is-active {
+  color: var(--accent);
+}
+
+.process-columns .process-columns__tick.is-active .process-columns__tick-bar {
+  width: 2rem;
+  background: var(--accent);
+}
+
+.process-columns .process-columns__tick:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+/* -------------------------------------------------------------- THE CARDS */
+
+.process-columns .process-columns__card {
+  width: min(100%, var(--pc-card-w));
+  transform: scale(var(--pc-scale, 1));
+  opacity: var(--pc-op, 1);
+}
+
+.process-columns .process-columns__card:hover {
+  position: relative;
+  z-index: 2;
+}
+
+.process-columns .process-columns__col[data-col="0"] .process-columns__card,
+.process-columns .process-columns__col[data-col="2"] .process-columns__card {
+  --pc-op: 0.68;
+}
+
+.process-columns .process-columns__card-in {
+  display: block;
+  background: var(--bg-raised);
+  border: 1px solid var(--line-soft);
+  box-shadow: var(--sh-1);
+  transition: transform var(--d-slow) var(--e-out-expo),
+              box-shadow var(--d-slow) var(--e-out-expo),
+              border-color var(--d-base) var(--e-out-quart);
+}
+
+.process-columns .process-columns__card:hover .process-columns__card-in {
+  transform: translate3d(0, -10px, 0);
+  box-shadow: var(--sh-3);
+  border-color: var(--line-strong);
+}
+
+.process-columns .process-columns__thumb {
+  display: block;
+  position: relative;
+  aspect-ratio: 3 / 2;
+  background-color: var(--c-bone);
+  /* The drawing itself is handed in as --pc-thumb (a url() held once on the
+     section root), so 36 cards share 18 decoded images. */
+  background-image: var(--pc-thumb, none), linear-gradient(150deg, var(--c-bone), var(--c-sand));
+  background-repeat: no-repeat, no-repeat;
+  background-position: center, center;
+  background-size: cover, cover;
+}
+
+.process-columns .process-columns__thumb::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--pc-grain, none);
+  background-repeat: repeat;
+  background-size: 96px 96px;
+  opacity: 0.24;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+
+.process-columns .process-columns__card-body {
+  display: grid;
+  gap: 0.4rem;
+  padding: clamp(0.8rem, 1.1vw, 1.05rem) clamp(0.9rem, 1.2vw, 1.2rem) clamp(0.95rem, 1.3vw, 1.25rem);
+  border-top: 1px solid var(--line-soft);
+}
+
+.process-columns .process-columns__card-meta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.process-columns .process-columns__card-idx {
+  color: var(--accent);
+}
+
+.process-columns .process-columns__card-dur {
+  color: var(--fg-muted);
+}
+
+.process-columns .process-columns__card-title {
+  font-family: var(--ff-display);
+  font-weight: 300;
+  font-size: var(--fs-md);
+  line-height: 1.12;
+  letter-spacing: var(--tr-snug);
+  color: var(--fg);
+}
+
+/* ==========================================================================
+   LIVE LAYOUT — sticky stage, counter-scrolling columns, centred panel
+   ========================================================================== */
+
+@media (min-width: 900px) {
+  .process-columns.is-live .process-columns__scroller {
+    height: calc(100vh + var(--pc-run));
+    height: calc(100svh + var(--pc-run));
+  }
+
+  .process-columns.is-live .process-columns__stage {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    height: 100svh;
+  }
+
+  .process-columns.is-live .process-columns__inner {
+    height: 100%;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: clamp(1.4rem, 2.6vw, 2.75rem);
+    align-items: stretch;
+    padding-block: clamp(2.25rem, 6vh, 4.5rem);
+  }
+
+  /* -- rail ------------------------------------------------------------- */
+  .process-columns.is-live .process-columns__rail {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-end;
+    width: clamp(3.4rem, 4.6vw, 4.5rem);
+    padding-block: 0.5rem;
+  }
+
+  /* -- field ------------------------------------------------------------ */
+  .process-columns.is-live .process-columns__view {
+    position: relative;
+    overflow: hidden;
+    border-block: 1px solid var(--line);
+  }
+
+  .process-columns.is-live .process-columns__field {
+    display: grid;
+    position: absolute;
+    inset: 0;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: var(--pc-gap);
+    -webkit-mask-image: var(--pc-fade);
+    mask-image: var(--pc-fade);
+  }
+
+  .process-columns.is-live .process-columns__col {
+    position: relative;
+    min-width: 0;
+  }
+
+  .process-columns.is-live .process-columns__track {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
+
+  .process-columns.is-live .process-columns__drift {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--pc-gap);
+  }
+
+  /* Promoted only while the section owns the scroll — `is-armed` is toggled
+     by the ScrollTrigger, so the layers are released either side of it. */
+  .process-columns.is-live .process-columns__field.is-armed .process-columns__track,
+  .process-columns.is-live .process-columns__field.is-armed .process-columns__drift {
+    will-change: transform;
+  }
+
+  /* Offset each column so the cards never line up in tidy rows. */
+  .process-columns.is-live .process-columns__col[data-col="1"] .process-columns__card:first-child {
+    margin-top: -9rem;
+  }
+  .process-columns.is-live .process-columns__col[data-col="2"] .process-columns__card:first-child {
+    margin-top: -4.5rem;
+  }
+
+  /* -- scrim: the field dissolves into the surface behind the panel ------ */
+  .process-columns.is-live .process-columns__scrim {
+    display: block;
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    /* The opaque core must fully cover the panel box, or the drifting cards
+       read straight through the copy. Sized against the panel, not the stage. */
+    background:
+      radial-gradient(
+        74% 64% at 50% 50%,
+        var(--bg-sunken) 0%,
+        var(--bg-sunken) 50%,
+        color-mix(in oklab, var(--bg-sunken) 90%, transparent) 66%,
+        color-mix(in oklab, var(--bg-sunken) 48%, transparent) 83%,
+        transparent 100%
+      ),
+      radial-gradient(
+        104% 88% at 50% 50%,
+        color-mix(in oklab, var(--bg-sunken) 52%, transparent) 0%,
+        transparent 74%
+      );
+    /* Softens whatever survives the gradient, only under the panel. */
+    backdrop-filter: blur(7px) saturate(104%);
+    -webkit-backdrop-filter: blur(7px) saturate(104%);
+    mask-image: radial-gradient(82% 72% at 50% 50%, #000 44%, transparent 100%);
+    -webkit-mask-image: radial-gradient(82% 72% at 50% 50%, #000 44%, transparent 100%);
+  }
+
+  /* -- panel ------------------------------------------------------------- */
+  .process-columns.is-live .process-columns__panel {
+    position: absolute;
+    z-index: 3;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: min(44rem, 90%);
+  }
+
+  /* A fixed box, tall enough for the longest step, so the numeral and the
+     title hold their position while the content swaps underneath them. */
+  .process-columns.is-live .process-columns__steps {
+    display: block;
+    position: relative;
+    gap: 0;
+    min-height: clamp(25rem, 24rem + 6vw, 32rem);
+  }
+
+  .process-columns.is-live .process-columns__step {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    padding-top: 0;
+    border-top: 0;
+    pointer-events: none;
+  }
+
+  /* Pre-hidden before JS arms the panel, so nothing stacks on first paint. */
+  .process-columns.is-live .process-columns__step:not(.is-active) .process-columns__mask-in {
+    transform: translateY(115%);
+  }
+
+  .process-columns.is-live .process-columns__step:not(.is-active) .process-columns__step-rule {
+    transform: scaleX(0);
+  }
+
+  .process-columns.is-live .process-columns__summary {
+    max-width: 34ch;
+  }
+}
+
+/* Short laptop viewports: pull the panel type back so it always clears the
+   stage without the columns having to shrink. */
+@media (min-width: 900px) and (max-height: 780px) {
+  .process-columns.is-live .process-columns__num {
+    font-size: var(--fs-2xl);
+  }
+  .process-columns.is-live .process-columns__title {
+    font-size: var(--fs-xl);
+  }
+  .process-columns.is-live .process-columns__steps {
+    min-height: clamp(20rem, 19rem + 5vw, 26rem);
+  }
+  .process-columns.is-live .process-columns__inner {
+    padding-block: clamp(1.5rem, 4vh, 3rem);
+  }
+}
+
+/* Two columns rather than three in the narrow half of the live range. */
+@media (min-width: 900px) and (max-width: 1180px) {
+  .process-columns.is-live .process-columns__field {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .process-columns.is-live .process-columns__col[data-col="2"] {
+    display: none;
+  }
+}
+
+/* -------------------------------------------------------- REDUCED MOTION  */
+@media (prefers-reduced-motion: reduce) {
+  .process-columns .process-columns__card-in,
+  .process-columns .process-columns__tick,
+  .process-columns .process-columns__tick-bar {
+    transition: none;
+  }
+}

@@ -1,0 +1,699 @@
+/* ============================================================================
+   CONTACT FORM
+   A sticky editorial column against the enquiry form.
+
+   The form is built on the shared .field / .chip contract, so almost nothing
+   here restyles the components — it positions them, and adds the three pieces
+   the kit has no opinion about: the chip groups, the segmented budget control
+   and the completeness meter.
+
+   One structural note: .field's padding-top is moved onto .contact-form__control
+   so that .field__line (which anchors to `bottom: 0` of its positioned parent)
+   sits on the input's own baseline even when an error message has grown the
+   field underneath it. Geometry is otherwise identical to components.css.
+   ========================================================================== */
+
+.section.contact-form {
+  background: var(--bg-raised);
+  border-top: 1px solid var(--line-soft);
+}
+
+/* ---------------------------------------------------------------- LAYOUT */
+
+.contact-form .contact-form__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: clamp(2.5rem, 6vw, 6.5rem);
+  /* Stretched, not start-aligned: the aside has to be as tall as the form
+     for its sticky inner to travel the whole way down it. */
+  align-items: stretch;
+}
+
+.contact-form .contact-form__aside-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  max-width: 34rem;
+  top: calc(var(--header-h) + 1rem);
+}
+
+/* ----------------------------------------------------------------- ASIDE */
+
+.contact-form .contact-form__title { margin-top: var(--sp-4); }
+
+.contact-form .contact-form__lede {
+  margin-top: var(--sp-5);
+  max-width: 36ch;
+}
+
+.contact-form .contact-form__direct {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  margin-top: var(--sp-7);
+  width: 100%;
+  padding-top: var(--sp-5);
+  border-top: 1px solid var(--line);
+}
+
+.contact-form .contact-form__direct-row {
+  display: grid;
+  grid-template-columns: minmax(6rem, 8rem) minmax(0, 1fr);
+  gap: var(--sp-3);
+  align-items: baseline;
+}
+
+.contact-form .contact-form__direct-label { color: var(--fg-muted); }
+
+.contact-form .contact-form__direct-value {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.4rem 0.85rem;
+  min-width: 0;
+}
+
+.contact-form .contact-form__direct-link {
+  font-size: var(--fs-base);
+  font-weight: 450;
+  color: var(--fg);
+  overflow-wrap: anywhere;
+  transition: color var(--d-fast) var(--e-out-quart);
+}
+.contact-form .contact-form__direct-link:hover,
+.contact-form .contact-form__direct-link:focus-visible { color: var(--accent); }
+
+.contact-form .contact-form__copy {
+  flex: none;
+  padding: 0.28em 0.7em;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wide);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  transition: color var(--d-fast) var(--e-out-quart),
+              border-color var(--d-fast) var(--e-out-quart);
+}
+.contact-form .contact-form__copy:hover { color: var(--fg); border-color: var(--line-strong); }
+.contact-form .contact-form__copy.is-copied { color: var(--accent); border-color: color-mix(in oklab, var(--accent) 45%, transparent); }
+
+.contact-form .contact-form__promise {
+  position: relative;
+  margin-top: var(--sp-5);
+  padding-left: 1.4rem;
+  max-width: 34ch;
+  font-size: var(--fs-sm);
+  line-height: 1.6;
+  color: var(--fg-soft);
+}
+.contact-form .contact-form__promise-dot {
+  position: absolute;
+  top: 0.6em;
+  left: 0;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.contact-form .contact-form__plate {
+  width: 100%;
+  /* Deliberately small: the sticky column has to clear a laptop viewport. */
+  max-width: 16rem;
+  margin-top: var(--sp-6);
+}
+/* On a genuinely short window the drawing is the first thing to go, so the
+   contact details never scroll out of reach. */
+@media (min-width: 1101px) and (max-height: 820px) {
+  .contact-form .contact-form__plate { display: none; }
+}
+.contact-form .contact-form__plate-frame {
+  aspect-ratio: 4 / 3;
+  background: var(--bg-sunken);
+  border: 1px solid var(--line-soft);
+}
+.contact-form .contact-form__plate-cap {
+  margin-top: 0.75rem;
+  color: var(--fg-muted);
+}
+
+/* ------------------------------------------------------------ FORM SHELL */
+
+.contact-form .contact-form__main {
+  position: relative;
+  min-width: 0;
+}
+
+.contact-form .contact-form__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3) var(--sp-5);
+  padding-bottom: var(--sp-4);
+  border-bottom: 1px solid var(--line);
+}
+.contact-form .contact-form__head-label { color: var(--fg-muted); }
+
+/* ------------------------------------------------------------- PROGRESS  */
+
+.contact-form .contact-form__progress {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.contact-form .contact-form__progress-read {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.45rem;
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wide);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+.contact-form .contact-form__progress-count {
+  font-size: var(--fs-xs);
+  color: var(--fg);
+  transition: color var(--d-base) var(--e-out-quart);
+}
+.contact-form .contact-form__progress-track {
+  position: relative;
+  display: block;
+  width: clamp(3.5rem, 8vw, 6.5rem);
+  height: 2px;
+  background: var(--line);
+  overflow: hidden;
+}
+.contact-form .contact-form__progress-fill {
+  position: absolute;
+  inset: 0;
+  background: var(--fg);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 520ms var(--e-out-expo), background-color var(--d-base) var(--e-out-quart);
+}
+.contact-form .contact-form__progress.is-complete .contact-form__progress-count { color: var(--accent); }
+.contact-form .contact-form__progress.is-complete .contact-form__progress-fill { background: var(--accent); }
+.contact-form .contact-form__progress.is-tick .contact-form__progress-count {
+  animation: cf-tick 560ms var(--e-out-expo) both;
+}
+@keyframes cf-tick {
+  0%   { opacity: 0; transform: translate3d(0, 45%, 0); }
+  100% { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+/* ------------------------------------------------------------------ NOTE */
+
+.contact-form .contact-form__note {
+  margin-top: var(--sp-4);
+  font-size: var(--fs-xs);
+  color: var(--fg-muted);
+}
+.contact-form .contact-form__req {
+  color: var(--accent);
+  font-family: var(--ff-mono);
+}
+.contact-form .contact-form__opt {
+  font-family: var(--ff-mono);
+  font-size: 0.62em;
+  letter-spacing: var(--tr-wide);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  vertical-align: 0.18em;
+}
+
+/* ------------------------------------------------------------------ ROWS */
+
+.contact-form .contact-form__rows {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.75rem, 3vw, 2.6rem);
+  margin-top: clamp(1.75rem, 3vw, 2.5rem);
+}
+
+.contact-form .contact-form__row--split {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(1.5rem, 3vw, 2.6rem);
+  align-items: end;
+}
+
+/* ---------------------------------------------------------------- FIELDS */
+
+/* Padding moves from .field to the control so the hairline stays on the
+   input's baseline once an error message appears below it. */
+.contact-form .field { padding-top: 0; }
+
+.contact-form .contact-form__control {
+  position: relative;
+  display: block;
+  padding-top: 1.5rem;
+}
+
+.contact-form .field__input {
+  border-bottom-color: var(--line-strong);
+  transition: border-color var(--d-base) var(--e-out-quart),
+              background-color var(--d-base) var(--e-out-quart);
+}
+.contact-form .field__input:hover { border-bottom-color: var(--fg-muted); }
+
+.contact-form .field textarea.field__input {
+  min-height: 9rem;
+  line-height: 1.5;
+}
+
+.contact-form .field__error { letter-spacing: var(--tr-wide); }
+
+.contact-form .contact-form__hint {
+  margin-top: 0.6rem;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tr-wide);
+  color: var(--fg-muted);
+  transition: color var(--d-fast) var(--e-out-quart);
+}
+.contact-form .contact-form__hint.is-met { color: var(--c-moss); }
+
+/* Select — the floating label has no :placeholder-shown to hang off, so it
+   simply lives in the raised position for the life of the field. */
+.contact-form .contact-form__select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 2rem;
+  cursor: pointer;
+  text-overflow: ellipsis;
+}
+.contact-form .contact-form__field--select .field__label {
+  transform: translateY(-1.75rem) scale(0.66);
+}
+.contact-form .contact-form__select-arrow {
+  position: absolute;
+  right: 0.15rem;
+  bottom: 1.15rem;
+  width: 0.7rem;
+  height: auto;
+  fill: none;
+  stroke: var(--fg-muted);
+  stroke-width: 1.3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  pointer-events: none;
+  transition: stroke var(--d-fast) var(--e-out-quart);
+}
+.contact-form .contact-form__control:hover .contact-form__select-arrow { stroke: var(--fg); }
+
+.contact-form .contact-form__timeline-note {
+  padding-bottom: 0.85rem;
+  color: var(--fg-muted);
+  max-width: 32ch;
+}
+
+/* ------------------------------------------------------------- FIELDSETS */
+
+.contact-form .contact-form__group {
+  border: 0;
+  min-width: 0;
+}
+.contact-form .contact-form__legend {
+  display: block;
+  margin-bottom: var(--sp-4);
+  color: var(--fg);
+}
+.contact-form .contact-form__legend-note {
+  display: block;
+  margin-top: 0.35rem;
+  letter-spacing: var(--tr-wide);
+  text-transform: none;
+  color: var(--fg-muted);
+}
+/* Nothing to choose from means the group has no business being there. */
+.contact-form .contact-form__group:has(.contact-form__chips:empty) { display: none; }
+
+/* ----------------------------------------------------------------- CHIPS */
+
+.contact-form .contact-form__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.contact-form .contact-form__chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55em;
+  isolation: isolate;
+  cursor: pointer;
+  user-select: none;
+  background: transparent;
+  border-color: var(--line-strong);
+  transition: color 320ms var(--e-out-quart),
+              border-color 320ms var(--e-out-quart);
+}
+.contact-form .contact-form__chip:hover { border-color: var(--fg); color: var(--fg); }
+
+.contact-form .contact-form__chip-input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  border-radius: inherit;
+}
+
+.contact-form .contact-form__chip-fill {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: var(--fg);
+  opacity: 0;
+  transform: scale(0.7);
+  transition: transform 520ms var(--e-out-expo), opacity 240ms var(--e-out-quart);
+}
+
+.contact-form .contact-form__chip-tick {
+  flex: none;
+  width: 0.82em;
+  height: 0.82em;
+  overflow: visible;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.contact-form .contact-form__chip-tick circle {
+  opacity: 0.4;
+  transition: opacity 240ms var(--e-out-quart);
+}
+.contact-form .contact-form__chip-tick path {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: scale(0.4);
+  transition: opacity 200ms var(--e-out-quart), transform 460ms var(--e-spring);
+}
+.contact-form .contact-form__chip-text { position: relative; }
+
+.contact-form .contact-form__chip.is-active,
+.contact-form .contact-form__chip:has(.contact-form__chip-input:checked) {
+  background: transparent;
+  border-color: var(--fg);
+  color: var(--bg);
+}
+.contact-form .contact-form__chip.is-active .contact-form__chip-fill,
+.contact-form .contact-form__chip:has(.contact-form__chip-input:checked) .contact-form__chip-fill {
+  opacity: 1;
+  transform: scale(1);
+}
+.contact-form .contact-form__chip.is-active .contact-form__chip-tick circle,
+.contact-form .contact-form__chip:has(.contact-form__chip-input:checked) .contact-form__chip-tick circle { opacity: 0; }
+.contact-form .contact-form__chip.is-active .contact-form__chip-tick path,
+.contact-form .contact-form__chip:has(.contact-form__chip-input:checked) .contact-form__chip-tick path {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* The real input is transparent, so the focus ring has to be drawn by the
+   chip itself. :focus-within is the fallback where :has is unavailable. */
+.contact-form .contact-form__chip:has(.contact-form__chip-input:focus-visible) {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+@supports not selector(:has(*)) {
+  .contact-form .contact-form__chip:focus-within {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+}
+
+/* ------------------------------------------------------- SEGMENTED BUDGET */
+
+.contact-form .contact-form__seg {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-2);
+  overflow: hidden;
+}
+
+.contact-form .contact-form__seg-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  isolation: isolate;
+  padding: 0.9rem 0.7rem;
+  background: var(--bg-raised);
+  text-align: center;
+  font-size: var(--fs-sm);
+  line-height: 1.25;
+  color: var(--fg-soft);
+  cursor: pointer;
+  user-select: none;
+  transition: color 300ms var(--e-out-quart);
+}
+.contact-form .contact-form__seg-item:hover { color: var(--fg); }
+
+.contact-form .contact-form__seg-input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+
+.contact-form .contact-form__seg-fill {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--fg);
+  opacity: 0;
+  transform: scaleY(0);
+  transform-origin: bottom center;
+  transition: transform 460ms var(--e-out-expo), opacity 200ms var(--e-out-quart);
+}
+.contact-form .contact-form__seg-text { position: relative; }
+
+.contact-form .contact-form__seg-item.is-active,
+.contact-form .contact-form__seg-item:has(.contact-form__seg-input:checked) { color: var(--bg); }
+.contact-form .contact-form__seg-item.is-active .contact-form__seg-fill,
+.contact-form .contact-form__seg-item:has(.contact-form__seg-input:checked) .contact-form__seg-fill {
+  opacity: 1;
+  transform: scaleY(1);
+}
+.contact-form .contact-form__seg-item:has(.contact-form__seg-input:focus-visible) {
+  outline: 2px solid var(--accent);
+  outline-offset: -3px;
+}
+@supports not selector(:has(*)) {
+  .contact-form .contact-form__seg-item:focus-within {
+    outline: 2px solid var(--accent);
+    outline-offset: -3px;
+  }
+}
+
+.contact-form .contact-form__seg-note {
+  margin-top: var(--sp-3);
+  max-width: 52ch;
+  font-size: var(--fs-xs);
+  line-height: 1.6;
+  color: var(--fg-muted);
+}
+
+/* --------------------------------------------------------------- CONSENT */
+
+.contact-form .contact-form__field--consent {
+  padding-top: var(--sp-2);
+  border-top: 1px solid var(--line-soft);
+}
+
+.contact-form .contact-form__consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  padding-top: var(--sp-3);
+  cursor: pointer;
+}
+
+.contact-form .contact-form__consent-input {
+  position: absolute;
+  width: 1.2rem;
+  height: 1.2rem;
+  margin: 0;
+  opacity: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+
+.contact-form .contact-form__consent-box {
+  position: relative;
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 1.2rem;
+  height: 1.2rem;
+  margin-top: 0.12rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-1);
+  background: var(--bg-raised);
+  transition: background-color 320ms var(--e-out-quart), border-color 320ms var(--e-out-quart);
+}
+.contact-form .contact-form__consent-box svg {
+  width: 0.78rem;
+  height: 0.78rem;
+  fill: none;
+  stroke: var(--bg);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: scale(0.4);
+  transition: opacity 180ms var(--e-out-quart), transform 420ms var(--e-spring);
+}
+.contact-form .contact-form__consent:has(.contact-form__consent-input:checked) .contact-form__consent-box {
+  background: var(--fg);
+  border-color: var(--fg);
+}
+.contact-form .contact-form__consent:has(.contact-form__consent-input:checked) .contact-form__consent-box svg {
+  opacity: 1;
+  transform: scale(1);
+}
+.contact-form .contact-form__consent:has(.contact-form__consent-input:focus-visible) .contact-form__consent-box {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+@supports not selector(:has(*)) {
+  .contact-form .contact-form__consent:focus-within .contact-form__consent-box {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+}
+.contact-form .contact-form__consent-text {
+  font-size: var(--fs-sm);
+  line-height: 1.55;
+  color: var(--fg-soft);
+  max-width: 58ch;
+}
+.contact-form .field.is-invalid .contact-form__consent-box { border-color: var(--c-terra); }
+
+/* --------------------------------------------------------------- ACTIONS */
+
+.contact-form .contact-form__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-3) var(--sp-5);
+  margin-top: clamp(2rem, 4vw, 3rem);
+  padding-top: var(--sp-5);
+  border-top: 1px solid var(--line);
+}
+
+.contact-form .contact-form__submit {
+  min-width: min(15rem, 100%);
+}
+.contact-form .contact-form__submit[disabled] { cursor: progress; }
+.contact-form .contact-form__submit .btn__label {
+  transition: opacity 220ms var(--e-out-quart);
+}
+.contact-form .contact-form__submit.is-loading .btn__label { opacity: 0; }
+
+.contact-form .contact-form__spin {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1.15em;
+  height: 1.15em;
+  margin: -0.575em 0 0 -0.575em;
+  border: 1.5px solid color-mix(in oklab, currentColor 26%, transparent);
+  border-top-color: currentColor;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 220ms var(--e-out-quart);
+  animation: cf-spin 760ms linear infinite;
+  animation-play-state: paused;
+}
+.contact-form .contact-form__submit.is-loading .contact-form__spin {
+  opacity: 1;
+  animation-play-state: running;
+}
+@keyframes cf-spin { to { transform: rotate(360deg); } }
+
+.contact-form .contact-form__actions-note { color: var(--fg-muted); }
+
+/* --------------------------------------------------------------- SUCCESS */
+
+.contact-form .contact-form__success {
+  max-width: 56ch;
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  border: 1px solid var(--line);
+  background: var(--bg);
+}
+.contact-form .contact-form__success .ui-form-success__body { overflow-wrap: anywhere; }
+.contact-form .contact-form__success-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+}
+
+/* ------------------------------------------------------------ RESPONSIVE */
+
+@media (max-width: 1100px) {
+  .contact-form .contact-form__layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(2.5rem, 6vw, 4rem);
+  }
+  .contact-form .contact-form__aside-inner {
+    position: static;
+    top: auto;
+    max-width: 46rem;
+  }
+  .contact-form .contact-form__plate { max-width: 24rem; }
+}
+
+@media (max-width: 720px) {
+  .contact-form .contact-form__row--split {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .contact-form .contact-form__timeline-note { padding-bottom: 0; }
+  .contact-form .contact-form__seg { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .contact-form .contact-form__direct-row { grid-template-columns: minmax(0, 1fr); gap: 0.3rem; }
+  .contact-form .contact-form__submit { width: 100%; }
+}
+
+@media (max-width: 420px) {
+  .contact-form .contact-form__head { gap: var(--sp-2); }
+  .contact-form .contact-form__progress { width: 100%; justify-content: space-between; }
+  .contact-form .contact-form__progress-track { width: 40%; }
+}
+
+/* -------------------------------------------------------- REDUCED MOTION */
+
+@media (prefers-reduced-motion: reduce) {
+  .contact-form .contact-form__spin { animation: none; }
+  .contact-form .contact-form__progress.is-tick .contact-form__progress-count { animation: none; }
+  .contact-form .contact-form__chip,
+  .contact-form .contact-form__chip-fill,
+  .contact-form .contact-form__chip-tick circle,
+  .contact-form .contact-form__chip-tick path,
+  .contact-form .contact-form__seg-fill,
+  .contact-form .contact-form__progress-fill,
+  .contact-form .contact-form__consent-box,
+  .contact-form .contact-form__consent-box svg { transition-duration: 1ms; }
+}
