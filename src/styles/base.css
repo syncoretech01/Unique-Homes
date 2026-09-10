@@ -9,6 +9,13 @@ html {
   text-size-adjust: 100%;
   scroll-behavior: auto;
   background: var(--c-ink);
+  /* Clip sideways on the root, not just on body. Several sections use art
+     layers that are deliberately wider than the viewport; when the clip lives
+     only on body it propagates to the viewport ambiguously and a few pixels of
+     horizontal scroll leak through once those layers animate. `clip` (rather
+     than `hidden`) does not create a scroll container, so `position: sticky`
+     keeps working. */
+  overflow-x: clip;
 }
 
 body {
